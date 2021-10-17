@@ -31,7 +31,7 @@ public class Room implements Serializable {
     @Column(nullable = false)
     private Boolean isAvailable;
     
-    @OneToOne
+    @OneToOne(optional = false)
     private RoomType roomType;
     
     @ManyToOne

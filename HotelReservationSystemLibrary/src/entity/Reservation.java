@@ -42,10 +42,18 @@ public class Reservation implements Serializable {
     @OneToMany(mappedBy = "reservation")
     private List<Room> rooms;
     
+    @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    @ManyToOne
     private Employee employee;
    
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Guest guest;
+    
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Partner partner;
+    
     public Long getReservationId() {
         return reservationId;
     }

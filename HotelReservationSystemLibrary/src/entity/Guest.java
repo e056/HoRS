@@ -6,11 +6,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -28,7 +31,14 @@ public class Guest implements Serializable {
     private String passportNumber;
     @Column(nullable = false, length = 64)
     private String password;
+    
+    @OneToMany(mappedBy = "guest")
+    private List<Reservation> reservations;
 
+    public Guest() {
+        reservations = new ArrayList<>();
+    }
+    
     public Long getGuestId() {
         return guestId;
     }
