@@ -6,11 +6,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import util.enumeration.AccessRightEnum;
 
 /**
@@ -33,6 +35,9 @@ public class Employee implements Serializable {
     private String employeePassword;
     @Column(nullable = false)
     private AccessRightEnum accessRightEnum;
+    
+    @OneToMany(mappedBy = "employee")
+    private List<Reservation> reservations;
 
     public Long getEmployeeId() {
         return employeeId;

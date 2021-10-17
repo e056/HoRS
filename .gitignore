@@ -24,17 +24,17 @@ nbproject/private/
 build/
 dist/
 
-DemoGit-ejb/nbproject/private/
-DemoGit-ejb/build/
-DemoGit-ejb/dist/
+HotelReservationSystem-ejb/nbproject/private/
+HotelReservationSystem-ejb/build/
+HotelReservationSystem-ejb/dist/
 
-DemoGitClient/nbproject/private/
-DemoGitClient/build/
-DemoGitClient/dist/
+HoRSManagementClient/nbproject/private/
+HoRSManagementClient/build/
+HoRSManagementClient/dist/
 
-DemoGitLibrary/nbproject/private/
-DemoGitLibrary/build/
-DemoGitLibrary/dist/
+HotelReservationSystemLibrary/nbproject/private/
+HotelReservationSystemLibrary/build/
+HotelReservationSystemLibrary/dist/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*

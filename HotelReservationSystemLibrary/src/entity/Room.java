@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -25,12 +27,15 @@ public class Room implements Serializable {
     private Long roomId;
     
     @Column(nullable = false, length = 64)
-    private String roomType;
-    @Column(nullable = false, length = 64)
     private String roomNumber;
     @Column(nullable = false)
     private Boolean isAvailable;
     
+    @OneToOne
+    private RoomType roomType;
+    
+    @ManyToOne
+    private Reservation reservation;
     
 
     public Long getRoomId() {
@@ -66,20 +71,7 @@ public class Room implements Serializable {
         return "entity.Room[ id=" + roomId + " ]";
     }
 
-    /**
-     * @return the roomType
-     */
-    public String getRoomType() {
-        return roomType;
-    }
-
-    /**
-     * @param roomType the roomType to set
-     */
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
-    }
-
+  
     /**
      * @return the roomNumber
      */

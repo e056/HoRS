@@ -7,11 +7,15 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -33,7 +37,15 @@ public class Reservation implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date endDate;
-
+    
+    @Column(nullable = false)
+    @OneToMany(mappedBy = "reservation")
+    private List<Room> rooms;
+    
+    @JoinColumn(nullable = false)
+    @ManyToOne
+    private Employee employee;
+   
     public Long getReservationId() {
         return reservationId;
     }

@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -44,6 +45,9 @@ public class RoomType implements Serializable {
     
     @OneToMany(mappedBy = "roomType")
     private List<RoomRate> roomRates;
+    
+    @OneToOne(mappedBy = "roomType")
+    private Room room;
 
     public RoomType() {
         roomRates = new ArrayList<>();
