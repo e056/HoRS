@@ -48,6 +48,21 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
             }
         }
     }
+    
+
+    public List<Partner> retrieveAllPartners()
+    {
+        Query query = em.createQuery("SELECT s FROM Partner s");
+        
+        List<Partner> partners = query.getResultList();
+        
+        for (Partner p : partners) {
+            p.getReservations().size();
+            
+        }
+        
+        return query.getResultList();
+    }
 
     public Partner retrievePartnerByPartnerId(Long partnerId) throws PartnerNotFoundException {
         Partner partner = em.find(Partner.class, partnerId);
