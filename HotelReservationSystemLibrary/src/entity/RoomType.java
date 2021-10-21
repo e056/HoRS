@@ -28,7 +28,7 @@ public class RoomType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
     
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 64, unique = true)
     private String roomTypeName;
     @Column(nullable = false, length = 64)
     private String roomTypeDescription;
@@ -197,6 +197,34 @@ public class RoomType implements Serializable {
      */
     public void setIsDisabled(Boolean isDisabled) {
         this.isDisabled = isDisabled;
+    }
+
+    /**
+     * @return the roomRates
+     */
+    public List<RoomRate> getRoomRates() {
+        return roomRates;
+    }
+
+    /**
+     * @param roomRates the roomRates to set
+     */
+    public void setRoomRates(List<RoomRate> roomRates) {
+        this.roomRates = roomRates;
+    }
+
+    /**
+     * @return the room
+     */
+    public Room getRoom() {
+        return room;
+    }
+
+    /**
+     * @param room the room to set
+     */
+    public void setRoom(Room room) {
+        this.room = room;
     }
     
 }
