@@ -23,6 +23,9 @@ import util.exception.UnknownPersistenceException;
 /**
  *
  * @author ANGELY
+ * 
+ * Added: Create new partners, View all partners
+ * 
  */
 @Stateless
 public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSessionBeanLocal {
@@ -58,10 +61,10 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
         
         for (Partner p : partners) {
             p.getReservations().size();
-            
+   
         }
         
-        return query.getResultList();
+        return partners;
     }
 
     public Partner retrievePartnerByPartnerId(Long partnerId) throws PartnerNotFoundException {

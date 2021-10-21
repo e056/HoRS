@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,18 +26,25 @@ public class Room implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
-    
-    @Column(nullable = false, length = 64)
+
+    @Column(nullable = false, length = 64, unique = true)
     private String roomNumber;
     @Column(nullable = false)
-    private Boolean isAvailable;
-    
-    @OneToOne(optional = false)
+    private boolean isAvailable; // room status
+
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private RoomType roomType;
-    
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Reservation reservation;
-    
+
+    public Room() {
+    }
+
+    public Room(String roomNumber, boolean isAvailable) {
+        this.roomNumber = roomNumber;
+        this.isAvailable = isAvailable;
+    }
 
     public Long getRoomId() {
         return roomId;
@@ -71,7 +79,6 @@ public class Room implements Serializable {
         return "entity.Room[ id=" + roomId + " ]";
     }
 
-  
     /**
      * @return the roomNumber
      */
@@ -90,14 +97,56 @@ public class Room implements Serializable {
      * @return the isAvailable
      */
     public Boolean getIsAvailable() {
-        return isAvailable;
+        return isIsAvailable();
     }
 
     /**
      * @param isAvailable the isAvailable to set
      */
     public void setIsAvailable(Boolean isAvailable) {
+        this.setIsAvailable((boolean) isAvailable);
+    }
+
+    /**
+     * @return the isAvailable
+     */
+    public boolean isIsAvailable() {
+        return isAvailable;
+    }
+
+    /**
+     * @param isAvailable the isAvailable to set
+     */
+    public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
-    
+
+    /**
+     * @return the roomType
+     */
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    /**
+     * @param roomType the roomType to set
+     */
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
+    }
+
+    /**
+     * @return the reservation
+     */
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+    /**
+     * @param reservation the reservation to set
+     */
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
+
 }

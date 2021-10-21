@@ -24,6 +24,7 @@ import util.exception.UnknownPersistenceException;
  * @author ANGELY
  *
  * Not necessary to support update and deletion of employees.
+ * Added: Create new Employee, View all employees
  */
 @Stateless
 public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeSessionBeanLocal {
@@ -71,8 +72,14 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
 
     public List<Employee> retrieveAllEmployees() {
         Query query = em.createQuery("SELECT s FROM Employee s");
+        
+        List<Employee> employees = query.getResultList();
+        
+        for (Employee e : employees) {
+            e.getReservations().size();
+        }
 
-        return query.getResultList();
+        return employees;
     }
 
     public Employee retrieveEmployeeByEmployeeId(Long employeeId) throws EmployeeNotFoundException {
