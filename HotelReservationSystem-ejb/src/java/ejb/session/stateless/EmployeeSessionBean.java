@@ -53,6 +53,8 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     public List<Employee> viewAllEmployee() {
         Query query = em.createQuery("SELECT e FROM Employee e");
         
+        // TODO: handle lazy fetching if needed
+        
         return query.getResultList();
     }
 
@@ -83,7 +85,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         }
     }
 
-    public Employee EmployeeLogin(String username, String password) throws InvalidLoginCredentialException {
+    public Employee employeeLogin(String username, String password) throws InvalidLoginCredentialException {
         try {
             Employee employee = retrieveEmployeeByUsername(username);
 

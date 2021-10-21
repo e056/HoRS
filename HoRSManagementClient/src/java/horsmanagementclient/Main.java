@@ -5,11 +5,19 @@
  */
 package horsmanagementclient;
 
+import ejb.session.stateless.EmployeeSessionBeanRemote;
+import javax.ejb.EJB;
+
 /**
  *
  * @author PYT
  */
 public class Main {
+
+    @EJB
+    private static EmployeeSessionBeanRemote employeeSessionBeanRemote;
+    
+    
 
     /**
      * @param args the command line arguments
