@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,7 +27,7 @@ public class Employee implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
-    
+
     @Column(nullable = false, length = 64)
     private String employeeName;
     @Column(nullable = false, length = 64, unique = true)
@@ -35,9 +36,21 @@ public class Employee implements Serializable {
     private String employeePassword;
     @Column(nullable = false)
     private AccessRightEnum accessRightEnum;
-    
-    @OneToMany(mappedBy = "employee")
+
+    @OneToMany(mappedBy = "employee") // lazy fetching
     private List<Reservation> reservations;
+
+    public Employee() {
+        this.reservations = new ArrayList<>();
+    }
+
+    public Employee(Long employeeId, String employeeName, String employeeUsername, String employeePassword, AccessRightEnum accessRightEnum) {
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.employeeUsername = employeeUsername;
+        this.employeePassword = employeePassword;
+        this.accessRightEnum = accessRightEnum;
+    }
 
     public Long getEmployeeId() {
         return employeeId;
@@ -127,5 +140,19 @@ public class Employee implements Serializable {
     public void setAccessRightEnum(AccessRightEnum accessRightEnum) {
         this.accessRightEnum = accessRightEnum;
     }
-    
+
+    /**
+     * @return the reservations
+     */
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    /**
+     * @param reservations the reservations to set
+     */
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
 }
