@@ -33,6 +33,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
+    @Override
     public Long createNewRoom(Room room) throws RoomNumberExistException, UnknownPersistenceException {
         try {
             em.persist(room);
@@ -52,6 +53,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
+    @Override
     public List<Room> retrieveAllRooms() {
         Query query = em.createQuery("SELECT s FROM Room s");
 
@@ -64,6 +66,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return rooms;
     }
 
+    @Override
     public Room retrieveRoomByRoomId(Long id) throws RoomNotFoundException {
         Room r = em.find(Room.class, id);
 
@@ -74,6 +77,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
+    @Override
     public Room retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException {
         Query query = em.createQuery("SELECT p FROM Room p WHERE p.roomNumber = :inRoomNumber");
         query.setParameter("inRoomNumber", roomNumber);
@@ -85,6 +89,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
+    @Override
     public void updateRoom(Room room) throws RoomNotFoundException, UpdateRoomException {
         if (room != null && room.getRoomId() != null) {
             Room roomToUpdate = retrieveRoomByRoomId(room.getRoomId());
@@ -101,6 +106,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
+    @Override
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {
 //        Room roomToRemove = retrieveRoomByRoomId(roomId);
 //

@@ -29,6 +29,8 @@ public class Room implements Serializable {
 
     @Column(nullable = false, length = 64, unique = true)
     private String roomNumber;
+    // FORMAT: 1234, where 12 refers to the floor number and 34 refers to the sequence number => floor 12 seq 34
+
     @Column(nullable = false)
     private boolean isAvailable; // room status
 
@@ -44,6 +46,14 @@ public class Room implements Serializable {
     public Room(String roomNumber, boolean isAvailable) {
         this.roomNumber = roomNumber;
         this.isAvailable = isAvailable;
+    }
+
+    public String getFloorNumber() {
+        return this.roomNumber.substring(0, 2);
+    }
+
+    public String getSequenceNumber() {
+        return this.roomNumber.substring(2, 4);
     }
 
     public Long getRoomId() {
