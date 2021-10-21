@@ -28,8 +28,6 @@ public interface RoomSessionBeanRemote {
 
     public List<Room> retrieveAllRooms();
 
-  ;
-
     public Room retrieveRoomByRoomId(Long id) throws RoomNotFoundException;
 
     public Room retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException;
@@ -38,5 +36,4 @@ public interface RoomSessionBeanRemote {
 
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
 
-    
 }

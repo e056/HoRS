@@ -28,7 +28,7 @@ public class RoomType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
     
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 64, unique = true)
     private String roomTypeName;
     @Column(nullable = false, length = 64)
     private String roomTypeDescription;
@@ -39,7 +39,7 @@ public class RoomType implements Serializable {
     @Column(nullable = false)
     private Long roomTypeCapacity;
     @Column(nullable = false, length = 64)
-    private String roomTypeAmmenities;
+    private String roomTypeAmenities;
     @Column(nullable = false)
     private Boolean isDisabled;
     
@@ -53,7 +53,7 @@ public class RoomType implements Serializable {
         roomRates = new ArrayList<>();
     }
 
-    public RoomType(Long roomTypeId, String roomTypeName, String roomTypeDescription, String roomTypeSize, String roomTypeBed, Long roomTypeCapacity, String roomTypeAmmenities, Boolean isDisabled, List<RoomRate> roomRates) {
+    public RoomType(Long roomTypeId, String roomTypeName, String roomTypeDescription, String roomTypeSize, String roomTypeBed, Long roomTypeCapacity, String roomTypeAmenities, Boolean isDisabled, List<RoomRate> roomRates) {
         this();
         
         this.roomTypeId = roomTypeId;
@@ -62,7 +62,7 @@ public class RoomType implements Serializable {
         this.roomTypeSize = roomTypeSize;
         this.roomTypeBed = roomTypeBed;
         this.roomTypeCapacity = roomTypeCapacity;
-        this.roomTypeAmmenities = roomTypeAmmenities;
+        this.roomTypeAmenities = roomTypeAmenities;
         this.isDisabled = isDisabled;
         this.roomRates = roomRates;
     }
@@ -172,17 +172,17 @@ public class RoomType implements Serializable {
     }
 
     /**
-     * @return the roomTypeAmmenities
+     * @return the roomTypeAmenities
      */
-    public String getRoomTypeAmmenities() {
-        return roomTypeAmmenities;
+    public String getRoomTypeAmenities() {
+        return roomTypeAmenities;
     }
 
     /**
-     * @param roomTypeAmmenities the roomTypeAmmenities to set
+     * @param roomTypeAmenities the roomTypeAmenities to set
      */
-    public void setRoomTypeAmmenities(String roomTypeAmmenities) {
-        this.roomTypeAmmenities = roomTypeAmmenities;
+    public void setRoomTypeAmenities(String roomTypeAmenities) {
+        this.roomTypeAmenities = roomTypeAmenities;
     }
 
     /**
@@ -197,6 +197,34 @@ public class RoomType implements Serializable {
      */
     public void setIsDisabled(Boolean isDisabled) {
         this.isDisabled = isDisabled;
+    }
+
+    /**
+     * @return the roomRates
+     */
+    public List<RoomRate> getRoomRates() {
+        return roomRates;
+    }
+
+    /**
+     * @param roomRates the roomRates to set
+     */
+    public void setRoomRates(List<RoomRate> roomRates) {
+        this.roomRates = roomRates;
+    }
+
+    /**
+     * @return the room
+     */
+    public Room getRoom() {
+        return room;
+    }
+
+    /**
+     * @param room the room to set
+     */
+    public void setRoom(Room room) {
+        this.room = room;
     }
     
 }
