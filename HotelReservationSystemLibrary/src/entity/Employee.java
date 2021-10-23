@@ -46,14 +46,16 @@ public class Employee implements Serializable {
         this.reservations = new ArrayList<>();
     }
 
-    public Employee(Long employeeId, String firstName, String lastName, String employeeUsername, String employeePassword, AccessRightEnum accessRightEnum) {
-        this.employeeId = employeeId;
+    public Employee(String firstName, String lastName, String username, String password, AccessRightEnum accessRightEnum) {
+        this();
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = employeeUsername;
-        this.password = employeePassword;
+        this.username = username;
+        this.password = password;
         this.accessRightEnum = accessRightEnum;
     }
+
+    
     
     public String getFullName() {
         return this.firstName + " " + this.lastName;
