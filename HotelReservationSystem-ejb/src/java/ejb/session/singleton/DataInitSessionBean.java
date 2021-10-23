@@ -5,8 +5,17 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.EmployeeSessionBeanLocal;
+import entity.Employee;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
+import javax.ejb.Startup;
+import util.enumeration.AccessRightEnum;
+import util.exception.EmployeeNotFoundException;
+import util.exception.EmployeeUsernameExistException;
+import util.exception.UnknownPersistenceException;
 
 /**
  *
@@ -14,8 +23,47 @@ import javax.ejb.LocalBean;
  */
 @Singleton
 @LocalBean
+@Startup
 public class DataInitSessionBean {
+
+    @EJB
+    private EmployeeSessionBeanLocal employeeSessionBeanLocal;
+    
+    
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+     public DataInitSessionBean() {
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        try {
+            employeeSessionBeanLocal.retrieveEmployeeByEmployeeId(1l);
+        } catch (EmployeeNotFoundException ex) {
+            doLoadData();
+        }
+
+    }
+
+    private void doLoadData() {
+        try {
+            Employee employee1 = new Employee("sysad", "one", "systemAdmin1", "password", AccessRightEnum.SYSTEM_ADMIN);
+            Employee employee2 = new Employee("opman", "two", "operationManager1", "password", AccessRightEnum.OPERATION_MANAGER);
+            Employee employee3 = new Employee("saleman", "three", "salesManager1", "password", AccessRightEnum.SALES_MANAGER);
+            Employee employee4 = new Employee("guestrln", "four", "guestRelationOfficer1", "password", AccessRightEnum.GUEST_RELATION_OFFICER);
+            
+            employeeSessionBeanLocal.createNewEmployee(employee1);
+            employeeSessionBeanLocal.createNewEmployee(employee2);
+            employeeSessionBeanLocal.createNewEmployee(employee3);
+            employeeSessionBeanLocal.createNewEmployee(employee4);
+
+        } catch (EmployeeUsernameExistException ex) {
+            ex.printStackTrace();
+        } catch (UnknownPersistenceException ex) {
+            ex.printStackTrace();
+        }
+    }
 }
+
+
