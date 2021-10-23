@@ -28,12 +28,14 @@ public class Partner implements Serializable {
     private Long partnerId;
 
     @Column(nullable = false, length = 64)
-    private String partnerName;
-    @Column(nullable = false, length = 64, unique = true)
-    private String partnerUsername;
+    private String firstName;
     @Column(nullable = false, length = 64)
-    private String partnerPassword;
-    
+    private String lastName;
+    @Column(nullable = false, length = 64, unique = true)
+    private String username;
+    @Column(nullable = false, length = 64)
+    private String password;
+
     @OneToMany(mappedBy = "partner")
     private List<Reservation> reservations;
 
@@ -41,15 +43,15 @@ public class Partner implements Serializable {
         reservations = new ArrayList<>();
     }
 
-    public Partner(String partnerName, String partnerUsername, String partnerPassword) {
+    public Partner(String firstName, String lastName, String username, String password) {
         this();
-        this.partnerName = partnerName;
-        this.partnerUsername = partnerUsername;
-        this.partnerPassword = partnerPassword;
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
     }
-    
-    
-    
+
     public Long getPartnerId() {
         return partnerId;
     }
@@ -84,45 +86,45 @@ public class Partner implements Serializable {
     }
 
     /**
-     * @return the partnerName
+     * @return the firstName
      */
-    public String getPartnerName() {
-        return partnerName;
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
-     * @param partnerName the partnerName to set
+     * @param firstName the firstName to set
      */
-    public void setPartnerName(String partnerName) {
-        this.partnerName = partnerName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     /**
-     * @return the partnerUsername
+     * @return the username
      */
-    public String getPartnerUsername() {
-        return partnerUsername;
+    public String getUsername() {
+        return username;
     }
 
     /**
-     * @param partnerUsername the partnerUsername to set
+     * @param username the username to set
      */
-    public void setPartnerUsername(String partnerUsername) {
-        this.partnerUsername = partnerUsername;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
-     * @return the partnerPassword
+     * @return the password
      */
-    public String getPartnerPassword() {
-        return partnerPassword;
+    public String getPassword() {
+        return password;
     }
 
     /**
-     * @param partnerPassword the partnerPassword to set
+     * @param password the password to set
      */
-    public void setPartnerPassword(String partnerPassword) {
-        this.partnerPassword = partnerPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
@@ -138,5 +140,19 @@ public class Partner implements Serializable {
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
     }
-    
+
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
 }

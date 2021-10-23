@@ -29,17 +29,17 @@ public class RoomType implements Serializable {
     private Long roomTypeId;
     
     @Column(nullable = false, length = 64, unique = true)
-    private String roomTypeName;
+    private String name;
     @Column(nullable = false, length = 64)
-    private String roomTypeDescription;
+    private String description;
     @Column(nullable = false, length = 64)
-    private String roomTypeSize;
+    private String size;
     @Column(nullable = false, length = 64)
-    private String roomTypeBed;
+    private String bed;
     @Column(nullable = false)
-    private Long roomTypeCapacity;
+    private Long capacity;
     @Column(nullable = false, length = 64)
-    private String roomTypeAmmenities;
+    private String amenities;
     @Column(nullable = false)
     private Boolean isDisabled;
     
@@ -57,12 +57,12 @@ public class RoomType implements Serializable {
         this();
         
         this.roomTypeId = roomTypeId;
-        this.roomTypeName = roomTypeName;
-        this.roomTypeDescription = roomTypeDescription;
-        this.roomTypeSize = roomTypeSize;
-        this.roomTypeBed = roomTypeBed;
-        this.roomTypeCapacity = roomTypeCapacity;
-        this.roomTypeAmmenities = roomTypeAmmenities;
+        this.name = roomTypeName;
+        this.description = roomTypeDescription;
+        this.size = roomTypeSize;
+        this.bed = roomTypeBed;
+        this.capacity = roomTypeCapacity;
+        this.amenities = roomTypeAmmenities;
         this.isDisabled = isDisabled;
         this.roomRates = roomRates;
     }
@@ -102,87 +102,87 @@ public class RoomType implements Serializable {
     }
 
     /**
-     * @return the roomTypeName
+     * @return the name
      */
-    public String getRoomTypeName() {
-        return roomTypeName;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @param roomTypeName the roomTypeName to set
+     * @param name the name to set
      */
-    public void setRoomTypeName(String roomTypeName) {
-        this.roomTypeName = roomTypeName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
-     * @return the roomTypeDescription
+     * @return the description
      */
-    public String getRoomTypeDescription() {
-        return roomTypeDescription;
+    public String getDescription() {
+        return description;
     }
 
     /**
-     * @param roomTypeDescription the roomTypeDescription to set
+     * @param description the description to set
      */
-    public void setRoomTypeDescription(String roomTypeDescription) {
-        this.roomTypeDescription = roomTypeDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
-     * @return the roomTypeSize
+     * @return the size
      */
-    public String getRoomTypeSize() {
-        return roomTypeSize;
+    public String getSize() {
+        return size;
     }
 
     /**
-     * @param roomTypeSize the roomTypeSize to set
+     * @param size the size to set
      */
-    public void setRoomTypeSize(String roomTypeSize) {
-        this.roomTypeSize = roomTypeSize;
+    public void setSize(String size) {
+        this.size = size;
     }
 
     /**
-     * @return the roomTypeBed
+     * @return the bed
      */
-    public String getRoomTypeBed() {
-        return roomTypeBed;
+    public String getBed() {
+        return bed;
     }
 
     /**
-     * @param roomTypeBed the roomTypeBed to set
+     * @param bed the bed to set
      */
-    public void setRoomTypeBed(String roomTypeBed) {
-        this.roomTypeBed = roomTypeBed;
+    public void setBed(String bed) {
+        this.bed = bed;
     }
 
     /**
-     * @return the roomTypeCapacity
+     * @return the capacity
      */
-    public Long getRoomTypeCapacity() {
-        return roomTypeCapacity;
+    public Long getCapacity() {
+        return capacity;
     }
 
     /**
-     * @param roomTypeCapacity the roomTypeCapacity to set
+     * @param capacity the capacity to set
      */
-    public void setRoomTypeCapacity(Long roomTypeCapacity) {
-        this.roomTypeCapacity = roomTypeCapacity;
+    public void setCapacity(Long capacity) {
+        this.capacity = capacity;
     }
 
     /**
-     * @return the roomTypeAmmenities
+     * @return the amenities
      */
-    public String getRoomTypeAmmenities() {
-        return roomTypeAmmenities;
+    public String getAmenities() {
+        return amenities;
     }
 
     /**
-     * @param roomTypeAmmenities the roomTypeAmmenities to set
+     * @param amenities the amenities to set
      */
-    public void setRoomTypeAmmenities(String roomTypeAmmenities) {
-        this.roomTypeAmmenities = roomTypeAmmenities;
+    public void setAmenities(String amenities) {
+        this.amenities = amenities;
     }
 
     /**

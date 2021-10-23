@@ -30,11 +30,11 @@ public class RoomRate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomRateId;
     @Column(nullable = false, length = 64)
-    private String roomRateName;
+    private String name;
     @Column(nullable = false)
-    private RoomRateType roomRateType;
+    private RoomRateType type;
     @Column(nullable = false)
-    private Long roomRatePerNight;
+    private Long ratePerNight;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date validityStart;
@@ -80,45 +80,45 @@ public class RoomRate implements Serializable {
     }
 
     /**
-     * @return the roomRateName
+     * @return the name
      */
-    public String getRoomRateName() {
-        return roomRateName;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @param roomRateName the roomRateName to set
+     * @param name the name to set
      */
-    public void setRoomRateName(String roomRateName) {
-        this.roomRateName = roomRateName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
-     * @return the roomRateType
+     * @return the type
      */
-    public RoomRateType getRoomRateType() {
-        return roomRateType;
+    public RoomRateType getType() {
+        return type;
     }
 
     /**
-     * @param roomRateType the roomRateType to set
+     * @param type the type to set
      */
-    public void setRoomRateType(RoomRateType roomRateType) {
-        this.roomRateType = roomRateType;
+    public void setType(RoomRateType type) {
+        this.type = type;
     }
 
     /**
-     * @return the roomRatePerNight
+     * @return the ratePerNight
      */
-    public Long getRoomRatePerNight() {
-        return roomRatePerNight;
+    public Long getRatePerNight() {
+        return ratePerNight;
     }
 
     /**
-     * @param roomRatePerNight the roomRatePerNight to set
+     * @param ratePerNight the ratePerNight to set
      */
-    public void setRoomRatePerNight(Long roomRatePerNight) {
-        this.roomRatePerNight = roomRatePerNight;
+    public void setRatePerNight(Long ratePerNight) {
+        this.ratePerNight = ratePerNight;
     }
 
     /**

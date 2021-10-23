@@ -29,11 +29,13 @@ public class Employee implements Serializable {
     private Long employeeId;
 
     @Column(nullable = false, length = 64)
-    private String employeeName;
-    @Column(nullable = false, length = 64, unique = true)
-    private String employeeUsername;
+    private String firstName;
     @Column(nullable = false, length = 64)
-    private String employeePassword;
+    private String lastName;
+    @Column(nullable = false, length = 64, unique = true)
+    private String username;
+    @Column(nullable = false, length = 64)
+    private String password;
     @Column(nullable = false)
     private AccessRightEnum accessRightEnum;
 
@@ -44,11 +46,12 @@ public class Employee implements Serializable {
         this.reservations = new ArrayList<>();
     }
 
-    public Employee(Long employeeId, String employeeName, String employeeUsername, String employeePassword, AccessRightEnum accessRightEnum) {
+    public Employee(Long employeeId, String firstName, String lastName, String employeeUsername, String employeePassword, AccessRightEnum accessRightEnum) {
         this.employeeId = employeeId;
-        this.employeeName = employeeName;
-        this.employeeUsername = employeeUsername;
-        this.employeePassword = employeePassword;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = employeeUsername;
+        this.password = employeePassword;
         this.accessRightEnum = accessRightEnum;
     }
 
@@ -86,45 +89,45 @@ public class Employee implements Serializable {
     }
 
     /**
-     * @return the employeeName
+     * @return the firstName
      */
-    public String getEmployeeName() {
-        return employeeName;
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
-     * @param employeeName the employeeName to set
+     * @param firstName the firstName to set
      */
-    public void setEmployeeName(String employeeName) {
-        this.employeeName = employeeName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     /**
-     * @return the employeeUsername
+     * @return the username
      */
-    public String getEmployeeUsername() {
-        return employeeUsername;
+    public String getUsername() {
+        return username;
     }
 
     /**
-     * @param employeeUsername the employeeUsername to set
+     * @param username the username to set
      */
-    public void setEmployeeUsername(String employeeUsername) {
-        this.employeeUsername = employeeUsername;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
-     * @return the employeePassword
+     * @return the password
      */
-    public String getEmployeePassword() {
-        return employeePassword;
+    public String getPassword() {
+        return password;
     }
 
     /**
-     * @param employeePassword the employeePassword to set
+     * @param password the password to set
      */
-    public void setEmployeePassword(String employeePassword) {
-        this.employeePassword = employeePassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
@@ -153,6 +156,20 @@ public class Employee implements Serializable {
      */
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
 }
