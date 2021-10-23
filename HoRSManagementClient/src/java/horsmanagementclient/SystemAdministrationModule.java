@@ -8,8 +8,10 @@ package horsmanagementclient;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
 import entity.Employee;
+import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
+import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
 import util.exception.InvalidAccessRightException;
 import util.exception.UnknownPersistenceException;
@@ -59,7 +61,7 @@ public class SystemAdministrationModule {
                 if (response == 1) {
                     doCreateNewEmployee();
                 } else if (response == 2) {
-                    //doViewStaffDetails();
+                    doViewAllEmployeeDetails();
                 } else if (response == 3) {
                     //doViewAllStaffs();
                 } else if (response == 4) {
@@ -115,4 +117,25 @@ public class SystemAdministrationModule {
         }
     }
 
+    private void doViewAllEmployeeDetails() {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        System.out.println("*** HoRS System :: System Administration :: View All Employee Details ***\n");
+
+        List<Employee> employees = employeeSessionBeanRemote.retrieveAllEmployees();
+
+        System.out.println("------------------------");
+        for (Employee employee : employees) {
+            System.out.printf("%8s%20s%20s%20s%25s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username", "Password");
+            System.out.printf("%8s%20s%20s%20s%25s%20s\n", employee.getEmployeeId().toString(),
+                    employee.getFirstName(), employee.getLastName(), employee.getAccessRightEnum().toString(),
+                    employee.getUsername(), employee.getPassword());
+
+        }
+
+        System.out.println("------------------------");
+
+    }
 }
+

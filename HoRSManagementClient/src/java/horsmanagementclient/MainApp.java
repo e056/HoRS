@@ -79,7 +79,7 @@ public class MainApp {
         String username = "";
         String password = "";
 
-        System.out.println("*** POS System :: Login ***\n");
+        System.out.println("*** HoRS System :: Login ***\n");
         System.out.print("Enter username> ");
         username = scanner.nextLine().trim();
         System.out.print("Enter password> ");
