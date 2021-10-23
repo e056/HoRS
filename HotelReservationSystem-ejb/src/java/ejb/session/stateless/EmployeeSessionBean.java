@@ -96,7 +96,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         try {
             Employee employee = retrieveEmployeeByUsername(username);
 
-            if (employee.getEmployeePassword().equals(password)) {
+            if (employee.getPassword().equals(password)) {
                 employee.getReservations().size();
                 return employee;
             } else {

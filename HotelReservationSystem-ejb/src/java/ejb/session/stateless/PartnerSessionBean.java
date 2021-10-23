@@ -102,7 +102,7 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
         try {
             Partner partner = retrievePartnerByUsername(username);
 
-            if (partner.getPartnerPassword().equals(password)) {
+            if (partner.getPassword().equals(password)) {
                 partner.getReservations().size();
                 return partner;
             } else {
