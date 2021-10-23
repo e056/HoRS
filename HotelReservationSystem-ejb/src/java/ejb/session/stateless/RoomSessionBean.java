@@ -5,9 +5,10 @@
  */
 package ejb.session.stateless;
 
-import entity.Reservation;
 import entity.Room;
+import entity.RoomType;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -23,19 +24,26 @@ import util.exception.UpdateRoomException;
 
 /**
  *
- * @author ANGELY Added: Create new room, view all rooms Unfinished: update
- * room, delete room
+ * @author ANGELY Added: Create new room, view all rooms 
+ * Unfinished: update room, delete room
  *
  */
 @Stateless
 public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLocal {
 
+    @EJB(name = "RoomTypeSessionBeanLocal")
+    private RoomTypeSessionBeanLocal roomTypeSessionBeanLocal;
+
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
+    
+    
 
+    // Incomplete: A room must have a Room Type, take in roomTypeId, do necessary association for both entities then persist
     @Override
     public Long createNewRoom(Room room) throws RoomNumberExistException, UnknownPersistenceException {
         try {
+            
             em.persist(room);
             em.flush();
 
