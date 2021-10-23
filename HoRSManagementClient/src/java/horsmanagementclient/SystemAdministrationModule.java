@@ -8,12 +8,14 @@ package horsmanagementclient;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
 import entity.Employee;
+import entity.Partner;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
 import util.exception.InvalidAccessRightException;
+import util.exception.PartnerUsernameExistException;
 import util.exception.UnknownPersistenceException;
 
 /**
@@ -63,9 +65,9 @@ public class SystemAdministrationModule {
                 } else if (response == 2) {
                     doViewAllEmployeeDetails();
                 } else if (response == 3) {
-                    //doViewAllStaffs();
+                    doCreateNewPartner();
                 } else if (response == 4) {
-                    //doCreateNewProduct();
+                    doViewAllPartnerDetails();
                 } else if (response == 5) {
                     break;
                 } else {
@@ -136,6 +138,50 @@ public class SystemAdministrationModule {
 
         System.out.println("------------------------");
 
+    }
+
+    private void doCreateNewPartner() {
+        
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("*** HoRS System :: System Administration :: Create New Partner ***\n");
+        
+        Partner newPartner = new Partner();
+        System.out.print("Enter Name> ");
+        newPartner.setName(scanner.nextLine().trim());
+        System.out.print("Enter Username> ");
+        newPartner.setUsername(scanner.nextLine().trim());
+        System.out.print("Enter Password> ");
+        newPartner.setPassword(scanner.nextLine().trim());
+        
+        try {
+            Long partnerId = partnerSessionBeanRemote.createNewPartner(newPartner);
+            System.out.println("New partner created successfully!: " + partnerId + "\n");
+        } catch (PartnerUsernameExistException ex) {
+            System.out.println("An error has occurred while creating the new partner!: The user name already exist\n");
+        } catch (UnknownPersistenceException ex) {
+            System.out.println("An unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
+        }
+        
+    }
+
+    private void doViewAllPartnerDetails() {
+        
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("*** HoRS System :: System Administration :: View All Partners ***\n");
+        
+        List<Partner> partners = partnerSessionBeanRemote.retrieveAllPartners();
+        
+        System.out.println("------------------------");
+        for (Partner partner : partners) {
+            System.out.printf("%8s%20s%25s%20s\n", "Partner ID", "Name", "Username", "Password");
+            System.out.printf("%8s%20s%25s%20s\n", partner.getPartnerId().toString(),
+                    partner.getName(), partner.getUsername(), partner.getPassword());
+
+        }
+        System.out.println("------------------------");
+     
     }
 }
 

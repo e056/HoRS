@@ -28,9 +28,7 @@ public class Partner implements Serializable {
     private Long partnerId;
 
     @Column(nullable = false, length = 64)
-    private String firstName;
-    @Column(nullable = false, length = 64)
-    private String lastName;
+    private String name;
     @Column(nullable = false, length = 64, unique = true)
     private String username;
     @Column(nullable = false, length = 64)
@@ -46,8 +44,7 @@ public class Partner implements Serializable {
     public Partner(String firstName, String lastName, String username, String password) {
         this();
 
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = firstName;
         this.username = username;
         this.password = password;
     }
@@ -86,17 +83,17 @@ public class Partner implements Serializable {
     }
 
     /**
-     * @return the firstName
+     * @return the name
      */
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @param firstName the firstName to set
+     * @param name the name to set
      */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -139,20 +136,6 @@ public class Partner implements Serializable {
      */
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
-    }
-
-    /**
-     * @return the lastName
-     */
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * @param lastName the lastName to set
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
 }
