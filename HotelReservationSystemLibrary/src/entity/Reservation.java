@@ -37,9 +37,9 @@ public class Reservation implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date endDate;
-    
-    @Column(nullable = false)
+
     @OneToMany(mappedBy = "reservation")
+    @JoinColumn(nullable = false)
     private List<Room> rooms;
     
     @ManyToOne(optional = false)

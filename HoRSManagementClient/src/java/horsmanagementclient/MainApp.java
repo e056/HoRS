@@ -52,9 +52,9 @@ public class MainApp {
                         System.out.println("Login successful!\n");
 
                         // initialise all modules
-                        //FrontOfficeModule frontOfficeModule = new FrontOfficeModule();
-                        //HotelOperationModule hotelOperationModule = new HotelOperationModule();
-                        SystemAdministrationModule systemAdministrationModule = new SystemAdministrationModule(partnerSessionBeanRemote,
+                        // frontOfficeModule = new FrontOfficeModule();
+                        // hotelOperationModule = new HotelOperationModule();
+                        this.systemAdministrationModule = new SystemAdministrationModule(partnerSessionBeanRemote,
                                 employeeSessionBeanRemote, currEmployee);
 
                         menuMain();
