@@ -54,6 +54,10 @@ public class Employee implements Serializable {
         this.password = employeePassword;
         this.accessRightEnum = accessRightEnum;
     }
+    
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
+    }
 
     public Long getEmployeeId() {
         return employeeId;
