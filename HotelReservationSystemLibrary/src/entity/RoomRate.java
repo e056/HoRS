@@ -29,7 +29,7 @@ public class RoomRate implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomRateId;
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 64, unique = true)
     private String name;
     @Column(nullable = false)
     private RoomRateType type;
@@ -147,6 +147,20 @@ public class RoomRate implements Serializable {
      */
     public void setValidityEnd(Date validityEnd) {
         this.validityEnd = validityEnd;
+    }
+
+    /**
+     * @return the roomType
+     */
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    /**
+     * @param roomType the roomType to set
+     */
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
     }
     
 }

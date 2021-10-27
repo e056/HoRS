@@ -39,21 +39,22 @@ public class RoomType implements Serializable {
     @Column(nullable = false)
     private Long capacity;
     @Column(nullable = false, length = 64)
-    private String amenities;
+    private List<String> amenities;
     @Column(nullable = false)
     private Boolean isDisabled;
     
     @OneToMany(mappedBy = "roomType")
     private List<RoomRate> roomRates;
     
-    @OneToOne(mappedBy = "roomType")
-    private Room room;
+    @OneToMany(mappedBy = "roomType")
+    private List<Room> rooms;
 
     public RoomType() {
         roomRates = new ArrayList<>();
+        amenities = new ArrayList<>();
     }
 
-    public RoomType(Long roomTypeId, String roomTypeName, String roomTypeDescription, String roomTypeSize, String roomTypeBed, Long roomTypeCapacity, String roomTypeAmmenities, Boolean isDisabled, List<RoomRate> roomRates) {
+    public RoomType(Long roomTypeId, String roomTypeName, String roomTypeDescription, String roomTypeSize, String roomTypeBed, Long roomTypeCapacity, List<String> roomTypeAmmenities, Boolean isDisabled, List<RoomRate> roomRates) {
         this();
         
         this.roomTypeId = roomTypeId;
@@ -174,14 +175,14 @@ public class RoomType implements Serializable {
     /**
      * @return the amenities
      */
-    public String getAmenities() {
+    public List<String> getAmenities() {
         return amenities;
     }
 
     /**
      * @param amenities the amenities to set
      */
-    public void setAmenities(String amenities) {
+    public void setAmenities(List<String> amenities) {
         this.amenities = amenities;
     }
 
@@ -214,17 +215,17 @@ public class RoomType implements Serializable {
     }
 
     /**
-     * @return the room
+     * @return the rooms
      */
-    public Room getRoom() {
-        return room;
+    public List<Room> getRooms() {
+        return rooms;
     }
 
     /**
-     * @param room the room to set
+     * @param rooms the rooms to set
      */
-    public void setRoom(Room room) {
-        this.room = room;
+    public void setRooms(List<Room> rooms) {
+        this.rooms = rooms;
     }
     
 }

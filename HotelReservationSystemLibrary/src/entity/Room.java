@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -32,9 +33,9 @@ public class Room implements Serializable {
     // FORMAT: 1234, where 12 refers to the floor number and 34 refers to the sequence number => floor 12 seq 34
 
     @Column(nullable = false)
-    private boolean isAvailable; // room status
+    private Boolean isAvailable; // room status
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private RoomType roomType;
 
     @ManyToOne(fetch = FetchType.LAZY)
