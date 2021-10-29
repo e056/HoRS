@@ -29,7 +29,7 @@ public class SystemAdministrationModule {
     private PartnerSessionBeanRemote partnerSessionBeanRemote;
     private EmployeeSessionBeanRemote employeeSessionBeanRemote;
     private Employee currEmployee;
-
+    
     public SystemAdministrationModule(PartnerSessionBeanRemote partnerSessionBeanRemote, EmployeeSessionBeanRemote employeeSessionBeanRemote, Employee currEmployee) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
