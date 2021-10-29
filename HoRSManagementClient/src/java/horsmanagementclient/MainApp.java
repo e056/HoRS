@@ -7,6 +7,10 @@ package horsmanagementclient;
 
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
+import ejb.session.stateless.RoomAllocationSessionBeanRemote;
+import ejb.session.stateless.RoomRateSessionBeanRemote;
+import ejb.session.stateless.RoomSessionBeanRemote;
+import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import entity.Employee;
 import java.util.Scanner;
 import util.exception.InvalidAccessRightException;
@@ -18,18 +22,38 @@ import util.exception.InvalidLoginCredentialException;
  */
 public class MainApp {
 
+    // System admin module
     private PartnerSessionBeanRemote partnerSessionBeanRemote;
     private EmployeeSessionBeanRemote employeeSessionBeanRemote;
+    
+    // Hotel Op module
+    private RoomTypeSessionBeanRemote roomTypeSessionBeanRemote;
+    private RoomSessionBeanRemote roomSessionBeanRemote;
+    private RoomRateSessionBeanRemote roomRateSessionBeanRemote;
+    private RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote;
+
     private SystemAdministrationModule systemAdministrationModule;
     private HotelOperationModule hotelOperationModule;
     private FrontOfficeModule frontOfficeModule;
 
     private Employee currEmployee;
 
+    // ONLY SYSTEMADMINMODULE
     public MainApp(PartnerSessionBeanRemote partnerSessionBeanRemote, EmployeeSessionBeanRemote employeeSessionBeanRemote) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
     }
+
+    public MainApp(PartnerSessionBeanRemote partnerSessionBeanRemote, EmployeeSessionBeanRemote employeeSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote) {
+        this.partnerSessionBeanRemote = partnerSessionBeanRemote;
+        this.employeeSessionBeanRemote = employeeSessionBeanRemote;
+        this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;
+        this.roomSessionBeanRemote = roomSessionBeanRemote;
+        this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
+        this.roomAllocationSessionBeanRemote = roomAllocationSessionBeanRemote;
+    }
+    
+    
 
     public void runApp() {
         Scanner scanner = new Scanner(System.in);
@@ -117,11 +141,11 @@ public class MainApp {
                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
                     }
                 } else if (response == 2) {
-//                    try {
-//                        // call menu for hotel op mod
-//                    } catch (InvalidAccessRightException ex) {
-//                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
-//                    }
+                    try {
+                        hotelOperationModule.menuHotelOperation();
+                    } catch (InvalidAccessRightException ex) {
+                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                    }
                 } else if (response == 3) {
 //                    try {
 //                        // call meny for front office mod
