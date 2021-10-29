@@ -109,12 +109,22 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     }
 
     /*Deletion of room rate
-    Can only be deleted if it is not used (by a room type entity)
-    Otherwise, mark as disabled if it is currently being used
+    Can only be deleted if it is not used (by a room entity) -> does this mean we need to link room rate with room?
+    Otherwise, mark as disabled (setEnabled = false) if it is currently being used
     */
     @Override
-    public void deleteRoomRate(String roomRateName) throws RoomRateNotFoundException, DeleteRoomRateException {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public void deleteRoomRate(String name) throws RoomRateNotFoundException, DeleteRoomRateException {
+        
+        RoomRate roomRate = retrieveRoomRateByRoomRateName(name);
+        
+        if(roomRate.getRoomType() == null)
+        {
+            entityManager.remove(roomRate);
+        } else{
+            roomRate.setEnabled(Boolean.FALSE);
+        }
+        
+       
     }
 
     public void persist(Object object) {

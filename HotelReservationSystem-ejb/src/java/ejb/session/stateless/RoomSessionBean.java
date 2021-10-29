@@ -32,7 +32,7 @@ import util.exception.UpdateRoomException;
 @Stateless
 public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLocal {
 
-    @EJB(name = "RoomTypeSessionBeanLocal")
+    @EJB
     private RoomTypeSessionBeanLocal roomTypeSessionBeanLocal;
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")

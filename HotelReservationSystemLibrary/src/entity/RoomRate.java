@@ -41,10 +41,16 @@ public class RoomRate implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date validityEnd;
+    @Column
+    private Boolean enabled;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private RoomType roomType;
+
+    public RoomRate() {
+        this.enabled = Boolean.TRUE;
+    }
 
     public Long getRoomRateId() {
         return roomRateId;
@@ -161,6 +167,20 @@ public class RoomRate implements Serializable {
      */
     public void setRoomType(RoomType roomType) {
         this.roomType = roomType;
+    }
+
+    /**
+     * @return the enabled
+     */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    /**
+     * @param enabled the enabled to set
+     */
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
     
 }
