@@ -108,7 +108,7 @@ public class HotelOperationModule {
             System.out.println("9: Back\n");
             response = 0;
 
-            while (response < 1 || response > 4) {
+            while (response < 1 || response > 9) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
