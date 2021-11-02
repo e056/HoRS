@@ -111,6 +111,7 @@ public class HotelOperationModule {
             System.out.println("6: Delete Room");
             System.out.println("7: View all Rooms");
             System.out.println("8: View Room Allocation Exception Report");
+            System.out.println("-----------------------");
             System.out.println("9: Back\n");
             response = 0;
 
@@ -153,9 +154,10 @@ public class HotelOperationModule {
         Scanner scanner = new Scanner(System.in);
         Room newRoom = new Room();
 
-        System.out.println("*** HoRS System :: Hotel Operation Moduule [Opertion Manager] :: Create New Room ***\n");
+        System.out.println("*** HoRS System :: Hotel Operation Moduule [Operation Manager] :: Create New Room ***\n");
         System.out.print("Enter Room Number (First two digits floor number, last two digits room sequence) > ");
-        String floorNumber = scanner.nextLine().trim();
+        String roomNumber = scanner.nextLine().trim();
+        newRoom.setRoomNumber(roomNumber);
         newRoom.setIsAvailable(true);
         newRoom.setIsEnabled(true);
 
@@ -165,7 +167,7 @@ public class HotelOperationModule {
         for (RoomType rt : roomTypes) {
             System.out.printf("%5s%20s\n", rt.getRoomTypeId(), rt.getName());
         }
-        System.out.print("Enter roomTypeId > "); 
+        System.out.print("Enter roomTypeId > ");
         Long roomTypeId = scanner.nextLong();
 
         try {
@@ -180,6 +182,39 @@ public class HotelOperationModule {
         }
 
     }
+    
+     public void doUpdateRoom() {
+        Scanner scanner = new Scanner(System.in);
+        Room newRoom = new Room();
+
+        System.out.println("*** HoRS System :: Hotel Operation Moduule [Operation Manager] :: Update Room ***\n");
+        System.out.print("Enter Room Number > ");
+        String floorNumber = scanner.nextLine().trim();
+        newRoom.setIsAvailable(true);
+        newRoom.setIsEnabled(true);
+
+        List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
+
+        System.out.printf("%5s%20s\n", "ID", "Room Type Name");
+        for (RoomType rt : roomTypes) {
+            System.out.printf("%5s%20s\n", rt.getRoomTypeId(), rt.getName());
+        }
+        System.out.print("Enter roomTypeId > ");
+        Long roomTypeId = scanner.nextLong();
+
+        try {
+            Long newRoomId = roomSessionBeanRemote.createNewRoom(newRoom, roomTypeId);
+            System.out.println("New room created successfully!: " + newRoomId + "\n");
+        } catch (RoomNumberExistException ex) {
+            System.out.println("An error has occurred while creating the new Room!: The room number already exist\n");
+        } catch (RoomTypeNotFoundException ex) {
+            System.out.println("An error has occurred while creating the new Room!: No such room type exists\n");
+        } catch (UnknownPersistenceException ex) {
+            System.out.println("An unknown error has occurred while creating the new Room!: " + ex.getMessage() + "\n");
+        }
+
+    }
+    
 
     public void menuSalesManager() throws InvalidAccessRightException {
         if (currEmployee.getAccessRightEnum() != AccessRightEnum.SALES_MANAGER) {
