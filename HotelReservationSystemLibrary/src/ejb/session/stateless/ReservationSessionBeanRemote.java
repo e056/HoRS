@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.Reservation;
+import java.util.List;
 import javax.ejb.Remote;
+import util.exception.RoomNotFoundException;
 
 /**
  *
@@ -14,4 +17,5 @@ import javax.ejb.Remote;
 @Remote
 public interface ReservationSessionBeanRemote {
     
+    public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
 }

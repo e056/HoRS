@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Room;
 import entity.RoomType;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -82,19 +83,25 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         }
     }
     
+    // if roomtype is not used by reservation then u can em.remove, if not you set enabled to false
     @Override
     public void deleteRoomType(String roomTypeName) throws RoomTypeNotFoundException, DeleteRoomTypeException
     {
         RoomType roomTypeToRemove = retrieveRoomTypeByRoomTypeName(roomTypeName);
         
-        if(roomTypeToRemove.getRooms() == null || roomTypeToRemove.getRoomRates().isEmpty())
+        if(!roomTypeToRemove.getRooms().isEmpty())
         {
-            roomTypeToRemove.setIsDisabled(Boolean.TRUE);
-        }
-        else
-        {
-            
-            throw new DeleteRoomTypeException("Room type " + roomTypeName + " is associated with existing room(s) and/or room type(s) and cannot be deleted!");
+            for(Room room : roomTypeToRemove.getRooms())
+            {
+                if(room.getReservation()!= null)
+                {
+                    roomTypeToRemove.setEnabled(Boolean.FALSE);
+                    break;
+                }
+            }
+            entityManager.remove(roomTypeToRemove);
+        } else{
+            roomTypeToRemove.setEnabled(Boolean.FALSE);
         }
     }
     

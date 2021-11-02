@@ -94,7 +94,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
             RoomRate roomRateToUpdate = retrieveRoomRateByRoomRateId(roomRate.getRoomRateId());
 
             if (roomRateToUpdate.getName().equals(roomRate.getName())) {
-                roomRateToUpdate.setName(roomRate.getName());
+                //roomRateToUpdate.setName(roomRate.getName());
                 roomRateToUpdate.setType(roomRate.getType());
                 roomRateToUpdate.setRatePerNight(roomRate.getRatePerNight());
                 roomRateToUpdate.setValidityStart(roomRate.getValidityStart());
@@ -109,7 +109,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     }
 
     /*Deletion of room rate
-    Can only be deleted if it is not used (by a room entity) -> does this mean we need to link room rate with room?
+    Can only be deleted if it is not used (by a reservation)
     Otherwise, mark as disabled (setEnabled = false) if it is currently being used
     */
     @Override
@@ -117,8 +117,16 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         
         RoomRate roomRate = retrieveRoomRateByRoomRateName(name);
         
-        if(roomRate.getRoomType() == null)
+        if(!roomRate.getRoomType().getRooms().isEmpty())
         {
+            for(Room room : roomRate.getRoomType().getRooms())
+            {
+                if(room.getReservation()!= null)
+                {
+                    roomRate.setEnabled(Boolean.FALSE);
+                    break;
+                }
+            }
             entityManager.remove(roomRate);
         } else{
             roomRate.setEnabled(Boolean.FALSE);

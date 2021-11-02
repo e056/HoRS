@@ -41,7 +41,7 @@ public class RoomType implements Serializable {
     @Column(nullable = false, length = 64)
     private List<String> amenities;
     @Column(nullable = false)
-    private Boolean isDisabled;
+    private Boolean enabled;
     
     @OneToMany(mappedBy = "roomType")
     private List<RoomRate> roomRates;
@@ -52,6 +52,7 @@ public class RoomType implements Serializable {
     public RoomType() {
         roomRates = new ArrayList<>();
         amenities = new ArrayList<>();
+        this.enabled = Boolean.TRUE;
     }
 
     public RoomType(Long roomTypeId, String roomTypeName, String roomTypeDescription, String roomTypeSize, String roomTypeBed, Long roomTypeCapacity, List<String> roomTypeAmmenities, Boolean isDisabled, List<RoomRate> roomRates) {
@@ -64,7 +65,7 @@ public class RoomType implements Serializable {
         this.bed = roomTypeBed;
         this.capacity = roomTypeCapacity;
         this.amenities = roomTypeAmmenities;
-        this.isDisabled = isDisabled;
+        this.enabled = isDisabled;
         this.roomRates = roomRates;
     }
     
@@ -187,17 +188,17 @@ public class RoomType implements Serializable {
     }
 
     /**
-     * @return the isDisabled
+     * @return the enabled
      */
-    public Boolean getIsDisabled() {
-        return isDisabled;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
     /**
-     * @param isDisabled the isDisabled to set
+     * @param enabled the enabled to set
      */
-    public void setIsDisabled(Boolean isDisabled) {
-        this.isDisabled = isDisabled;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**

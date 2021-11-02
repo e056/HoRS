@@ -5,7 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.Reservation;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
+import util.exception.RoomNotFoundException;
 
 /**
  *
@@ -13,5 +17,9 @@ import javax.ejb.Local;
  */
 @Local
 public interface ReservationSessionBeanLocal {
+
+    public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
+
+    public List<Reservation> retrieveReservationsByDate(Date dateToday);
     
 }

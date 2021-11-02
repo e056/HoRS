@@ -33,6 +33,9 @@ import util.exception.UpdateRoomException;
 public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLocal {
 
     @EJB
+    private ReservationSessionBeanLocal reservationSessionBeanLocal;
+
+    @EJB
     private RoomTypeSessionBeanLocal roomTypeSessionBeanLocal;
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
@@ -123,15 +126,15 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     @Override
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {
-       /* Room roomToRemove = retrieveRoomByRoomId(roomId);
+       Room roomToRemove = retrieveRoomByRoomId(roomId);
 
-        List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByRoomId(productId);
+        List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByRoomId(roomId);
 
         if (reservations.isEmpty()) {
             entityManager.remove(roomToRemove);
         } else {
-            throw new DeleteRoomException("Room ID " + roomID + " is associated with existing sreservations and cannot be deleted!");
-        } */
+            roomToRemove.setEnabled(Boolean.FALSE);
+        } 
     }
 
 }

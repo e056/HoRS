@@ -5,7 +5,12 @@
  */
 package ejb.session.stateless;
 
+import entity.Reservation;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.EJB;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 
 /**
@@ -27,8 +32,16 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
     @EJB
     private ReservationSessionBeanLocal reservationSessionBeanLocal;
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @Schedule(dayOfWeek = "*", hour = "2")
+    public void allocateRoomToReservation()
+    {
+        Date dateToday = new Date();
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+        System.out.println("********** RoomAllocationSessionBean.allocateRoomToReservation(): Timeout at " + timeStamp);
+        List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByDate(dateToday);
+        
+        
+    }
     
     
 }

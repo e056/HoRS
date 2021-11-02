@@ -34,6 +34,9 @@ public class Room implements Serializable {
 
     @Column(nullable = false)
     private Boolean isAvailable; // room status
+    
+    @Column(nullable = false)
+    private Boolean enabled; //whether room is enabled or not
 
     @ManyToOne(fetch = FetchType.LAZY)
     private RoomType roomType;
@@ -158,6 +161,20 @@ public class Room implements Serializable {
      */
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
+    }
+
+    /**
+     * @return the enabled
+     */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    /**
+     * @param enabled the enabled to set
+     */
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
 }
