@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 import util.exception.InvalidAccessRightException;
+import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateRoomException;
 
 /**
  *
@@ -107,14 +109,15 @@ public class HotelOperationModule {
             System.out.println("3: View All Room Types");
             System.out.println("-----------------------");
             System.out.println("4: Create New Room");
-            System.out.println("5: View Room Details [Update, Delete here]");
-            System.out.println("6: View all Rooms");
-            System.out.println("7: View Room Allocation Exception Report");
+            System.out.println("5: Update Room");
+            System.out.println("6: Delete Room");
+            System.out.println("7: View all Rooms");
+            System.out.println("8: View Room Allocation Exception Report");
             System.out.println("-----------------------");
-            System.out.println("8: Back\n");
+            System.out.println("9: Back\n");
             response = 0;
 
-            while (response < 1 || response > 7) {
+            while (response < 1 || response > 9) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
@@ -130,17 +133,19 @@ public class HotelOperationModule {
                 } else if (response == 5) {
                     //doViewRoomDetails();
                 } else if (response == 6) {
-                    doViewAllRooms();
+                    doUpdateRoom();
                 } else if (response == 7) {
-
+                    doViewAllRooms();
                 } else if (response == 8) {
+                    //doViewAllRooms();
+                } else if (response == 9) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
 
-            if (response == 8) {
+            if (response == 9) {
                 break;
             }
         }
@@ -179,9 +184,35 @@ public class HotelOperationModule {
         }
 
     }
-    
-    public void doViewRoomDetails() {
-        
+
+    public void doUpdateRoom() {
+        System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: Update Room ***\n");
+
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        System.out.print("Enter Room number > ");
+        String roomNumber = scanner.nextLine().trim();
+
+        try {
+            Room room = roomSessionBeanRemote.retrieveRoomByRoomNumber(roomNumber);
+            System.out.print("Enter Availability ('Y' if available, 'N' for unavailable, anything else for no change)> ");
+            input = scanner.nextLine().trim();
+            if (input == "Y") {
+                room.setIsAvailable(Boolean.TRUE);
+            } else if (input == "N") {
+                room.setIsAvailable(Boolean.FALSE);
+            }
+
+            roomSessionBeanRemote.updateRoom(room);
+            System.out.println("Staff updated successfully!\n");
+
+        } catch (RoomNotFoundException ex) {
+            System.out.println("An error has occurred while updating: The room does not exist.");
+        } catch (UpdateRoomException ex) {
+            System.out.println("An error has occurred while updating: " + ex.getMessage());
+        }
+
     }
 
     public void doViewAllRooms() {

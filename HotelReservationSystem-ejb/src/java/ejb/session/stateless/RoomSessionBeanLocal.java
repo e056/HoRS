@@ -32,7 +32,7 @@ public interface RoomSessionBeanLocal {
 
     public Room retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException;
 
-    public void updateRoom(Room room, RoomType roomType, Reservation reservation) throws RoomNotFoundException, UpdateRoomException;
 
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
+    public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException;
 }
