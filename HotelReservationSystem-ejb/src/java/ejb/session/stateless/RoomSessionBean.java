@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.exception.DeleteRoomException;
+import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.UnknownPersistenceException;
@@ -135,6 +136,26 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         } else {
             roomToRemove.setEnabled(Boolean.FALSE);
         } 
+    }
+    
+    @Override
+    public List<Room> retrieveRoomByReservationId(Long reservationId) throws ReservationNotFoundException
+    {
+        Reservation reservation = reservationSessionBeanLocal.retrieveReservationByReservationId(reservationId);
+        
+        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.reservation.reservationId = :inRId");
+        query.setParameter("inRId", reservationId);
+        List<Room> rooms = query.getResultList();
+        return rooms;
+        
+    }
+    
+    public List<Room> retrieveRoomByRoomType(Integer roomRank)
+    {
+        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.roomType.rank = :inroomRank");
+        query.setParameter("inroomRank", roomRank);
+        List<Room> rooms = query.getResultList();
+        return rooms;
     }
 
 }
