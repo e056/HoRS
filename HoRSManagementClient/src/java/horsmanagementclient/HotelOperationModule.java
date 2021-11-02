@@ -10,14 +10,22 @@ import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import entity.Employee;
+import entity.Room;
+import entity.RoomType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 import util.exception.InvalidAccessRightException;
+import util.exception.RoomNotFoundException;
+import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeNotFoundException;
+import util.exception.UnknownPersistenceException;
+import util.exception.UpdateRoomException;
 
 /**
  *
- * @author ANGELY
- * NOTE: allocate room to current day reservations not added
+ * @author ANGELY NOTE: allocate room to current day reservations not added
  */
 public class HotelOperationModule {
 
@@ -105,6 +113,7 @@ public class HotelOperationModule {
             System.out.println("6: Delete Room");
             System.out.println("7: View all Rooms");
             System.out.println("8: View Room Allocation Exception Report");
+            System.out.println("-----------------------");
             System.out.println("9: Back\n");
             response = 0;
 
@@ -115,22 +124,20 @@ public class HotelOperationModule {
 
                 if (response == 1) {
                     //doCreateNewRoomType();
-
                 } else if (response == 2) {
                     //doViewRoomTypeDetails();
-
                 } else if (response == 3) {
                     //doViewAllRoomTypes();
-                }else if (response == 4) {
-                    //doCreateNewRoom();
+                } else if (response == 4) {
+                    doCreateNewRoom();
                 } else if (response == 5) {
-                    //doUpdateRoom();
+                    //doViewRoomDetails();
                 } else if (response == 6) {
-                    //doDeleteRoom();
+                    doUpdateRoom();
                 } else if (response == 7) {
-                    //doViewAllRooms();
+                    doViewAllRooms();
                 } else if (response == 8) {
-                    //doViewRoomAllocationExceptionReport();
+                    //doViewAllRooms();
                 } else if (response == 9) {
                     break;
                 } else {
@@ -142,6 +149,86 @@ public class HotelOperationModule {
                 break;
             }
         }
+
+    }
+
+    public void doCreateNewRoom() {
+        Scanner scanner = new Scanner(System.in);
+        Room newRoom = new Room();
+
+        System.out.println("*** HoRS System :: Hotel Operation Moduule [Operation Manager] :: Create New Room ***\n");
+        System.out.print("Enter Room Number (First two digits floor number, last two digits room sequence) > ");
+        String roomNumber = scanner.nextLine().trim();
+        newRoom.setRoomNumber(roomNumber);
+        newRoom.setIsAvailable(true);
+        newRoom.setEnabled(true);
+
+        List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
+
+        System.out.printf("%5s%20s\n", "ID", "Room Type Name");
+        for (RoomType rt : roomTypes) {
+            System.out.printf("%5s%20s\n", rt.getRoomTypeId(), rt.getName());
+        }
+        System.out.print("Enter roomTypeId > ");
+        Long roomTypeId = scanner.nextLong();
+
+        try {
+            Long newRoomId = roomSessionBeanRemote.createNewRoom(newRoom, roomTypeId);
+            System.out.println("New room created successfully!: " + newRoomId + "\n");
+        } catch (RoomNumberExistException ex) {
+            System.out.println("An error has occurred while creating the new Room!: The room number already exist\n");
+        } catch (RoomTypeNotFoundException ex) {
+            System.out.println("An error has occurred while creating the new Room!: No such room type exists\n");
+        } catch (UnknownPersistenceException ex) {
+            System.out.println("An unknown error has occurred while creating the new Room!: " + ex.getMessage() + "\n");
+        }
+
+    }
+
+    public void doUpdateRoom() {
+        System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: Update Room ***\n");
+
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        System.out.print("Enter Room number > ");
+        String roomNumber = scanner.nextLine().trim();
+
+        try {
+            Room room = roomSessionBeanRemote.retrieveRoomByRoomNumber(roomNumber);
+            System.out.print("Enter Availability ('Y' if available, 'N' for unavailable, anything else for no change)> ");
+            input = scanner.nextLine().trim();
+            if (input == "Y") {
+                room.setIsAvailable(Boolean.TRUE);
+            } else if (input == "N") {
+                room.setIsAvailable(Boolean.FALSE);
+            }
+
+            roomSessionBeanRemote.updateRoom(room);
+            System.out.println("Staff updated successfully!\n");
+
+        } catch (RoomNotFoundException ex) {
+            System.out.println("An error has occurred while updating: The room does not exist.");
+        } catch (UpdateRoomException ex) {
+            System.out.println("An error has occurred while updating: " + ex.getMessage());
+        }
+
+    }
+
+    public void doViewAllRooms() {
+
+        System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: View All Rooms ***\n");
+        System.out.println("------------------------");
+
+        List<Room> rooms = roomSessionBeanRemote.retrieveAllRooms();
+        System.out.printf("%8s%20s%20s%20s\n", "Room ID", "Room Number", "Room Status", "Room Enabled");
+        for (Room room : rooms) {
+            String roomStatus = (room.getIsAvailable()) ? "Available" : "Not Available";
+            String roomEnabled = (room.getEnabled()) ? "Enabled" : "Disabled";
+            System.out.printf("%8s%20s%20s%20s\n", room.getRoomId(), room.getRoomNumber(), roomStatus, roomEnabled);
+        }
+
+        System.out.println("------------------------");
 
     }
 

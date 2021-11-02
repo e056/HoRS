@@ -14,6 +14,7 @@ import util.exception.DeleteRoomException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
 
@@ -24,7 +25,7 @@ import util.exception.UpdateRoomException;
 @Local
 public interface RoomSessionBeanLocal {
 
-    public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException;
+    public Long createNewRoom(Room room, Long roomTypeId) throws  RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException;
 
     public List<Room> retrieveAllRooms();
 
@@ -32,11 +33,14 @@ public interface RoomSessionBeanLocal {
 
     public Room retrieveRoomByRoomNumber(String roomNumber) throws RoomNotFoundException;
 
-    public void updateRoom(Room room, RoomType roomType, Reservation reservation) throws RoomNotFoundException, UpdateRoomException;
 
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
+
 
     public List<Room> retrieveRoomByReservationId(Long reservationId) throws ReservationNotFoundException;
 
     public List<Room> retrieveRoomByRoomType(Integer roomRank);
+
+    public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException;
+
 }

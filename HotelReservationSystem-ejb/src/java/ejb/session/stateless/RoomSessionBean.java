@@ -21,13 +21,14 @@ import util.exception.DeleteRoomException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
 
 /**
  *
- * @author ANGELY Added: Create new room, view all rooms 
- * Unfinished: update room, delete room
+ * @author ANGELY Added: Create new room, view all rooms Unfinished: update
+ * room, delete room
  *
  */
 @Stateless
@@ -41,19 +42,23 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
-    
-    
+
+    public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
+
+        Long roomTypeId = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName).getRoomTypeId();
+        return createNewRoom(room, roomTypeId);
+
+    }
 
     // Added: Use em to find RoomType, did associations both ways, persisted
-    @Override
-    public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException {
+    public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
         try {
-            
-            RoomType roomType = entityManager.find(RoomType.class, roomTypeId);
-            
+
+            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomTypeId);
+
             room.setRoomType(roomType);
             roomType.getRooms().add(room);
-            
+
             entityManager.persist(room);
             entityManager.flush();
 
@@ -107,27 +112,26 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
-    @Override
-    public void updateRoom(Room room, RoomType roomType, Reservation reservation) throws RoomNotFoundException, UpdateRoomException {
-        if (room != null && room.getRoomId() != null) {
-            Room roomToUpdate = retrieveRoomByRoomId(room.getRoomId());
-
-            if (roomToUpdate.getRoomNumber().equals(room.getRoomNumber())) {
-                roomToUpdate.setIsAvailable(room.getIsAvailable());
-                roomToUpdate.setRoomType(roomType);
-                roomToUpdate.setReservation(reservation);
-                // added setRoomType and setReservation
-            } else {
-                throw new UpdateRoomException("Room number of room to be updated does not match the existing record");
-            }
-        } else {
-            throw new RoomNotFoundException("Room ID not provided for room to be updated");
-        }
-    }
-
+//    @Override
+//    public void updateRoom(Room room, RoomType roomType, Reservation reservation) throws RoomNotFoundException, UpdateRoomException {
+//        if (room != null && room.getRoomId() != null) {
+//            Room roomToUpdate = retrieveRoomByRoomId(room.getRoomId());
+//
+//            if (roomToUpdate.getRoomNumber().equals(room.getRoomNumber())) {
+//                roomToUpdate.setIsAvailable(room.getIsAvailable());
+//                roomToUpdate.setRoomType(roomType);
+//                roomToUpdate.setReservation(reservation);
+//                // added setRoomType and setReservation
+//            } else {
+//                throw new UpdateRoomException("Room number of room to be updated does not match the existing record");
+//            }
+//        } else {
+//            throw new RoomNotFoundException("Room ID not provided for room to be updated");
+//        }
+//    }
     @Override
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {
-       Room roomToRemove = retrieveRoomByRoomId(roomId);
+        Room roomToRemove = retrieveRoomByRoomId(roomId);
 
         List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByRoomId(roomId);
 
@@ -135,7 +139,21 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             entityManager.remove(roomToRemove);
         } else {
             roomToRemove.setEnabled(Boolean.FALSE);
-        } 
+        }
+    }
+
+    @Override
+    public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException {
+        if (room != null && room.getRoomId() != null) {
+            Room roomToUpdate = retrieveRoomByRoomId(room.getRoomId());
+            if (roomToUpdate.getRoomNumber().equals(room.getRoomNumber())) {
+                roomToUpdate.setIsAvailable(room.getIsAvailable());
+            } else {
+                throw new UpdateRoomException("Room number of room to be updated does not match the existing record");
+            }
+        } else {
+            throw new RoomNotFoundException("Room ID not provided for room to be updated");
+        }
     }
     
     @Override

@@ -77,7 +77,8 @@ public class MainApp {
 
                         // initialise all modules
                         // frontOfficeModule = new FrontOfficeModule();
-                        // hotelOperationModule = new HotelOperationModule();
+                        this.hotelOperationModule = new HotelOperationModule(roomTypeSessionBeanRemote, roomSessionBeanRemote,
+                                roomRateSessionBeanRemote, roomAllocationSessionBeanRemote, currEmployee);
                         this.systemAdministrationModule = new SystemAdministrationModule(partnerSessionBeanRemote,
                                 employeeSessionBeanRemote, currEmployee);
 

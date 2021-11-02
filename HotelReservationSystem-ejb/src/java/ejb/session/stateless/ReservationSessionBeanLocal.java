@@ -9,6 +9,7 @@ import entity.Reservation;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 
 /**
@@ -21,5 +22,7 @@ public interface ReservationSessionBeanLocal {
     public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
 
     public List<Reservation> retrieveReservationsByDate(Date dateToday);
+
+    public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException;
     
 }

@@ -6,12 +6,14 @@
 package ejb.session.stateless;
 
 import entity.Reservation;
+import entity.Room;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
+import util.exception.ReservationNotFoundException;
 
 /**
  *
@@ -30,16 +32,31 @@ import javax.ejb.Stateless;
 public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemote, RoomAllocationSessionBeanLocal {
 
     @EJB
+    private RoomSessionBeanLocal roomSessionBeanLocal;
+
+    @EJB
     private ReservationSessionBeanLocal reservationSessionBeanLocal;
 
+    
     @Schedule(dayOfWeek = "*", hour = "2")
-    public void allocateRoomToReservation()
+    public void allocateRoomToReservation() throws ReservationNotFoundException
     {
         Date dateToday = new Date();
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
         System.out.println("********** RoomAllocationSessionBean.allocateRoomToReservation(): Timeout at " + timeStamp);
         List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByDate(dateToday);
-        
+        for(Reservation reservation : reservations)
+        {
+            List<Room> rooms = roomSessionBeanLocal.retrieveRoomByReservationId(reservation.getReservationId());
+            for(Room room : rooms)
+            {
+                if(room.getEnabled()== false || room.getIsAvailable() == false)
+                {
+                    //check next higher room type. room has to be avail from this duration of reservation
+                    
+                }
+            }
+        }
         
     }
     

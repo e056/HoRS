@@ -42,6 +42,8 @@ public class RoomType implements Serializable {
     private List<String> amenities;
     @Column(nullable = false)
     private Boolean enabled;
+    @Column(nullable = false)
+    private Integer rank;
     
     @OneToMany(mappedBy = "roomType")
     private List<RoomRate> roomRates;
@@ -227,6 +229,20 @@ public class RoomType implements Serializable {
      */
     public void setRooms(List<Room> rooms) {
         this.rooms = rooms;
+    }
+
+    /**
+     * @return the rank
+     */
+    public Integer getRank() {
+        return rank;
+    }
+
+    /**
+     * @param rank the rank to set
+     */
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
     
 }

@@ -16,6 +16,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.UnknownPersistenceException;
 
@@ -35,6 +36,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     
 
     
+    @Override
     public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException
     {
         
@@ -47,12 +49,21 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
        
     }
     
+    @Override
     public List<Reservation> retrieveReservationsByDate(Date dateToday)
     {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.startDate = :inDateToday");
         query.setParameter("inDateToday", dateToday);
         
         return query.getResultList();
+    }
+    
+    @Override
+    public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException
+    {
+        Reservation reservation =  em.find(Reservation.class, reservationId);
+        return reservation;
+        
     }
 
     public void persist(Object object) {
