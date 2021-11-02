@@ -33,4 +33,5 @@ public interface RoomTypeSessionBeanLocal {
 
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException;
 
+    public void rearrangingRank(Integer rank);
 }

@@ -131,5 +131,16 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
         return query.getResultList();
     }
+    
+    @Override
+    public void rearrangingRank(Integer rank) {
+        Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.rank = :inRank");
+        query.setParameter("inRank", rank);
+        List<RoomType> roomTypes = query.getResultList();
+        for(RoomType roomType : roomTypes)
+        {
+            roomType.setRank(roomType.getRank() + 1);
+        }
+    }
 
 }

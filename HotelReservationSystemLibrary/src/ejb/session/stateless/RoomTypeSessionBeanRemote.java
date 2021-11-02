@@ -34,6 +34,8 @@ public interface RoomTypeSessionBeanRemote {
     public List<RoomType> retrieveAllEnabledRoomTypes();
     
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException;
+
+    public void rearrangingRank(Integer rank);
     
    
 }

@@ -42,7 +42,7 @@ public class RoomType implements Serializable {
     private List<String> amenities;
     @Column(nullable = false)
     private Boolean enabled;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Integer rank;
     
     @OneToMany(mappedBy = "roomType")
@@ -57,10 +57,10 @@ public class RoomType implements Serializable {
         this.enabled = Boolean.TRUE;
     }
 
-    public RoomType(Long roomTypeId, String roomTypeName, String roomTypeDescription, String roomTypeSize, String roomTypeBed, Long roomTypeCapacity, List<String> roomTypeAmmenities, Boolean isDisabled, List<RoomRate> roomRates) {
+    public RoomType(String roomTypeName, String roomTypeDescription, String roomTypeSize, String roomTypeBed, Long roomTypeCapacity, List<String> roomTypeAmmenities, Boolean isDisabled, List<RoomRate> roomRates) {
         this();
         
-        this.roomTypeId = roomTypeId;
+        
         this.name = roomTypeName;
         this.description = roomTypeDescription;
         this.size = roomTypeSize;

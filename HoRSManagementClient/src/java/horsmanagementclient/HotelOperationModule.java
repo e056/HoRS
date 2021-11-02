@@ -15,10 +15,13 @@ import entity.RoomType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.enumeration.AccessRightEnum;
 import util.exception.InvalidAccessRightException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeNameExistException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
@@ -123,7 +126,7 @@ public class HotelOperationModule {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    //doCreateNewRoomType();
+                    doCreateNewRoomType();
                 } else if (response == 2) {
                     //doViewRoomTypeDetails();
                 } else if (response == 3) {
@@ -275,6 +278,80 @@ public class HotelOperationModule {
             }
         }
 
+    }
+
+    private void doCreateNewRoomType() {
+        System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: Create new Room Type ***\n");
+        System.out.println("------------------------");
+        Scanner scanner = new Scanner(System.in);
+        String input;
+        Integer count = 0;
+        Integer rank = 0;
+        RoomType newRoomType = new RoomType();
+        List<String> amenities = new ArrayList();
+
+        System.out.print("Enter Room Type Name > ");
+        String name = scanner.nextLine().trim();
+        newRoomType.setName(name);
+        
+        System.out.print("Enter Room Type Description > ");
+        String desc = scanner.nextLine().trim();
+        newRoomType.setDescription(desc);
+        
+        System.out.print("Enter Room Size > ");
+        String size = scanner.nextLine().trim();
+        newRoomType.setSize(size);
+        
+        System.out.print("Enter Room Bed > ");
+        String bed = scanner.nextLine().trim();
+        newRoomType.setBed(bed);
+        
+        System.out.print("Enter Room Capacity > ");
+        Long capacity = scanner.nextLong();
+        newRoomType.setCapacity(capacity);
+        
+        do{
+            System.out.print("Enter Room Amenities > ");
+            String amenity = scanner.nextLine().trim();
+            amenities.add(amenity);
+            
+            System.out.print("More amenity? (Enter 'N' to stop adding amenities)> ");
+            input = scanner.nextLine().trim();
+        }
+        while(!input.equals("N"));
+        
+        newRoomType.setAmenities(amenities);
+        
+        System.out.println("Select room rank. Current room types: ");
+        System.out.println("------------------------");
+        List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
+        System.out.printf("%8s%20s\n", "Room Name", "Room Rank (1 means most basic)");
+        for(RoomType roomType : roomTypes)
+        {
+            if(roomType.getRank() > count)
+            {
+                count = roomType.getRank();
+            }
+            System.out.printf("%8s%20s\n", roomType.getName(), roomType.getRank());
+        }
+        System.out.println("------------------------");
+        count++;
+        System.out.print("Enter rank (integer from 1 to " + count + ")>");
+        rank = scanner.nextInt();
+        if(rank < count)
+        {
+            roomTypeSessionBeanRemote.rearrangingRank(rank);
+        }
+        
+        newRoomType.setRank(rank);
+        try {
+            roomTypeSessionBeanRemote.createNewRoomType(newRoomType);
+        } catch (RoomTypeNameExistException ex) {
+            ex.getMessage();
+        } catch (UnknownPersistenceException ex) {
+            ex.getMessage();
+        }
+        
     }
 
 }
