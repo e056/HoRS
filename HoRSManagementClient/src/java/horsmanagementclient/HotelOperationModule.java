@@ -107,15 +107,14 @@ public class HotelOperationModule {
             System.out.println("3: View All Room Types");
             System.out.println("-----------------------");
             System.out.println("4: Create New Room");
-            System.out.println("5: Update Room");
-            System.out.println("6: Delete Room");
-            System.out.println("7: View all Rooms");
-            System.out.println("8: View Room Allocation Exception Report");
+            System.out.println("5: View Room Details [Update, Delete here]");
+            System.out.println("6: View all Rooms");
+            System.out.println("7: View Room Allocation Exception Report");
             System.out.println("-----------------------");
-            System.out.println("9: Back\n");
+            System.out.println("8: Back\n");
             response = 0;
 
-            while (response < 1 || response > 9) {
+            while (response < 1 || response > 7) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
@@ -129,21 +128,19 @@ public class HotelOperationModule {
                 } else if (response == 4) {
                     doCreateNewRoom();
                 } else if (response == 5) {
-                    //doUpdateRoom();
+                    //doViewRoomDetails();
                 } else if (response == 6) {
-                    //doDeleteRoom();
+                    doViewAllRooms();
                 } else if (response == 7) {
-                    //doViewAllRooms();
+
                 } else if (response == 8) {
-                    //doViewRoomAllocationExceptionReport();
-                } else if (response == 9) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
 
-            if (response == 9) {
+            if (response == 8) {
                 break;
             }
         }
@@ -183,38 +180,26 @@ public class HotelOperationModule {
 
     }
     
-     public void doUpdateRoom() {
-        Scanner scanner = new Scanner(System.in);
-        Room newRoom = new Room();
+    public void doViewRoomDetails() {
+        
+    }
 
-        System.out.println("*** HoRS System :: Hotel Operation Moduule [Operation Manager] :: Update Room ***\n");
-        System.out.print("Enter Room Number > ");
-        String floorNumber = scanner.nextLine().trim();
-        newRoom.setIsAvailable(true);
-        newRoom.setIsEnabled(true);
+    public void doViewAllRooms() {
 
-        List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
+        System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: View All Rooms ***\n");
+        System.out.println("------------------------");
 
-        System.out.printf("%5s%20s\n", "ID", "Room Type Name");
-        for (RoomType rt : roomTypes) {
-            System.out.printf("%5s%20s\n", rt.getRoomTypeId(), rt.getName());
+        List<Room> rooms = roomSessionBeanRemote.retrieveAllRooms();
+        System.out.printf("%8s%20s%20s%20s\n", "Room ID", "Room Number", "Room Status", "Room Enabled");
+        for (Room room : rooms) {
+            String roomStatus = (room.getIsAvailable()) ? "Available" : "Not Available";
+            String roomEnabled = (room.getIsEnabled()) ? "Enabled" : "Disabled";
+            System.out.printf("%8s%20s%20s%20s\n", room.getRoomId(), room.getRoomNumber(), roomStatus, roomEnabled);
         }
-        System.out.print("Enter roomTypeId > ");
-        Long roomTypeId = scanner.nextLong();
 
-        try {
-            Long newRoomId = roomSessionBeanRemote.createNewRoom(newRoom, roomTypeId);
-            System.out.println("New room created successfully!: " + newRoomId + "\n");
-        } catch (RoomNumberExistException ex) {
-            System.out.println("An error has occurred while creating the new Room!: The room number already exist\n");
-        } catch (RoomTypeNotFoundException ex) {
-            System.out.println("An error has occurred while creating the new Room!: No such room type exists\n");
-        } catch (UnknownPersistenceException ex) {
-            System.out.println("An unknown error has occurred while creating the new Room!: " + ex.getMessage() + "\n");
-        }
+        System.out.println("------------------------");
 
     }
-    
 
     public void menuSalesManager() throws InvalidAccessRightException {
         if (currEmployee.getAccessRightEnum() != AccessRightEnum.SALES_MANAGER) {
