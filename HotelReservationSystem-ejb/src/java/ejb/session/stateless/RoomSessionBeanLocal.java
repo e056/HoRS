@@ -11,6 +11,7 @@ import entity.RoomType;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomException;
+import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.UnknownPersistenceException;
@@ -34,4 +35,8 @@ public interface RoomSessionBeanLocal {
     public void updateRoom(Room room, RoomType roomType, Reservation reservation) throws RoomNotFoundException, UpdateRoomException;
 
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
+
+    public List<Room> retrieveRoomByReservationId(Long reservationId) throws ReservationNotFoundException;
+
+    public List<Room> retrieveRoomByRoomType(Integer roomRank);
 }
