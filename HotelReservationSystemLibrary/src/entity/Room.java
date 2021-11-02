@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,8 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 /**
  *
@@ -36,7 +35,7 @@ public class Room implements Serializable {
     private Boolean isAvailable; // room status
     
     @Column(nullable = false)
-    private Boolean enabled; //whether room is enabled or not
+    private Boolean isEnabled; //whether room is isEnabled or not. Will be set to false if room is used during deletion.
 
     @ManyToOne(fetch = FetchType.LAZY)
     private RoomType roomType;
@@ -48,6 +47,7 @@ public class Room implements Serializable {
     }
 
     public Room(String roomNumber, boolean isAvailable) {
+        this();
         this.roomNumber = roomNumber;
         this.isAvailable = isAvailable;
     }
@@ -164,17 +164,17 @@ public class Room implements Serializable {
     }
 
     /**
-     * @return the enabled
+     * @return the isEnabled
      */
-    public Boolean getEnabled() {
-        return enabled;
+    public Boolean getIsEnabled() {
+        return isEnabled;
     }
 
     /**
-     * @param enabled the enabled to set
+     * @param isEnabled the isEnabled to set
      */
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setIsEnabled(Boolean isEnabled) {
+        this.isEnabled = isEnabled;
     }
 
 }

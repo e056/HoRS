@@ -10,14 +10,20 @@ import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import entity.Employee;
+import entity.Room;
+import entity.RoomType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 import util.exception.InvalidAccessRightException;
+import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeNotFoundException;
+import util.exception.UnknownPersistenceException;
 
 /**
  *
- * @author ANGELY
- * NOTE: allocate room to current day reservations not added
+ * @author ANGELY NOTE: allocate room to current day reservations not added
  */
 public class HotelOperationModule {
 
@@ -115,14 +121,12 @@ public class HotelOperationModule {
 
                 if (response == 1) {
                     //doCreateNewRoomType();
-
                 } else if (response == 2) {
                     //doViewRoomTypeDetails();
-
                 } else if (response == 3) {
                     //doViewAllRoomTypes();
-                }else if (response == 4) {
-                    //doCreateNewRoom();
+                } else if (response == 4) {
+                    doCreateNewRoom();
                 } else if (response == 5) {
                     //doUpdateRoom();
                 } else if (response == 6) {
@@ -141,6 +145,38 @@ public class HotelOperationModule {
             if (response == 9) {
                 break;
             }
+        }
+
+    }
+
+    public void doCreateNewRoom() {
+        Scanner scanner = new Scanner(System.in);
+        Room newRoom = new Room();
+
+        System.out.println("*** HoRS System :: Hotel Operation Moduule [Opertion Manager] :: Create New Room ***\n");
+        System.out.print("Enter Room Number (First two digits floor number, last two digits room sequence) > ");
+        String floorNumber = scanner.nextLine().trim();
+        newRoom.setIsAvailable(true);
+        newRoom.setIsEnabled(true);
+
+        List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
+
+        System.out.printf("%5s%20s\n", "ID", "Room Type Name");
+        for (RoomType rt : roomTypes) {
+            System.out.printf("%5s%20s\n", rt.getRoomTypeId(), rt.getName());
+        }
+        System.out.print("Enter roomTypeId > "); 
+        Long roomTypeId = scanner.nextLong();
+
+        try {
+            Long newRoomId = roomSessionBeanRemote.createNewRoom(newRoom, roomTypeId);
+            System.out.println("New room created successfully!: " + newRoomId + "\n");
+        } catch (RoomNumberExistException ex) {
+            System.out.println("An error has occurred while creating the new Room!: The room number already exist\n");
+        } catch (RoomTypeNotFoundException ex) {
+            System.out.println("An error has occurred while creating the new Room!: No such room type exists\n");
+        } catch (UnknownPersistenceException ex) {
+            System.out.println("An unknown error has occurred while creating the new Room!: " + ex.getMessage() + "\n");
         }
 
     }

@@ -13,6 +13,7 @@ import javax.ejb.Local;
 import util.exception.DeleteRoomException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
 
@@ -23,7 +24,7 @@ import util.exception.UpdateRoomException;
 @Local
 public interface RoomSessionBeanLocal {
 
-    public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException;
+    public Long createNewRoom(Room room, Long roomTypeId) throws  RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException;
 
     public List<Room> retrieveAllRooms();
 

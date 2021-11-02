@@ -20,13 +20,14 @@ import javax.persistence.Query;
 import util.exception.DeleteRoomException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
 
 /**
  *
- * @author ANGELY Added: Create new room, view all rooms 
- * Unfinished: update room, delete room
+ * @author ANGELY Added: Create new room, view all rooms Unfinished: update
+ * room, delete room
  *
  */
 @Stateless
@@ -40,19 +41,24 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
-    
-    
+
+    public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
+
+        Long roomTypeId = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName).getRoomTypeId();
+        return createNewRoom(room, roomTypeId);
+
+    }
 
     // Added: Use em to find RoomType, did associations both ways, persisted
-    @Override
-    public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException {
+ 
+    public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
         try {
-            
-            RoomType roomType = entityManager.find(RoomType.class, roomTypeId);
-            
+
+            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomTypeId);
+
             room.setRoomType(roomType);
             roomType.getRooms().add(room);
-            
+
             entityManager.persist(room);
             entityManager.flush();
 
@@ -126,15 +132,15 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     @Override
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {
-       Room roomToRemove = retrieveRoomByRoomId(roomId);
+        Room roomToRemove = retrieveRoomByRoomId(roomId);
 
         List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByRoomId(roomId);
 
         if (reservations.isEmpty()) {
             entityManager.remove(roomToRemove);
         } else {
-            roomToRemove.setEnabled(Boolean.FALSE);
-        } 
+            roomToRemove.setIsEnabled(Boolean.FALSE);
+        }
     }
 
 }

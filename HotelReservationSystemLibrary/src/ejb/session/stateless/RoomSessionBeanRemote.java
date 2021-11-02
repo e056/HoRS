@@ -16,6 +16,7 @@ import util.exception.InvalidLoginCredentialException;
 import util.exception.PartnerNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
 
@@ -26,7 +27,7 @@ import util.exception.UpdateRoomException;
 @Remote
 public interface RoomSessionBeanRemote {
 
-    public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException;
+    public Long createNewRoom(Room room, Long roomTypeId) throws  RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException;
 
     public List<Room> retrieveAllRooms();
 
@@ -37,6 +38,8 @@ public interface RoomSessionBeanRemote {
     public void updateRoom(Room room, RoomType roomType, Reservation reservation) throws RoomNotFoundException, UpdateRoomException;
 
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
+
+    public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException;
 
 
     
