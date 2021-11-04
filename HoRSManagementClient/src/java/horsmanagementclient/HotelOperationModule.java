@@ -134,9 +134,9 @@ public class HotelOperationModule {
                 } else if (response == 4) {
                     doCreateNewRoom();
                 } else if (response == 5) {
-                    //doViewRoomDetails();
-                } else if (response == 6) {
                     doUpdateRoom();
+                } else if (response == 6) {
+                    
                 } else if (response == 7) {
                     doViewAllRooms();
                 } else if (response == 8) {
@@ -201,14 +201,14 @@ public class HotelOperationModule {
             Room room = roomSessionBeanRemote.retrieveRoomByRoomNumber(roomNumber);
             System.out.print("Enter Availability ('Y' if available, 'N' for unavailable, anything else for no change)> ");
             input = scanner.nextLine().trim();
-            if (input == "Y") {
+            if (input.equals("Y")) {
                 room.setIsAvailable(Boolean.TRUE);
-            } else if (input == "N") {
+            } else if (input.equals("N")) {
                 room.setIsAvailable(Boolean.FALSE);
             }
 
             roomSessionBeanRemote.updateRoom(room);
-            System.out.println("Staff updated successfully!\n");
+            System.out.println("Room updated successfully!\n");
 
         } catch (RoomNotFoundException ex) {
             System.out.println("An error has occurred while updating: The room does not exist.");
