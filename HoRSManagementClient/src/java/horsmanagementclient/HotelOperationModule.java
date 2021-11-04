@@ -288,70 +288,71 @@ public class HotelOperationModule {
         Integer count = 0;
         Integer rank = 0;
         RoomType newRoomType = new RoomType();
-        List<String> amenities = new ArrayList();
+        //List<String> amenities = new ArrayList();
 
         System.out.print("Enter Room Type Name > ");
         String name = scanner.nextLine().trim();
         newRoomType.setName(name);
-        
+
         System.out.print("Enter Room Type Description > ");
         String desc = scanner.nextLine().trim();
         newRoomType.setDescription(desc);
-        
+
         System.out.print("Enter Room Size > ");
         String size = scanner.nextLine().trim();
         newRoomType.setSize(size);
-        
+
         System.out.print("Enter Room Bed > ");
         String bed = scanner.nextLine().trim();
         newRoomType.setBed(bed);
-        
+
         System.out.print("Enter Room Capacity > ");
         Long capacity = scanner.nextLong();
         newRoomType.setCapacity(capacity);
-        
-        do{
-            System.out.print("Enter Room Amenities > ");
-            String amenity = scanner.nextLine().trim();
-            amenities.add(amenity);
-            
-            System.out.print("More amenity? (Enter 'N' to stop adding amenities)> ");
-            input = scanner.nextLine().trim();
-        }
-        while(!input.equals("N"));
-        
+
+        scanner.nextLine();
+        System.out.print("Enter Room Amenities > ");
+        String amenities = scanner.nextLine().trim();
         newRoomType.setAmenities(amenities);
-        
+
+//        do{
+//            System.out.print("Enter Room Amenities > ");
+//            String amenity = scanner.nextLine().trim();
+//            amenities.add(amenity);
+//            
+//            System.out.print("More amenity? (Enter 'N' to stop adding amenities)> ");
+//            input = scanner.nextLine().trim();
+//        }
+//        while(!input.equals("N"));
+        //newRoomType.setAmenities(amenities);
         System.out.println("Select room rank. Current room types: ");
         System.out.println("------------------------");
         List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
         System.out.printf("%8s%20s\n", "Room Name", "Room Rank (1 means most basic)");
-        for(RoomType roomType : roomTypes)
-        {
-            if(roomType.getRank() > count)
-            {
+        for (RoomType roomType : roomTypes) {
+            if (roomType.getRank() > count) {
                 count = roomType.getRank();
             }
             System.out.printf("%8s%20s\n", roomType.getName(), roomType.getRank());
         }
         System.out.println("------------------------");
         count++;
-        System.out.print("Enter rank (integer from 1 to " + count + ")>");
+        System.out.print("Enter rank (integer from 1 to " + count + ") >");
         rank = scanner.nextInt();
-        if(rank < count)
-        {
+        if (rank < count) {
             roomTypeSessionBeanRemote.rearrangingRank(rank);
         }
-        
+
         newRoomType.setRank(rank);
         try {
-            roomTypeSessionBeanRemote.createNewRoomType(newRoomType);
+            Long roomTypeId = roomTypeSessionBeanRemote.createNewRoomType(newRoomType);
+            System.out.println("New room type created with id = " + roomTypeId);
         } catch (RoomTypeNameExistException ex) {
-            ex.getMessage();
+            System.out.println(ex.getMessage());
         } catch (UnknownPersistenceException ex) {
-            ex.getMessage();
+            System.out.println(ex.getMessage());
         }
-        
+
     }
 
 }

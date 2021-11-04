@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package entity;
 
 import java.io.Serializable;
@@ -14,11 +15,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 /**
  *
- * @author PYT
+ * @author ANGELY
  */
 @Entity
 public class RoomType implements Serializable {
@@ -27,6 +27,7 @@ public class RoomType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
+
     
     @Column(nullable = false, length = 64, unique = true)
     private String name;
@@ -38,38 +39,37 @@ public class RoomType implements Serializable {
     private String bed;
     @Column(nullable = false)
     private Long capacity;
-    @Column(nullable = false, length = 64)
-    private List<String> amenities;
+    @Column(nullable = false)
+    private String amenities;
     @Column(nullable = false)
     private Boolean enabled;
     @Column(nullable = false, unique = true)
-    private Integer rank;
+    private Integer ranking;
     
     @OneToMany(mappedBy = "roomType")
     private List<RoomRate> roomRates;
     
     @OneToMany(mappedBy = "roomType")
     private List<Room> rooms;
-
+    
     public RoomType() {
-        roomRates = new ArrayList<>();
-        amenities = new ArrayList<>();
-        this.enabled = Boolean.TRUE;
+        this.roomRates = new ArrayList<>();
+        this.rooms = new ArrayList<>();
+        this.enabled = true;
     }
 
-    public RoomType(String roomTypeName, String roomTypeDescription, String roomTypeSize, String roomTypeBed, Long roomTypeCapacity, List<String> roomTypeAmmenities, Boolean isDisabled, List<RoomRate> roomRates) {
+    public RoomType(String name, String description, String size, String bed, Long capacity, String amenities, Boolean enabled, Integer ranking) {
         this();
-        
-        
-        this.name = roomTypeName;
-        this.description = roomTypeDescription;
-        this.size = roomTypeSize;
-        this.bed = roomTypeBed;
-        this.capacity = roomTypeCapacity;
-        this.amenities = roomTypeAmmenities;
-        this.enabled = isDisabled;
-        this.roomRates = roomRates;
+        this.name = name;
+        this.description = description;
+        this.size = size;
+        this.bed = bed;
+        this.capacity = capacity;
+        this.amenities = amenities;
+        this.enabled = enabled;
+        this.ranking = ranking;
     }
+    
     
 
     public Long getRoomTypeId() {
@@ -175,19 +175,7 @@ public class RoomType implements Serializable {
         this.capacity = capacity;
     }
 
-    /**
-     * @return the amenities
-     */
-    public List<String> getAmenities() {
-        return amenities;
-    }
 
-    /**
-     * @param amenities the amenities to set
-     */
-    public void setAmenities(List<String> amenities) {
-        this.amenities = amenities;
-    }
 
     /**
      * @return the enabled
@@ -201,6 +189,20 @@ public class RoomType implements Serializable {
      */
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /**
+     * @return the ranking
+     */
+    public Integer getRank() {
+        return ranking;
+    }
+
+    /**
+     * @param ranking the ranking to set
+     */
+    public void setRank(Integer ranking) {
+        this.ranking = ranking;
     }
 
     /**
@@ -232,17 +234,17 @@ public class RoomType implements Serializable {
     }
 
     /**
-     * @return the rank
+     * @return the amenities
      */
-    public Integer getRank() {
-        return rank;
+    public String getAmenities() {
+        return amenities;
     }
 
     /**
-     * @param rank the rank to set
+     * @param amenities the amenities to set
      */
-    public void setRank(Integer rank) {
-        this.rank = rank;
+    public void setAmenities(String amenities) {
+        this.amenities = amenities;
     }
-    
+
 }

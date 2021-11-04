@@ -45,7 +45,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         } catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new RoomTypeNameExistException();
+                    throw new RoomTypeNameExistException("A roomType with this room name already exists!");
                 } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
@@ -105,7 +105,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         }
 
     }
-    
+
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException {
         RoomType roomType = entityManager.find(RoomType.class, roomId);
         if (roomType == null) {
@@ -113,9 +113,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         } else {
             return roomType;
         }
-                
-     
-        
+
     }
 
     @Override
@@ -130,15 +128,15 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.enabled = TRUE");
 
         return query.getResultList();
+
     }
-    
+
     @Override
     public void rearrangingRank(Integer rank) {
-        Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.rank = :inRank");
+        Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.rank >= :inRank");
         query.setParameter("inRank", rank);
         List<RoomType> roomTypes = query.getResultList();
-        for(RoomType roomType : roomTypes)
-        {
+        for (RoomType roomType : roomTypes) {
             roomType.setRank(roomType.getRank() + 1);
         }
     }
