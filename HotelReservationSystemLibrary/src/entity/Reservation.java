@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -37,6 +38,9 @@ public class Reservation implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date endDate;
+    
+    @Column
+    private BigDecimal totalPrice;
 
     @OneToMany(mappedBy = "reservation")
     @JoinColumn(nullable = false)
@@ -53,6 +57,26 @@ public class Reservation implements Serializable {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Partner partner;
+    
+    @OneToMany(mappedBy = "reservation")
+    private List<RoomReservationLineEntity> roomReservationLineEntities;
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public List<RoomReservationLineEntity> getRoomReservationLineEntities() {
+        return roomReservationLineEntities;
+    }
+
+    public void setRoomReservationLineEntities(List<RoomReservationLineEntity> roomReservationLineEntities) {
+        this.roomReservationLineEntities = roomReservationLineEntities;
+    }
+    
     
     public Long getReservationId() {
         return reservationId;
