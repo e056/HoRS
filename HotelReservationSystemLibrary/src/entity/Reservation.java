@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -42,9 +43,9 @@ public class Reservation implements Serializable {
     @Column
     private BigDecimal totalPrice;
 
-    @OneToMany(mappedBy = "reservation")
-    @JoinColumn(nullable = false)
-    private List<Room> rooms;
+//    @OneToMany(mappedBy = "reservation")
+//    @JoinColumn(nullable = false)
+//    private List<Room> rooms;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -62,7 +63,21 @@ public class Reservation implements Serializable {
     private List<RoomReservationLineEntity> roomReservationLineEntities;
 
     public Reservation() {
+        this.roomReservationLineEntities = new ArrayList<>();
     }
+
+    public Reservation(Date startDate, Date endDate, BigDecimal totalPrice, Employee employee, Guest guest, Partner partner, List<RoomReservationLineEntity> roomReservationLineEntities) {
+        this();
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.totalPrice = totalPrice;
+        this.employee = employee;
+        this.guest = guest;
+        this.partner = partner;
+        this.roomReservationLineEntities = roomReservationLineEntities;
+    }
+    
+    
 
     
     
@@ -87,13 +102,13 @@ public class Reservation implements Serializable {
         return reservationId;
     }
 
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
-    }
+//    public List<Room> getRooms() {
+//        return rooms;
+//    }
+//
+//    public void setRooms(List<Room> rooms) {
+//        this.rooms = rooms;
+//    }
 
     public Employee getEmployee() {
         return employee;

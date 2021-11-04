@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 /**
@@ -26,10 +27,12 @@ public class RoomAllocationExceptionEntity implements Serializable {
     private Long roomAllocationExceptionId;
     
     @OneToMany
-    private List<RoomReservationLineEntity> typeOneException;
+    @JoinColumn(name = "roomAllocationExceptionId")
+    private List<RoomReservationLineEntity> typeOneExceptions;
     
     @OneToMany
-    private List<RoomReservationLineEntity> typeTwoException;
+    @JoinColumn(name = "roomAllocationExceptionId")
+    private List<RoomReservationLineEntity> typeTwoExceptions;
     
     
 

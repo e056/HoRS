@@ -17,5 +17,5 @@ import util.exception.RoomNotFoundException;
 @Remote
 public interface ReservationSessionBeanRemote {
     
-    public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
+    //public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
 }

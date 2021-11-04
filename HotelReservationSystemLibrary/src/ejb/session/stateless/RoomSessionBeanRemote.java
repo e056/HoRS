@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.Partner;
 import entity.Reservation;
 import entity.Room;
+import entity.RoomReservationLineEntity;
 import entity.RoomType;
 import java.util.List;
 import javax.ejb.Remote;
@@ -40,6 +41,8 @@ public interface RoomSessionBeanRemote {
 
     public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException;
     public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException;
+
+    public List<RoomReservationLineEntity> retrieveRoomReservationsByRoomId(Long roomId);
 
 
     

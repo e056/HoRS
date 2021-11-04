@@ -82,7 +82,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
         if (!roomTypeToRemove.getRooms().isEmpty()) {
             for (Room room : roomTypeToRemove.getRooms()) {
-                if (room.getReservation() != null) {
+                if (room.getRoomReservationLineEntities().size() != 0) {
                     roomTypeToRemove.setEnabled(Boolean.FALSE);
                     break;
                 }

@@ -5,8 +5,8 @@
  */
 package ejb.session.stateless;
 
-import entity.Reservation;
 import entity.Room;
+import entity.RoomReservationLineEntity;
 import entity.RoomType;
 import java.util.List;
 import javax.ejb.EJB;
@@ -18,7 +18,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.exception.DeleteRoomException;
-import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomTypeNotFoundException;
@@ -83,7 +82,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         List<Room> rooms = query.getResultList();
 
         for (Room r : rooms) {
-            r.getReservation();
+            r.getRoomReservationLineEntities();
             r.getRoomType();
         }
         return rooms;
@@ -133,13 +132,26 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {
         Room roomToRemove = retrieveRoomByRoomId(roomId);
 
-        List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByRoomId(roomId);
+        List<RoomReservationLineEntity> roomReservations = retrieveRoomReservationsByRoomId(roomId);
 
-        if (reservations.isEmpty()) {
+        if (roomReservations.size() == 0) {
             entityManager.remove(roomToRemove);
         } else {
             roomToRemove.setEnabled(Boolean.FALSE);
+            throw new DeleteRoomException("Room is associated with reservation, disabling room for future use.");
+            
         }
+    }
+
+    @Override
+    public List<RoomReservationLineEntity> retrieveRoomReservationsByRoomId(Long roomId) {
+        {
+            Query query = entityManager.createQuery("SELECT rr FROM RoomReservationLineEntity rr WHERE rr.room.roomId = :inRoomId");
+            query.setParameter("inRoomId", roomId);
+
+            return query.getResultList();
+        }
+
     }
 
     @Override
@@ -155,21 +167,9 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             throw new RoomNotFoundException("Room ID not provided for room to be updated");
         }
     }
-    
-    @Override
-    public List<Room> retrieveRoomByReservationId(Long reservationId) throws ReservationNotFoundException
-    {
-        Reservation reservation = reservationSessionBeanLocal.retrieveReservationByReservationId(reservationId);
-        
-        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.reservation.reservationId = :inRId");
-        query.setParameter("inRId", reservationId);
-        List<Room> rooms = query.getResultList();
-        return rooms;
-        
-    }
-    
-    public List<Room> retrieveRoomByRoomType(Integer roomRank)
-    {
+
+
+    public List<Room> retrieveRoomByRoomType(Integer roomRank) {
         Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.roomType.rank = :inroomRank");
         query.setParameter("inroomRank", roomRank);
         List<Room> rooms = query.getResultList();

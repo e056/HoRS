@@ -35,18 +35,28 @@ public class Room implements Serializable {
 
     @Column(nullable = false)
     private Boolean isAvailable; // room status
-    
+
     @Column(nullable = false)
     private Boolean enabled; //whether room is enabled or not. Will be set to false if room is used during deletion.
 
     @ManyToOne
     private RoomType roomType;
+//
+//    @ManyToOne
+//    private Reservation reservation;
 
-    @ManyToOne
-    private Reservation reservation;
-    
     @OneToMany(mappedBy = "room")
     private List<RoomReservationLineEntity> roomReservationLineEntities;
+
+    public Room() {
+        this.roomReservationLineEntities = new ArrayList<>();
+    }
+
+    public Room(String roomNumber, boolean isAvailable) {
+        this();
+        this.roomNumber = roomNumber;
+        this.isAvailable = isAvailable;
+    }
 
     public List<RoomReservationLineEntity> getRoomReservationLineEntities() {
         return roomReservationLineEntities;
@@ -54,17 +64,6 @@ public class Room implements Serializable {
 
     public void setRoomReservationLineEntities(List<RoomReservationLineEntity> roomReservationLineEntities) {
         this.roomReservationLineEntities = roomReservationLineEntities;
-    }
-    
-    
-
-    public Room() {
-    }
-
-    public Room(String roomNumber, boolean isAvailable) {
-        this();
-        this.roomNumber = roomNumber;
-        this.isAvailable = isAvailable;
     }
 
     public String getFloorNumber() {
@@ -162,20 +161,6 @@ public class Room implements Serializable {
      */
     public void setRoomType(RoomType roomType) {
         this.roomType = roomType;
-    }
-
-    /**
-     * @return the reservation
-     */
-    public Reservation getReservation() {
-        return reservation;
-    }
-
-    /**
-     * @param reservation the reservation to set
-     */
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
     }
 
     /**

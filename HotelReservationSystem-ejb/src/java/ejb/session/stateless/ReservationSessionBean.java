@@ -35,19 +35,19 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     
     
 
-    
-    @Override
-    public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException
-    {
-        
-        Room room = roomSessionBeanLocal.retrieveRoomByRoomId(roomId);
-        
-        Query query = em.createQuery("SELECT r.reservation FROM Room r WHERE r.roomId = :inRoomId");
-        query.setParameter("inRoomId", roomId);
-        
-        return query.getResultList();
-       
-    }
+//    
+//    @Override
+//    public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException
+//    {
+//        
+//        Room room = roomSessionBeanLocal.retrieveRoomByRoomId(roomId);
+//        
+//        Query query = em.createQuery("SELECT r.reservation FROM Room r WHERE r.roomId = :inRoomId");
+//        query.setParameter("inRoomId", roomId);
+//        
+//        return query.getResultList();
+//       
+//    }
     
     @Override
     public List<Reservation> retrieveReservationsByDate(Date dateToday)

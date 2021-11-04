@@ -19,7 +19,7 @@ import util.exception.RoomNotFoundException;
 @Local
 public interface ReservationSessionBeanLocal {
 
-    public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
+    //public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
 
     public List<Reservation> retrieveReservationsByDate(Date dateToday);
 

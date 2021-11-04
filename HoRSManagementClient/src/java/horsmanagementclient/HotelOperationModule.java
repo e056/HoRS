@@ -18,6 +18,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.enumeration.AccessRightEnum;
+import util.exception.DeleteRoomException;
 import util.exception.InvalidAccessRightException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
@@ -128,7 +129,7 @@ public class HotelOperationModule {
                 if (response == 1) {
                     doCreateNewRoomType();
                 } else if (response == 2) {
-                    //doViewRoomTypeDetails();
+                    //doViewRoomTypeDetails(); 
                 } else if (response == 3) {
                     //doViewAllRoomTypes();
                 } else if (response == 4) {
@@ -136,7 +137,8 @@ public class HotelOperationModule {
                 } else if (response == 5) {
                     doUpdateRoom();
                 } else if (response == 6) {
-                    
+                    doDeleteRoom();
+
                 } else if (response == 7) {
                     doViewAllRooms();
                 } else if (response == 8) {
@@ -155,6 +157,7 @@ public class HotelOperationModule {
 
     }
 
+    // 4: Create new room
     public void doCreateNewRoom() {
         Scanner scanner = new Scanner(System.in);
         Room newRoom = new Room();
@@ -188,6 +191,7 @@ public class HotelOperationModule {
 
     }
 
+    // 5: Update Room
     public void doUpdateRoom() {
         System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: Update Room ***\n");
 
@@ -214,6 +218,35 @@ public class HotelOperationModule {
             System.out.println("An error has occurred while updating: The room does not exist.");
         } catch (UpdateRoomException ex) {
             System.out.println("An error has occurred while updating: " + ex.getMessage());
+        }
+
+    }
+
+    // 6: Delete Room
+    public void doDeleteRoom() {
+        System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: Delete Room ***\n");
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        System.out.print("Enter Room number > ");
+        String roomNumber = scanner.nextLine().trim();
+
+        try {
+            Room room = roomSessionBeanRemote.retrieveRoomByRoomNumber(roomNumber);
+            System.out.print("Confirm deletion? ('Y' to proceed)> ");
+            input = scanner.nextLine().trim();
+            if (input.equals("Y")) {
+                roomSessionBeanRemote.deleteRoom(room.getRoomId());
+                System.out.println("Room has been deleted!");
+            } else {
+                System.out.println("Room deletion cancelled...");
+            }
+
+        } catch (RoomNotFoundException ex) {
+            System.out.println("An error has occurred while deleting: The room does not exist.");
+        } catch (DeleteRoomException ex) {
+            // disables the room
+            System.out.println(ex.getMessage());
         }
 
     }
