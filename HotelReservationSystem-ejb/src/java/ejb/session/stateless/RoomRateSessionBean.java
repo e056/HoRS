@@ -64,7 +64,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
     @Override
     public List<RoomRate> retrieveAllRoomRates() {
-        Query query = entityManager.createQuery("SELECT s FROM RoomRate s");
+        Query query = entityManager.createQuery("SELECT s FROM RoomRate s ORDER BY s.roomRateId, s.type");
 
         List<RoomRate> roomRates = query.getResultList();
 
