@@ -307,10 +307,9 @@ public class HotelOperationModule {
         newRoomType.setBed(bed);
 
         System.out.print("Enter Room Capacity > ");
-        Long capacity = scanner.nextLong();
+        String capacity = scanner.nextLine().trim();
         newRoomType.setCapacity(capacity);
 
-        scanner.nextLine();
         System.out.print("Enter Room Amenities > ");
         String amenities = scanner.nextLine().trim();
         newRoomType.setAmenities(amenities);
@@ -328,22 +327,27 @@ public class HotelOperationModule {
         System.out.println("Select room rank. Current room types: ");
         System.out.println("------------------------");
         List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
-        System.out.printf("%8s%20s\n", "Room Name", "Room Rank (1 means most basic)");
-        for (RoomType roomType : roomTypes) {
-            if (roomType.getRank() > count) {
-                count = roomType.getRank();
+        if (roomTypes.size() != 0) {
+            System.out.printf("%8s%20s\n", "Room Name", "Room Rank (1 means most basic)");
+            for (RoomType roomType : roomTypes) {
+                if (roomType.getRanking() > count) {
+                    count = roomType.getRanking();
+                }
+                System.out.printf("%8s%20s\n", roomType.getName(), roomType.getRanking());
             }
-            System.out.printf("%8s%20s\n", roomType.getName(), roomType.getRank());
-        }
-        System.out.println("------------------------");
-        count++;
-        System.out.print("Enter rank (integer from 1 to " + count + ") >");
-        rank = scanner.nextInt();
-        if (rank < count) {
-            roomTypeSessionBeanRemote.rearrangingRank(rank);
+            System.out.println("------------------------");
+            count++;
+            System.out.print("Enter rank (integer from 1 to " + count + ") >");
+            rank = scanner.nextInt();
+            if (rank < count) {
+                roomTypeSessionBeanRemote.rearrangingRank(rank);
+            }
+            newRoomType.setRanking(rank);
+
+        } else {
+            newRoomType.setRanking(1);
         }
 
-        newRoomType.setRank(rank);
         try {
             Long roomTypeId = roomTypeSessionBeanRemote.createNewRoomType(newRoomType);
             System.out.println("New room type created with id = " + roomTypeId);

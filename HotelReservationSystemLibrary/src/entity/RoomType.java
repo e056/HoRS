@@ -38,7 +38,7 @@ public class RoomType implements Serializable {
     @Column(nullable = false, length = 64)
     private String bed;
     @Column(nullable = false)
-    private Long capacity;
+    private String capacity;
     @Column(nullable = false)
     private String amenities;
     @Column(nullable = false)
@@ -58,7 +58,7 @@ public class RoomType implements Serializable {
         this.enabled = true;
     }
 
-    public RoomType(String name, String description, String size, String bed, Long capacity, String amenities, Boolean enabled, Integer ranking) {
+    public RoomType(String name, String description, String size, String bed, String capacity, String amenities, Boolean enabled, Integer ranking) {
         this();
         this.name = name;
         this.description = description;
@@ -164,14 +164,14 @@ public class RoomType implements Serializable {
     /**
      * @return the capacity
      */
-    public Long getCapacity() {
+    public String getCapacity() {
         return capacity;
     }
 
     /**
      * @param capacity the capacity to set
      */
-    public void setCapacity(Long capacity) {
+    public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
 
@@ -194,14 +194,14 @@ public class RoomType implements Serializable {
     /**
      * @return the ranking
      */
-    public Integer getRank() {
+    public Integer getRanking() {
         return ranking;
     }
 
     /**
      * @param ranking the ranking to set
      */
-    public void setRank(Integer ranking) {
+    public void setRanking(Integer ranking) {
         this.ranking = ranking;
     }
 

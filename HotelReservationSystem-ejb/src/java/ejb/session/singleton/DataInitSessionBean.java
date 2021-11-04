@@ -48,10 +48,10 @@ public class DataInitSessionBean {
 
     private void doLoadData() {
         try {
-            Employee employee1 = new Employee("sysad", "one", "systemAdmin1", "password", AccessRightEnum.SYSTEM_ADMIN);
-            Employee employee2 = new Employee("opman", "two", "operationManager1", "password", AccessRightEnum.OPERATION_MANAGER);
-            Employee employee3 = new Employee("saleman", "three", "salesManager1", "password", AccessRightEnum.SALES_MANAGER);
-            Employee employee4 = new Employee("guestrln", "four", "guestRelationOfficer1", "password", AccessRightEnum.GUEST_RELATION);
+            Employee employee1 = new Employee("sysad", "one", "sa", "password", AccessRightEnum.SYSTEM_ADMIN);
+            Employee employee2 = new Employee("opman", "two", "om", "password", AccessRightEnum.OPERATION_MANAGER);
+            Employee employee3 = new Employee("saleman", "three", "sm", "password", AccessRightEnum.SALES_MANAGER);
+            Employee employee4 = new Employee("guestrln", "four", "gro", "password", AccessRightEnum.GUEST_RELATION);
             
             employeeSessionBeanLocal.createNewEmployee(employee1);
             employeeSessionBeanLocal.createNewEmployee(employee2);
