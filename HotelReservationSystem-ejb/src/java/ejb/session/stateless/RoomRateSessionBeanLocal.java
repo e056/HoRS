@@ -5,18 +5,15 @@
  */
 package ejb.session.stateless;
 
-import entity.Reservation;
-import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomRateException;
-import util.exception.RoomNotFoundException;
-import util.exception.RoomNumberExistException;
+import util.exception.RoomRateNameExistException;
 import util.exception.RoomRateNotFoundException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
-import util.exception.UpdateRoomException;
 import util.exception.UpdateRoomRateException;
 
 /**
@@ -26,7 +23,7 @@ import util.exception.UpdateRoomRateException;
 @Local
 public interface RoomRateSessionBeanLocal {
     
-    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException;
+    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException;
     
     public List<RoomRate> retrieveAllRoomRates();
     
@@ -37,4 +34,5 @@ public interface RoomRateSessionBeanLocal {
     public void updateRoomRate(RoomType roomType, RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException;
     
     public void deleteRoomRate(String roomRateName) throws RoomRateNotFoundException, DeleteRoomRateException;
+    
 }

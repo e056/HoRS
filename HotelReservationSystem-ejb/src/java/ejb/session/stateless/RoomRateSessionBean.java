@@ -9,6 +9,7 @@ import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -16,15 +17,12 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import util.enumeration.RoomRateType;
 import util.exception.DeleteRoomRateException;
-import util.exception.RoomNotFoundException;
-import util.exception.RoomNumberExistException;
+import util.exception.RoomRateNameExistException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomRateException;
-import util.exception.UpdateRoomTypeException;
 
 /**
  *
@@ -33,20 +31,20 @@ import util.exception.UpdateRoomTypeException;
 @Stateless
 public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateSessionBeanLocal {
 
+    @EJB
+    private RoomTypeSessionBeanLocal roomTypeSessionBeanLocal;
+
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
 
-    
-    
-    @Override
-    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException {
+    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException {
         try {
-            
-            RoomType roomType = entityManager.find(RoomType.class, roomTypeId);
-            
+
+            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomTypeId);
+
             roomRate.setRoomType(roomType);
             roomType.getRoomRates().add(roomRate);
-            
+
             entityManager.persist(roomRate);
             entityManager.flush();
 
@@ -54,7 +52,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         } catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new RoomNumberExistException();
+                    throw new RoomRateNameExistException();
                 } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
@@ -89,8 +87,8 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
     @Override
     public void updateRoomRate(RoomType roomType, RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException {
-       
-        if (roomRate != null && roomRate.getRoomRateId()!= null) {
+
+        if (roomRate != null && roomRate.getRoomRateId() != null) {
             RoomRate roomRateToUpdate = retrieveRoomRateByRoomRateId(roomRate.getRoomRateId());
 
             if (roomRateToUpdate.getName().equals(roomRate.getName())) {
@@ -99,7 +97,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
                 roomRateToUpdate.setRatePerNight(roomRate.getRatePerNight());
                 roomRateToUpdate.setValidityStart(roomRate.getValidityStart());
                 roomRateToUpdate.setValidityEnd(roomRate.getValidityEnd());
-                
+
             } else {
                 throw new UpdateRoomRateException("Room number of room to be updated does not match the existing record");
             }
@@ -111,28 +109,24 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     /*Deletion of room rate
     Can only be deleted if it is not used (by a reservation)
     Otherwise, mark as disabled (setEnabled = false) if it is currently being used
-    */
+     */
     @Override
     public void deleteRoomRate(String name) throws RoomRateNotFoundException, DeleteRoomRateException {
-        
+
         RoomRate roomRate = retrieveRoomRateByRoomRateName(name);
-        
-        if(!roomRate.getRoomType().getRooms().isEmpty())
-        {
-            for(Room room : roomRate.getRoomType().getRooms())
-            {
-                if(room.getRoomReservationLineEntities().size() != 0)
-                {
+
+        if (!roomRate.getRoomType().getRooms().isEmpty()) {
+            for (Room room : roomRate.getRoomType().getRooms()) {
+                if (room.getRoomReservationLineEntities().size() != 0) {
                     roomRate.setEnabled(Boolean.FALSE);
                     break;
                 }
             }
             entityManager.remove(roomRate);
-        } else{
+        } else {
             roomRate.setEnabled(Boolean.FALSE);
         }
-        
-       
+
     }
 
     public void persist(Object object) {
@@ -143,17 +137,14 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     public RoomRate retrieveRoomRateByRoomRateName(String name) throws RoomRateNotFoundException {
         Query query = entityManager.createQuery("SELECT r FROM RoomRate r WHERE r.name = :inName");
         query.setParameter("inName", name);
-        
-        try{
-            return (RoomRate)query.getSingleResult();
-        }
-        catch (NoResultException | NonUniqueResultException ex){
+
+        try {
+            return (RoomRate) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
             throw new RoomRateNotFoundException("Room Rate " + name + " does not exist!");
-            
+
         }
-        
-        
-        
+
     }
 
 }

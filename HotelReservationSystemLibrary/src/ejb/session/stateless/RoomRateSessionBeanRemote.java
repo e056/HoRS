@@ -5,7 +5,16 @@
  */
 package ejb.session.stateless;
 
+import entity.RoomRate;
+import entity.RoomType;
+import java.util.List;
 import javax.ejb.Remote;
+import util.exception.DeleteRoomRateException;
+import util.exception.RoomRateNameExistException;
+import util.exception.RoomRateNotFoundException;
+import util.exception.RoomTypeNotFoundException;
+import util.exception.UnknownPersistenceException;
+import util.exception.UpdateRoomRateException;
 
 /**
  *
@@ -13,5 +22,16 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface RoomRateSessionBeanRemote {
-    
+
+    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException;
+
+    public List<RoomRate> retrieveAllRoomRates();
+
+    public RoomRate retrieveRoomRateByRoomRateId(Long id) throws RoomRateNotFoundException;
+
+    public RoomRate retrieveRoomRateByRoomRateName(String name) throws RoomRateNotFoundException;
+
+    public void updateRoomRate(RoomType roomType, RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException;
+
+    public void deleteRoomRate(String roomRateName) throws RoomRateNotFoundException, DeleteRoomRateException;
 }

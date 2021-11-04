@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,11 +35,11 @@ public class RoomRate implements Serializable {
     @Column(nullable = false)
     private RoomRateType type;
     @Column(nullable = false)
-    private Long ratePerNight;
-    @Temporal(TemporalType.TIMESTAMP)
+    private BigDecimal ratePerNight;
+    @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     private Date validityStart;
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     private Date validityEnd;
     @Column
@@ -51,6 +52,17 @@ public class RoomRate implements Serializable {
     public RoomRate() {
         this.enabled = Boolean.TRUE;
     }
+
+    public RoomRate(String name, RoomRateType type, BigDecimal ratePerNight, Date validityStart, Date validityEnd, Boolean enabled) {
+        this();
+        this.name = name;
+        this.type = type;
+        this.ratePerNight = ratePerNight;
+        this.validityStart = validityStart;
+        this.validityEnd = validityEnd;
+        this.enabled = enabled;
+    }
+    
 
     public Long getRoomRateId() {
         return roomRateId;
@@ -116,14 +128,14 @@ public class RoomRate implements Serializable {
     /**
      * @return the ratePerNight
      */
-    public Long getRatePerNight() {
+    public BigDecimal getRatePerNight() {
         return ratePerNight;
     }
 
     /**
      * @param ratePerNight the ratePerNight to set
      */
-    public void setRatePerNight(Long ratePerNight) {
+    public void setRatePerNight(BigDecimal ratePerNight) {
         this.ratePerNight = ratePerNight;
     }
 
