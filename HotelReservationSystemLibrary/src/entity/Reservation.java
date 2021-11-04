@@ -61,6 +61,11 @@ public class Reservation implements Serializable {
     @OneToMany(mappedBy = "reservation")
     private List<RoomReservationLineEntity> roomReservationLineEntities;
 
+    public Reservation() {
+    }
+
+    
+    
     public BigDecimal getTotalPrice() {
         return totalPrice;
     }

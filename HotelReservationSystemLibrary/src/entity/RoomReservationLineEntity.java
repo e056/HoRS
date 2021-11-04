@@ -35,6 +35,11 @@ public class RoomReservationLineEntity implements Serializable {
     @ManyToOne
     private Reservation reservation;
 
+    public RoomReservationLineEntity() {
+    }
+
+    
+    
     public BigDecimal getPrice() {
         return price;
     }
