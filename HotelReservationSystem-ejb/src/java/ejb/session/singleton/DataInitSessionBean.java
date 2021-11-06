@@ -11,7 +11,9 @@ import ejb.session.stateless.RoomSessionBeanLocal;
 import ejb.session.stateless.RoomTypeSessionBeanLocal;
 import entity.Employee;
 import entity.Room;
+import entity.RoomRate;
 import entity.RoomType;
+import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -20,9 +22,11 @@ import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import util.enumeration.AccessRightEnum;
+import util.enumeration.RoomRateType;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
 import util.exception.RoomNumberExistException;
+import util.exception.RoomRateNameExistException;
 import util.exception.RoomTypeNameExistException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -159,6 +163,37 @@ public class DataInitSessionBean {
             roomSessionBeanLocal.createNewRoom(gs4, gs);
             roomSessionBeanLocal.createNewRoom(gs5, gs);
             
+            //room rate
+            RoomRateType pub = RoomRateType.PUBLISHED;
+            RoomRateType nor = RoomRateType.NORMAL;
+            RoomRateType peak = RoomRateType.PEAK;
+            RoomRateType pro = RoomRateType.PROMOTION;
+            
+            RoomRate drp = new RoomRate("Deluxe Room Published", deluxe, pub, BigDecimal.valueOf(100));
+            RoomRate drn = new RoomRate("Deluxe Room Normal", deluxe, nor, BigDecimal.valueOf(50));
+            
+            RoomRate prp = new RoomRate("Premier Room Published", premier, pub, BigDecimal.valueOf(200));
+            RoomRate prn = new RoomRate("Premier Room Normal", premier, nor, BigDecimal.valueOf(100));
+            
+            RoomRate frp = new RoomRate("Family Room Published", family, pub, BigDecimal.valueOf(300));
+            RoomRate frn = new RoomRate("Family Room Normal", family, nor, BigDecimal.valueOf(150));
+            
+            RoomRate jsp = new RoomRate("Junior Suite Published", junior, pub, BigDecimal.valueOf(400));
+            RoomRate jsn = new RoomRate("Junior Suite Normal", junior, nor, BigDecimal.valueOf(200));
+            
+            RoomRate gsp = new RoomRate("Grand Suite Published", grand, pub, BigDecimal.valueOf(500));
+            RoomRate gsn = new RoomRate("Grand Suite Normal", grand, nor, BigDecimal.valueOf(250));
+            
+            roomRateSessionBeanLocal.createNewRoomRate(drp, deluxe.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(drn, deluxe.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(prp, premier.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(prn, premier.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(frp, family.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(frn, family.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(jsp, junior.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(jsn, junior.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(gsp, grand.getRoomTypeId());
+            roomRateSessionBeanLocal.createNewRoomRate(gsn, grand.getRoomTypeId());
             
             
         } catch (EmployeeUsernameExistException ex) {
@@ -167,14 +202,12 @@ public class DataInitSessionBean {
             ex.printStackTrace();
         } catch (UnknownPersistenceException ex) {
             ex.printStackTrace();
-        //} catch (RoomNumberExistException ex) {
-            ex.printStackTrace();
-        //} catch (RoomTypeNotFoundException ex) {
-            ex.printStackTrace();
         } catch (RoomNumberExistException ex) {
-            Logger.getLogger(DataInitSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         } catch (RoomTypeNotFoundException ex) {
-            Logger.getLogger(DataInitSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        } catch (RoomRateNameExistException ex) {
+            ex.printStackTrace();
         }
     }
 }
