@@ -104,11 +104,11 @@ public class DataInitSessionBean {
             Room pr4 = new Room("0402", isAvailable);
             Room pr5 = new Room("0502", isAvailable);
             
-            /*Room fr1 = new Room("0103", isAvailable);
+            Room fr1 = new Room("0103", isAvailable);
             Room fr2 = new Room("0203", isAvailable);
             Room fr3 = new Room("0303", isAvailable);
             Room fr4 = new Room("0403", isAvailable);
-            Room fr5 = new Room("0503", isAvailable); */
+            Room fr5 = new Room("0503", isAvailable); 
             
             Room js1 = new Room("0104", isAvailable);
             Room js2 = new Room("0204", isAvailable);
@@ -140,11 +140,11 @@ public class DataInitSessionBean {
             roomSessionBeanLocal.createNewRoom(pr4, pr);
             roomSessionBeanLocal.createNewRoom(pr5, pr);
            
-            /*roomSessionBeanLocal.createNewRoom(fr1, fr);
+            roomSessionBeanLocal.createNewRoom(fr1, fr);
             roomSessionBeanLocal.createNewRoom(fr2, fr);
             roomSessionBeanLocal.createNewRoom(fr3, fr);
             roomSessionBeanLocal.createNewRoom(fr4, fr);
-            roomSessionBeanLocal.createNewRoom(fr5, fr);*/
+            roomSessionBeanLocal.createNewRoom(fr5, fr);
             
             
             roomSessionBeanLocal.createNewRoom(js1, js);
