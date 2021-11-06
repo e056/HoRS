@@ -14,7 +14,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -31,20 +33,24 @@ public class RoomType implements Serializable {
     
     @Column(nullable = false, length = 64, unique = true)
     private String name;
-    @Column(nullable = false, length = 64)
+    @Column(length = 64)
     private String description;
-    @Column(nullable = false, length = 64)
+    @Column(length = 64)
     private String size;
-    @Column(nullable = false, length = 64)
+    @Column(length = 64)
     private String bed;
-    @Column(nullable = false)
+    @Column
     private String capacity;
-    @Column(nullable = false)
+    @Column
     private String amenities;
-    @Column(nullable = false)
+    @Column
     private Boolean enabled;
-    @Column(nullable = false, unique = true)
-    private Integer ranking;
+    //@Column(nullable = false, unique = true)
+    //private Integer ranking;
+    
+    @OneToOne
+    @JoinColumn(unique = true)
+    private RoomType nextHigherRoomType;
     
     @OneToMany(mappedBy = "roomType")
     private List<RoomRate> roomRates;
@@ -58,7 +64,7 @@ public class RoomType implements Serializable {
         this.enabled = true;
     }
 
-    public RoomType(String name, String description, String size, String bed, String capacity, String amenities, Boolean enabled, Integer ranking) {
+    public RoomType(String name, String description, String size, String bed, String capacity, String amenities, Boolean enabled, RoomType roomType) {
         this();
         this.name = name;
         this.description = description;
@@ -67,7 +73,15 @@ public class RoomType implements Serializable {
         this.capacity = capacity;
         this.amenities = amenities;
         this.enabled = enabled;
-        this.ranking = ranking;
+        //this.ranking = ranking;
+        this.nextHigherRoomType = roomType;
+    }
+    
+    public RoomType(String name, RoomType roomType) {
+        this();
+        this.name = name;
+        this.enabled = Boolean.TRUE;
+        this.nextHigherRoomType = roomType;
     }
     
     
@@ -193,17 +207,17 @@ public class RoomType implements Serializable {
 
     /**
      * @return the ranking
-     */
+     
     public Integer getRanking() {
         return ranking;
-    }
+    } */
 
     /**
      * @param ranking the ranking to set
-     */
+     
     public void setRanking(Integer ranking) {
         this.ranking = ranking;
-    }
+    }*/
 
     /**
      * @return the roomRates
@@ -245,6 +259,20 @@ public class RoomType implements Serializable {
      */
     public void setAmenities(String amenities) {
         this.amenities = amenities;
+    }
+
+    /**
+     * @return the nextHigherRoomType
+     */
+    public RoomType getNextHigherRoomType() {
+        return nextHigherRoomType;
+    }
+
+    /**
+     * @param nextHigherRoomType the nextHigherRoomType to set
+     */
+    public void setNextHigherRoomType(RoomType nextHigherRoomType) {
+        this.nextHigherRoomType = nextHigherRoomType;
     }
 
 }

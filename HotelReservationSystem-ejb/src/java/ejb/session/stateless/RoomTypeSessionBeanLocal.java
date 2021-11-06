@@ -23,7 +23,7 @@ public interface RoomTypeSessionBeanLocal {
 
     public List<RoomType> retrieveAllRoomTypes();
 
-    public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException;
+     public Long createNewRoomType(RoomType roomType, String nextHigherRoomTypeName) throws RoomTypeNameExistException, UnknownPersistenceException, RoomTypeNotFoundException;
 
     public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException;
 
@@ -33,5 +33,7 @@ public interface RoomTypeSessionBeanLocal {
 
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException;
 
-    public void rearrangingRank(Integer rank);
+    public void rearrangingRank(String nextHigherRoomTypeName, Long roomTypeId);
+    
+    public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException;
 }

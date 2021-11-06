@@ -8,6 +8,8 @@ package ejb.session.stateless;
 import entity.Room;
 import entity.RoomType;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -16,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.exception.DeleteRoomTypeException;
+import util.exception.RoomTypeIsLowestException;
 import util.exception.RoomTypeNameExistException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -36,13 +39,68 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     @Override
-    public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException {
+    public Long createNewRoomType(RoomType roomType, String nextHigherRoomTypeName) throws RoomTypeNameExistException, UnknownPersistenceException, RoomTypeNotFoundException {
+        Boolean lowestRank = false;
         try {
-            entityManager.persist(roomType);
-            entityManager.flush();
-
+            if(nextHigherRoomTypeName.equals("None"))
+            {
+                RoomType highestRoomType = retrieveHighestRoomType();
+                highestRoomType.setNextHigherRoomType(roomType);
+                entityManager.persist(roomType);
+                entityManager.flush();  
+            } else {
+                RoomType currentRoomType = retrieveRoomTypeByNextHighestRoomType(nextHigherRoomTypeName);
+                if(currentRoomType != null)
+                {
+                    System.out.println(currentRoomType.getName());
+                }
+                RoomType nextHigherRoomType = currentRoomType.getNextHigherRoomType();
+                currentRoomType.setNextHigherRoomType(null);
+                
+                roomType.setNextHigherRoomType(nextHigherRoomType);
+                
+                entityManager.persist(roomType);
+                
+                entityManager.flush();  
+                currentRoomType.setNextHigherRoomType(roomType);
+                
+            }
             return roomType.getRoomTypeId();
         } catch (PersistenceException ex) {
+            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                    throw new RoomTypeNameExistException("A roomType with this room name already exists!");
+                } else {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            } else {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
+        } catch (RoomTypeIsLowestException ex) {
+             lowestRank = true;
+        } finally
+        {
+            if(lowestRank == true)
+            {
+               roomType.setNextHigherRoomType(retrieveRoomTypeByRoomTypeName(nextHigherRoomTypeName));
+               entityManager.persist(roomType);
+               entityManager.flush(); 
+               return roomType.getRoomTypeId();
+            } else {
+                return null;
+            }
+             
+        }
+    }
+    
+    @Override
+    public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException
+    {
+        try{
+            entityManager.persist(roomType);
+            entityManager.flush(); 
+            return roomType.getRoomTypeId();
+        }catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
                     throw new RoomTypeNameExistException("A roomType with this room name already exists!");
@@ -132,13 +190,38 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     @Override
-    public void rearrangingRank(Integer rank) {
-        Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.ranking >= :inRank");
-        query.setParameter("inRank", rank);
-        List<RoomType> roomTypes = query.getResultList();
-        for (RoomType roomType : roomTypes) {
-            roomType.setRanking(roomType.getRanking() + 1);
-        }
+    public void rearrangingRank(String nextHigherRoomTypeName, Long newRoomTypeId) {
+        Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.nextHigherRoomType.name = :inName");
+        RoomType newRoomType = entityManager.find(RoomType.class, newRoomTypeId);
+        query.setParameter("inName", nextHigherRoomTypeName);
+        RoomType roomType = (RoomType) query.getSingleResult();
+        roomType.setNextHigherRoomType(newRoomType);
+        newRoomType.setNextHigherRoomType(roomType);
     }
+    
+    @Override
+    public RoomType retrieveRoomTypeByNextHighestRoomType(String nextHighestRoomTypeName) throws RoomTypeIsLowestException
+    {
+        
+        try{
+            Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.nextHigherRoomType.name = :inName");
+            query.setParameter("inName", nextHighestRoomTypeName);
+            return (RoomType) query.getSingleResult();
+        } catch(NoResultException ex)
+        {
+            throw new RoomTypeIsLowestException("Room type is lowest");
+        }
+        
+    }
+    
+    public RoomType retrieveHighestRoomType()
+    {
+        Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.nextHigherRoomType IS NULL");
+        
+        RoomType roomType = (RoomType) query.getSingleResult();
+        
+        return roomType;
+    }
+
 
 }

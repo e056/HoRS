@@ -171,8 +171,7 @@ public class HotelOperationModule {
         System.out.println("------------------------");
         Scanner scanner = new Scanner(System.in);
         String input;
-        Integer count = 0;
-        Integer rank = 0;
+        String nextHigherRoomTypeName = "";
         RoomType newRoomType = new RoomType();
         //List<String> amenities = new ArrayList();
 
@@ -214,30 +213,35 @@ public class HotelOperationModule {
         System.out.println("------------------------");
         List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
         if (roomTypes.size() != 0) {
-            System.out.printf("%8s%20s\n", "Room Name", "Room Rank (1 means most basic)");
+            System.out.printf("%8s%30s\n", "Room Name", "Next Higher Room Type");
             for (RoomType roomType : roomTypes) {
-                if (roomType.getRanking() > count) {
-                    count = roomType.getRanking();
+                if(roomType.getNextHigherRoomType() == null)
+                {
+                    System.out.printf("%8s%30s\n", roomType.getName(), "None");
+                } else {
+                    System.out.printf("%8s%30s\n", roomType.getName(), roomType.getNextHigherRoomType().getName());
                 }
-                System.out.printf("%8s%20s\n", roomType.getName(), roomType.getRanking());
+                
             }
             System.out.println("------------------------");
-            count++;
-            System.out.print("Enter rank (integer from 1 to " + count + ") >");
-            rank = scanner.nextInt();
-            if (rank < count) {
-                roomTypeSessionBeanRemote.rearrangingRank(rank);
-            }
-            newRoomType.setRanking(rank);
+            
+            System.out.print("Enter Next Higher Room Type (Type 'None' if this will be the highest room type)>");
+            nextHigherRoomTypeName = scanner.nextLine().trim();
+            
+            newRoomType.setNextHigherRoomType(null);
+            
 
         } else {
-            newRoomType.setRanking(1);
+            newRoomType.setNextHigherRoomType(null);
         }
 
         try {
-            Long roomTypeId = roomTypeSessionBeanRemote.createNewRoomType(newRoomType);
+             Long roomTypeId = roomTypeSessionBeanRemote.createNewRoomType(newRoomType, nextHigherRoomTypeName);
+          
             System.out.println("New room type created with id = " + roomTypeId + "\n");
         } catch (RoomTypeNameExistException ex) {
+            System.out.println(ex.getMessage());
+        } catch (RoomTypeNotFoundException ex) {
             System.out.println(ex.getMessage());
         } catch (UnknownPersistenceException ex) {
             System.out.println(ex.getMessage());
