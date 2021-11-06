@@ -22,17 +22,17 @@ import util.exception.UpdateRoomRateException;
  */
 @Local
 public interface RoomRateSessionBeanLocal {
-    
+
     public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException;
-    
+
     public List<RoomRate> retrieveAllRoomRates();
-    
+
     public RoomRate retrieveRoomRateByRoomRateId(Long id) throws RoomRateNotFoundException;
-    
+
     public RoomRate retrieveRoomRateByRoomRateName(String name) throws RoomRateNotFoundException;
-    
-    public void updateRoomRate(RoomType roomType, RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException;
-    
-    public void deleteRoomRate(String roomRateName) throws RoomRateNotFoundException, DeleteRoomRateException;
-    
+
+    public void updateRoomRate(RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException;
+
+    public void deleteRoomRate(Long rrId) throws RoomRateNotFoundException, DeleteRoomRateException;
+
 }

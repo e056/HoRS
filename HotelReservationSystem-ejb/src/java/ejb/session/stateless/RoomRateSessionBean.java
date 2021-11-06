@@ -86,23 +86,23 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     }
 
     @Override
-    public void updateRoomRate(RoomType roomType, RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException {
+    public void updateRoomRate(RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException {
 
         if (roomRate != null && roomRate.getRoomRateId() != null) {
             RoomRate roomRateToUpdate = retrieveRoomRateByRoomRateId(roomRate.getRoomRateId());
 
             if (roomRateToUpdate.getName().equals(roomRate.getName())) {
                 //roomRateToUpdate.setName(roomRate.getName());
-                roomRateToUpdate.setType(roomRate.getType());
+                //roomRateToUpdate.setType(roomRate.getType());
                 roomRateToUpdate.setRatePerNight(roomRate.getRatePerNight());
                 roomRateToUpdate.setValidityStart(roomRate.getValidityStart());
                 roomRateToUpdate.setValidityEnd(roomRate.getValidityEnd());
 
             } else {
-                throw new UpdateRoomRateException("Room number of room to be updated does not match the existing record");
+                throw new UpdateRoomRateException("Room Rate name of Room Rate to be updated does not match the existing record");
             }
         } else {
-            throw new RoomRateNotFoundException("Room type ID not provided for room type to be updated");
+            throw new RoomRateNotFoundException("RoomRateId not provided for room type to be updated");
         }
     }
 
@@ -111,9 +111,9 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     Otherwise, mark as disabled (setEnabled = false) if it is currently being used
      */
     @Override
-    public void deleteRoomRate(String name) throws RoomRateNotFoundException, DeleteRoomRateException {
+    public void deleteRoomRate(Long rrId) throws RoomRateNotFoundException, DeleteRoomRateException {
 
-        RoomRate roomRate = retrieveRoomRateByRoomRateName(name);
+        RoomRate roomRate = retrieveRoomRateByRoomRateId(rrId);
 
         if (!roomRate.getRoomType().getRooms().isEmpty()) {
             for (Room room : roomRate.getRoomType().getRooms()) {
@@ -125,6 +125,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
             entityManager.remove(roomRate);
         } else {
             roomRate.setEnabled(Boolean.FALSE);
+            throw new DeleteRoomRateException("Room Rate is associated with reservation, disabling room for future use.");
         }
 
     }

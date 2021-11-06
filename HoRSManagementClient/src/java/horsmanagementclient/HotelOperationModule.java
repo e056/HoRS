@@ -13,23 +13,29 @@ import entity.Employee;
 import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.enumeration.AccessRightEnum;
 import util.enumeration.RoomRateType;
 import util.exception.DeleteRoomException;
+import util.exception.DeleteRoomRateException;
 import util.exception.InvalidAccessRightException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomRateNameExistException;
+import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNameExistException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
+import util.exception.UpdateRoomRateException;
 
 /**
  *
@@ -360,6 +366,11 @@ public class HotelOperationModule {
 
     }
 
+    /**
+     * =======================================================================
+     * Start of Sales Manager Functions
+     * =======================================================================
+     */
     public void menuSalesManager() throws InvalidAccessRightException {
         if (currEmployee.getAccessRightEnum() != AccessRightEnum.SALES_MANAGER) {
             throw new InvalidAccessRightException("You don't have SALES MANAGER rights to access the system administration module.");
@@ -387,7 +398,7 @@ public class HotelOperationModule {
                     doCreateNewRoomRate();
 
                 } else if (response == 2) {
-                    //doViewRoomRateDetails();
+                    doViewRoomRateDetails();
 
                 } else if (response == 3) {
                     doViewAllRoomRates();
@@ -473,6 +484,119 @@ public class HotelOperationModule {
 
     }
 
+    // 2: View room rate details
+    public void doViewRoomRateDetails() {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        System.out.println("*** POS System :: System Administration :: View Product Details ***\n");
+        System.out.print("Enter Room Rate Name> ");
+        String name = scanner.nextLine().trim();
+
+        try {
+            RoomRate rr = roomRateSessionBeanRemote.retrieveRoomRateByRoomRateName(name);
+            System.out.printf("%8s%20s%20s%20s%40s%40s%20s\n", "Room Rate ID", "Room Rate Type", "Room Type", "Rate Per Night", "Validity Start", "Validity End", "Enabled?");
+            String enabled = (rr.getEnabled()) ? "Enabled" : "Disabled";
+            String start = (rr.getValidityStart() == null) ? "-" : rr.getValidityStart().toString();
+            String end = (rr.getValidityEnd() == null) ? "-" : rr.getValidityEnd().toString();
+            System.out.printf("%8s%20s%20s%20s%40s%40s%20s\n", rr.getRoomRateId(),
+                    rr.getType().toString(), rr.getRoomType().getName(),
+                    NumberFormat.getCurrencyInstance().format(rr.getRatePerNight()),
+                    start, end,
+                    enabled);
+            System.out.println("------------------------");
+            System.out.println("1: Update Room Rate");
+            System.out.println("2: Delete Room Rate");
+            System.out.println("3: Back\n");
+            System.out.print("> ");
+            response = scanner.nextInt();
+
+            if (response == 1) {
+                doUpdateRoomRate(rr);
+                
+            } else if (response == 2) {
+                doDeleteRoomRate(rr);
+            }
+            return;
+        } catch (RoomRateNotFoundException ex) {
+            System.out.println("An error has occurred while retrieving Room Rate: " + ex.getMessage() + "\n");
+        }
+    }
+
+    // can rate type be changed?
+    public void doUpdateRoomRate(RoomRate rr) {
+        try {
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("d/M/y");
+            Scanner scanner = new Scanner(System.in);
+            String input;
+            Integer integerInput;
+            BigDecimal bigDecimalInput;
+
+            System.out.println("*** HoRs System :: Hotel Operation Module :: View Room Rate Details :: Update Room Rate ***\n");
+
+            System.out.print("Set Rate per Night (blank if no change> ");
+            
+            bigDecimalInput = scanner.nextBigDecimal();
+            scanner.nextLine();
+            if (bigDecimalInput.compareTo(BigDecimal.ZERO) > 0) {
+                rr.setRatePerNight(bigDecimalInput);
+            }
+            
+
+            if (!(rr.getType().equals(RoomRateType.NORMAL) || rr.getType().equals(RoomRateType.PUBLISHED))) {
+
+                Date date;
+                System.out.print("Enter Validity Start Date (dd/mm/yyyy) (blank if no change)> ");
+                input = scanner.nextLine().trim();
+                if (input.length() > 0) {
+
+                    date = inputDateFormat.parse(input);
+                    rr.setValidityStart(date);
+
+                }
+                System.out.print("Enter Validity End Date (dd/mm/yyyy) (blank if no change)> ");
+                input = scanner.nextLine().trim();
+                if (input.length() > 0) {
+
+                    date = inputDateFormat.parse(input);
+                    rr.setValidityEnd(date);
+
+                }
+
+            }
+            roomRateSessionBeanRemote.updateRoomRate(rr);
+            System.out.println("Successfully updated!");
+
+        } catch (ParseException ex) {
+            System.out.println("Invalid date format!");
+
+        } catch (RoomRateNotFoundException ex) {
+            System.out.println("An error has occurred while updating: " + ex.getMessage());
+
+        } catch (UpdateRoomRateException ex) {
+            System.out.println("An error has occurred while updating: " + ex.getMessage());
+        }
+    }
+
+    public void doDeleteRoomRate(RoomRate rr) {
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        System.out.println("*** HoRs System :: Hotel Operation Module :: View Room Rate Details :: Delete Room Rate ***\n");
+        System.out.printf("Confirm Delete Room Rate %s (Enter 'Y' to Delete)> ", rr.getName());
+        input = scanner.nextLine().trim();
+
+        if (input.equals("Y")) {
+            try {
+                roomRateSessionBeanRemote.deleteRoomRate(rr.getRoomRateId());
+                System.out.println("Room Rate deleted successfully!\n");
+            } catch (RoomRateNotFoundException | DeleteRoomRateException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
+    }
+
     // 3: View all room rates
     public void doViewAllRoomRates() {
         // TODO: Fix timing
@@ -486,8 +610,7 @@ public class HotelOperationModule {
             String enabled = (rr.getEnabled()) ? "Enabled" : "Disabled";
             String start = (rr.getValidityStart() == null) ? "-" : rr.getValidityStart().toString();
             String end = (rr.getValidityEnd() == null) ? "-" : rr.getValidityEnd().toString();
-            
-            
+
             System.out.printf("%8s%20s%20s%20s%40s%40s%20s\n", rr.getRoomRateId(),
                     rr.getType().toString(), rr.getRoomType().getName(),
                     NumberFormat.getCurrencyInstance().format(rr.getRatePerNight()),
