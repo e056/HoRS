@@ -37,6 +37,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
 
+    @Override
     public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException {
         try {
 
