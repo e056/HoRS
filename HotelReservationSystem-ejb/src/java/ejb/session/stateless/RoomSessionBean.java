@@ -20,6 +20,7 @@ import javax.persistence.Query;
 import util.exception.DeleteRoomException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
+import util.exception.RoomTypeHasNoRoomException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateRoomException;
@@ -42,15 +43,35 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
 
+    @Override
     public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
+        try {
 
-        Long roomTypeId = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName).getRoomTypeId();
-        return createNewRoom(room, roomTypeId);
+            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(roomTypeName);
 
+            room.setRoomType(roomType);
+            roomType.getRooms().add(room);
+
+            entityManager.persist(room);
+            entityManager.flush();
+
+            return room.getRoomId();
+        } catch (PersistenceException ex) {
+            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                    throw new RoomNumberExistException();
+                } else {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            } else {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
+        }
+   
     }
 
     // Added: Use em to find RoomType, did associations both ways, persisted
-    public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
+   /* public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
         try {
 
             RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomTypeId);
@@ -73,7 +94,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                 throw new UnknownPersistenceException(ex.getMessage());
             }
         }
-    }
+    } */
 
     @Override
     public List<Room> retrieveAllRooms() {
@@ -169,11 +190,19 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
 
-    public List<Room> retrieveRoomByRoomType(Integer roomRank) {
-        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.roomType.rank = :inroomRank");
-        query.setParameter("inroomRank", roomRank);
+    @Override
+    public List<Room> retrieveRoomByRoomType(String roomType) throws RoomTypeHasNoRoomException {
+        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.roomType.name = :inroomType");
+        query.setParameter("inroomType", roomType);
         List<Room> rooms = query.getResultList();
-        return rooms;
+        //notes: query.getResultList returns a list, if got no results it just returns an empty list, not NULL
+        if(rooms.isEmpty())
+        {
+            throw new RoomTypeHasNoRoomException("No Room is using this room type");
+        } else {
+            return rooms;
+        }
+   
     }
 
 }

@@ -82,6 +82,8 @@ public class RoomType implements Serializable {
         this.name = name;
         this.enabled = Boolean.TRUE;
         this.nextHigherRoomType = roomType;
+        this.roomRates = new ArrayList<>();
+        this.rooms = new ArrayList<>();
     }
     
     

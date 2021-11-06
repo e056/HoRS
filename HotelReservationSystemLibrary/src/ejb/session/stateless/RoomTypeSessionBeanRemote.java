@@ -28,15 +28,13 @@ public interface RoomTypeSessionBeanRemote {
     
     public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException;
     
-    public void deleteRoomType(String roomTypeName) throws RoomTypeNotFoundException, DeleteRoomTypeException;
+    public void deleteRoomType(RoomType roomType) throws RoomTypeNotFoundException, DeleteRoomTypeException;
     
     public RoomType retrieveRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException;
 
     public List<RoomType> retrieveAllEnabledRoomTypes();
     
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException;
-
-    public void rearrangingRank(String nextHigherRoomTypeName, Long newRoomTypeId);
 
     public RoomType retrieveRoomTypeByNextHighestRoomType(String roomTypeName)throws RoomTypeIsLowestException;
 

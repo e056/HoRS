@@ -10,6 +10,7 @@ import entity.RoomType;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -18,6 +19,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.exception.DeleteRoomTypeException;
+import util.exception.RoomTypeHasNoRoomException;
 import util.exception.RoomTypeIsLowestException;
 import util.exception.RoomTypeNameExistException;
 import util.exception.RoomTypeNotFoundException;
@@ -30,6 +32,9 @@ import util.exception.UpdateRoomTypeException;
  */
 @Stateless
 public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeSessionBeanLocal {
+
+    @EJB(name = "RoomSessionBeanLocal")
+    private RoomSessionBeanLocal roomSessionBeanLocal;
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
@@ -87,7 +92,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                entityManager.flush(); 
                return roomType.getRoomTypeId();
             } else {
-                return null;
+                return roomType.getRoomTypeId();
             }
              
         }
@@ -133,22 +138,64 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         }
     }
 
-    // if roomtype is not used by reservation then u can em.remove, if not you set enabled to false
+    // check if room type is linked to any room or room rate. if not, only then can delete & rearrange the ranks
     @Override
-    public void deleteRoomType(String roomTypeName) throws RoomTypeNotFoundException, DeleteRoomTypeException {
-        RoomType roomTypeToRemove = retrieveRoomTypeByRoomTypeName(roomTypeName);
-
-        if (!roomTypeToRemove.getRooms().isEmpty()) {
-            for (Room room : roomTypeToRemove.getRooms()) {
-                if (room.getRoomReservationLineEntities().size() != 0) {
-                    roomTypeToRemove.setEnabled(Boolean.FALSE);
-                    break;
+    public void deleteRoomType(RoomType roomTypeToRemove) throws RoomTypeNotFoundException, DeleteRoomTypeException {
+        Boolean isLowest = false;
+        Boolean canDelete = true;
+        
+        try{
+            roomSessionBeanLocal.retrieveRoomByRoomType(roomTypeToRemove.getName());
+            canDelete = false;
+            System.out.println("Cannot delete");
+        } catch(RoomTypeHasNoRoomException ex)
+        {
+            System.out.println("Can delete");
+            canDelete = true;
+        }
+        
+        if(canDelete)
+        {
+            try{
+                if(retrieveHighestRoomType().equals(roomTypeToRemove))
+                {
+                    RoomType prevRoomType = retrieveRoomTypeByNextHighestRoomType(roomTypeToRemove.getName());
+                    prevRoomType.setNextHigherRoomType(null);
+                    entityManager.remove(roomTypeToRemove);
+                } else
+                {
+                    Long roomTypeId = roomTypeToRemove.getRoomTypeId();
+                    RoomType rt = entityManager.find(RoomType.class, roomTypeId);
+                    RoomType prevRoomType = retrieveRoomTypeByNextHighestRoomType(roomTypeToRemove.getName());
+                    Long prtId = prevRoomType.getRoomTypeId();
+                    RoomType prt = entityManager.find(RoomType.class, prtId);
+                    RoomType higherRoomType = roomTypeToRemove.getNextHigherRoomType();
+                    rt.setNextHigherRoomType(null);
+                    entityManager.remove(rt);
+                    prt.setNextHigherRoomType(higherRoomType);
+                }
+                  
+            } catch (RoomTypeIsLowestException ex) {
+                isLowest = true;
+            } finally
+            {
+                if(isLowest)
+                {
+                    //notes: must use em.find BEFORE em.remove for em.remove to work. im not sure why but it solved the bug
+                    Long roomTypeId = roomTypeToRemove.getRoomTypeId();
+                    RoomType rt = entityManager.find(RoomType.class, roomTypeId);
+                    rt.setNextHigherRoomType(null);
+                    entityManager.remove(rt);
                 }
             }
-            entityManager.remove(roomTypeToRemove);
-        } else {
-            roomTypeToRemove.setEnabled(Boolean.FALSE);
+        } else
+        {
+            Long id = roomTypeToRemove.getRoomTypeId();
+            RoomType rt = entityManager.find(RoomType.class, id);
+            rt.setEnabled(Boolean.FALSE);
+            throw new DeleteRoomTypeException("Room Type cannot be deleted as it is currently used by Room or Room Rate. Room Type has been set to disabled!");
         }
+
     }
 
     @Override
@@ -189,16 +236,6 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
     }
 
-    @Override
-    public void rearrangingRank(String nextHigherRoomTypeName, Long newRoomTypeId) {
-        Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.nextHigherRoomType.name = :inName");
-        RoomType newRoomType = entityManager.find(RoomType.class, newRoomTypeId);
-        query.setParameter("inName", nextHigherRoomTypeName);
-        RoomType roomType = (RoomType) query.getSingleResult();
-        roomType.setNextHigherRoomType(newRoomType);
-        newRoomType.setNextHigherRoomType(roomType);
-    }
-    
     @Override
     public RoomType retrieveRoomTypeByNextHighestRoomType(String nextHighestRoomTypeName) throws RoomTypeIsLowestException
     {

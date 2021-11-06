@@ -6,9 +6,14 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import ejb.session.stateless.RoomRateSessionBeanLocal;
+import ejb.session.stateless.RoomSessionBeanLocal;
 import ejb.session.stateless.RoomTypeSessionBeanLocal;
 import entity.Employee;
+import entity.Room;
 import entity.RoomType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -17,7 +22,9 @@ import javax.ejb.Startup;
 import util.enumeration.AccessRightEnum;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
+import util.exception.RoomNumberExistException;
 import util.exception.RoomTypeNameExistException;
+import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 /**
@@ -28,6 +35,12 @@ import util.exception.UnknownPersistenceException;
 @LocalBean
 @Startup
 public class DataInitSessionBean {
+
+    @EJB
+    private RoomSessionBeanLocal roomSessionBeanLocal;
+
+    @EJB
+    private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
 
     @EJB
     private RoomTypeSessionBeanLocal roomTypeSessionBeanLocal;
@@ -52,8 +65,9 @@ public class DataInitSessionBean {
 
     }
 
-    private void doLoadData() {
+    private void doLoadData(){
         try {
+            //employee 
             Employee employee1 = new Employee("sysad", "one", "sa", "password", AccessRightEnum.SYSTEM_ADMIN);
             Employee employee2 = new Employee("opman", "two", "om", "password", AccessRightEnum.OPERATION_MANAGER);
             Employee employee3 = new Employee("saleman", "three", "sm", "password", AccessRightEnum.SALES_MANAGER);
@@ -63,7 +77,7 @@ public class DataInitSessionBean {
             employeeSessionBeanLocal.createNewEmployee(employee2);
             employeeSessionBeanLocal.createNewEmployee(employee3);
             employeeSessionBeanLocal.createNewEmployee(employee4);
-            
+            //room type
             RoomType grand = new RoomType("Grand Suite",null);
             RoomType junior = new RoomType("Junior Suite", grand);
             RoomType family = new RoomType("Family Room", junior);
@@ -76,12 +90,91 @@ public class DataInitSessionBean {
             roomTypeSessionBeanLocal.createNewRoomType(premier);
             roomTypeSessionBeanLocal.createNewRoomType(deluxe);
             
+            //room
+            Boolean isAvailable = Boolean.TRUE;
+            Room dr1 = new Room("0101", isAvailable);
+            Room dr2 = new Room("0201", isAvailable);
+            Room dr3 = new Room("0301", isAvailable);
+            Room dr4 = new Room("0401", isAvailable);
+            Room dr5 = new Room("0501", isAvailable); 
+            
+            Room pr1 = new Room("0102", isAvailable);
+            Room pr2 = new Room("0202", isAvailable);
+            Room pr3 = new Room("0302", isAvailable);
+            Room pr4 = new Room("0402", isAvailable);
+            Room pr5 = new Room("0502", isAvailable);
+            
+            /*Room fr1 = new Room("0103", isAvailable);
+            Room fr2 = new Room("0203", isAvailable);
+            Room fr3 = new Room("0303", isAvailable);
+            Room fr4 = new Room("0403", isAvailable);
+            Room fr5 = new Room("0503", isAvailable); */
+            
+            Room js1 = new Room("0104", isAvailable);
+            Room js2 = new Room("0204", isAvailable);
+            Room js3 = new Room("0304", isAvailable);
+            Room js4 = new Room("0404", isAvailable);
+            Room js5 = new Room("0504", isAvailable);
+            
+            Room gs1 = new Room("0105", isAvailable);
+            Room gs2 = new Room("0205", isAvailable);
+            Room gs3 = new Room("0305", isAvailable);
+            Room gs4 = new Room("0405", isAvailable);
+            Room gs5 = new Room("0505", isAvailable);
+            
+            String dr = "Deluxe Room";
+            String pr = "Premier Room";
+            String fr = "Family Room";
+            String js = "Junior Suite";
+            String gs = "Grand Suite";
+            
+            roomSessionBeanLocal.createNewRoom(dr1, dr);
+            roomSessionBeanLocal.createNewRoom(dr2, dr);
+            roomSessionBeanLocal.createNewRoom(dr3, dr);
+            roomSessionBeanLocal.createNewRoom(dr4, dr);
+            roomSessionBeanLocal.createNewRoom(dr5, dr);
+            
+            roomSessionBeanLocal.createNewRoom(pr1, pr);
+            roomSessionBeanLocal.createNewRoom(pr2, pr);
+            roomSessionBeanLocal.createNewRoom(pr3, pr);
+            roomSessionBeanLocal.createNewRoom(pr4, pr);
+            roomSessionBeanLocal.createNewRoom(pr5, pr);
+           
+            /*roomSessionBeanLocal.createNewRoom(fr1, fr);
+            roomSessionBeanLocal.createNewRoom(fr2, fr);
+            roomSessionBeanLocal.createNewRoom(fr3, fr);
+            roomSessionBeanLocal.createNewRoom(fr4, fr);
+            roomSessionBeanLocal.createNewRoom(fr5, fr);*/
+            
+            
+            roomSessionBeanLocal.createNewRoom(js1, js);
+            roomSessionBeanLocal.createNewRoom(js2, js);
+            roomSessionBeanLocal.createNewRoom(js3, js);
+            roomSessionBeanLocal.createNewRoom(js4, js);
+            roomSessionBeanLocal.createNewRoom(js5, js);
+            
+            roomSessionBeanLocal.createNewRoom(gs1, gs);
+            roomSessionBeanLocal.createNewRoom(gs2, gs);
+            roomSessionBeanLocal.createNewRoom(gs3, gs);
+            roomSessionBeanLocal.createNewRoom(gs4, gs);
+            roomSessionBeanLocal.createNewRoom(gs5, gs);
+            
+            
+            
         } catch (EmployeeUsernameExistException ex) {
             ex.printStackTrace();
         } catch (RoomTypeNameExistException ex) {
             ex.printStackTrace();
         } catch (UnknownPersistenceException ex) {
             ex.printStackTrace();
+        //} catch (RoomNumberExistException ex) {
+            ex.printStackTrace();
+        //} catch (RoomTypeNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (RoomNumberExistException ex) {
+            Logger.getLogger(DataInitSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RoomTypeNotFoundException ex) {
+            Logger.getLogger(DataInitSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

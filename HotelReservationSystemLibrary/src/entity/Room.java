@@ -56,6 +56,8 @@ public class Room implements Serializable {
         this();
         this.roomNumber = roomNumber;
         this.isAvailable = isAvailable;
+        this.enabled = Boolean.TRUE;
+        this.roomReservationLineEntities = new ArrayList<>();
     }
 
     public List<RoomReservationLineEntity> getRoomReservationLineEntities() {
