@@ -9,6 +9,7 @@ import entity.RoomType;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.DeleteRoomTypeException;
+import util.exception.RoomTypeIsLowestException;
 import util.exception.RoomTypeNameExistException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -23,7 +24,7 @@ public interface RoomTypeSessionBeanRemote {
     
     public List<RoomType> retrieveAllRoomTypes();
     
-    public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException;
+    public Long createNewRoomType(RoomType roomType, String nextHigherRoomTypeName) throws RoomTypeNameExistException, UnknownPersistenceException, RoomTypeNotFoundException;
     
     public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException;
     
@@ -35,7 +36,13 @@ public interface RoomTypeSessionBeanRemote {
     
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException;
 
-    public void rearrangingRank(Integer rank);
+    public void rearrangingRank(String nextHigherRoomTypeName, Long newRoomTypeId);
+
+    public RoomType retrieveRoomTypeByNextHighestRoomType(String roomTypeName)throws RoomTypeIsLowestException;
+
+    public RoomType retrieveHighestRoomType();
+
+    public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException;
     
    
 }
