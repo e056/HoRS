@@ -230,5 +230,5 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         return rooms;
 
     }
-
+    
 }

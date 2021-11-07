@@ -139,6 +139,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     // check if room type is linked to any room or room rate. if not, only then can delete & rearrange the ranks
+    // if room type is linked to any rooms and we disable room type, we must also disable all rooms belonging to this room type
     @Override
     public void deleteRoomType(RoomType roomTypeToRemove) throws RoomTypeNotFoundException, DeleteRoomTypeException {
         Boolean isLowest = false;
@@ -192,8 +193,16 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         {
             Long id = roomTypeToRemove.getRoomTypeId();
             RoomType rt = entityManager.find(RoomType.class, id);
+            List<Room> roomsToDisable = rt.getRooms();
+            for(Room room : roomsToDisable)
+            {
+                Long roomId = room.getRoomId();
+                Room roomFound = entityManager.find(Room.class, roomId);
+                roomFound.setEnabled(Boolean.FALSE);
+                        
+            }
             rt.setEnabled(Boolean.FALSE);
-            throw new DeleteRoomTypeException("Room Type cannot be deleted as it is currently used by Room or Room Rate. Room Type has been set to disabled!");
+            throw new DeleteRoomTypeException("Room Type cannot be deleted as it is currently used by Room or Room Rate. Room Type and its rooms have been set to disabled!");
         }
 
     }
