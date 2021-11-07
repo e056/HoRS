@@ -9,6 +9,7 @@ import entity.Reservation;
 import entity.Room;
 import entity.RoomReservationLineEntity;
 import entity.RoomType;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomException;
@@ -27,6 +28,8 @@ import util.exception.UpdateRoomException;
 @Local
 public interface RoomSessionBeanLocal {
 
+    public List<Room> retrieveRoomsAvailableForReservation(Date checkInDate, Date checkOutDate);
+
     public List<Room> retrieveAllRooms();
 
     public Room retrieveRoomByRoomId(Long id) throws RoomNotFoundException;
@@ -41,6 +44,7 @@ public interface RoomSessionBeanLocal {
 
     public List<RoomReservationLineEntity> retrieveRoomReservationsByRoomId(Long roomId);
 
+    public List<Room> retrieveAvailableAndEnabledRooms();
     public List<Room> retrieveRoomByRoomType(String roomType) throws RoomTypeHasNoRoomException;
 
 

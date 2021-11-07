@@ -5,9 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.Reservation;
 import entity.Room;
 import entity.RoomReservationLineEntity;
 import entity.RoomType;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -160,7 +162,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         } else {
             roomToRemove.setEnabled(Boolean.FALSE);
             throw new DeleteRoomException("Room is associated with reservation, disabling room for future use.");
-            
+
         }
     }
 
@@ -203,6 +205,30 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             return rooms;
         }
    
+    }
+    
+    public List<Room> retrieveAvailableAndEnabledRooms() {
+        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.isAvailable = true AND r.enabled = true");
+        return query.getResultList();
+        
+    }
+
+    public List<Room> retrieveRoomsAvailableForReservation(Date checkInDate, Date checkOutDate) {
+        Query query = entityManager.createQuery("SELECT r FROM Reservation r WHERE r.startDate BETWEEN :ci AND :co ");
+        query.setParameter(":ci", checkInDate);
+        query.setParameter(":co", checkOutDate);
+        
+        List<Reservation> reservations = query.getResultList();
+        List<Room> rooms = retrieveAvailableAndEnabledRooms();
+        
+        for (Reservation reservation : reservations) {
+            for (RoomReservationLineEntity rrle: reservation.getRoomReservationLineEntities()) {
+                rooms.remove(rrle.getRoom());
+            }   
+        }
+        
+        return rooms;
+
     }
 
 }

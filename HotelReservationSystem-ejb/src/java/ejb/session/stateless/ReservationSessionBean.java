@@ -6,19 +6,18 @@
 package ejb.session.stateless;
 
 import entity.Reservation;
-import entity.Room;
+import entity.RoomReservationLineEntity;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.CreateNewReservationException;
 import util.exception.ReservationNotFoundException;
-import util.exception.RoomNotFoundException;
-import util.exception.UnknownPersistenceException;
 
 /**
  *
@@ -29,44 +28,42 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
+    @Resource
+    private EJBContext eJBContext;
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
-    
-    
 
-//    
-//    @Override
-//    public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException
-//    {
-//        
-//        Room room = roomSessionBeanLocal.retrieveRoomByRoomId(roomId);
-//        
-//        Query query = em.createQuery("SELECT r.reservation FROM Room r WHERE r.roomId = :inRoomId");
-//        query.setParameter("inRoomId", roomId);
-//        
-//        return query.getResultList();
-//       
-//    }
-    
+    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException {
+
+        em.persist(reservation);
+
+        for (RoomReservationLineEntity lineEntity : reservation.getRoomReservationLineEntities()) {
+            if (!lineEntity.getRoom().getEnabled() || !lineEntity.getRoom().getIsAvailable()) {
+                eJBContext.setRollbackOnly();
+                throw new CreateNewReservationException("Room(s) is not available/enabled for reservation!");
+            }
+        }
+
+        em.flush();
+
+        return reservation;
+    }
+
     @Override
-    public List<Reservation> retrieveReservationsByDate(Date dateToday)
-    {
+    public List<Reservation> retrieveReservationsByDate(Date dateToday) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.startDate = :inDateToday");
         query.setParameter("inDateToday", dateToday);
-        
+
         return query.getResultList();
     }
-    
+
     @Override
-    public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException
-    {
-        Reservation reservation =  em.find(Reservation.class, reservationId);
+    public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException {
+        Reservation reservation = em.find(Reservation.class,
+                reservationId);
         return reservation;
-        
+
     }
 
-    public void persist(Object object) {
-        em.persist(object);
-    }
 }

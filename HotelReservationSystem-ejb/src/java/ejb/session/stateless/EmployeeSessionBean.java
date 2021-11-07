@@ -74,10 +74,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         Query query = em.createQuery("SELECT s FROM Employee s");
         
         List<Employee> employees = query.getResultList();
-        
-        for (Employee e : employees) {
-            e.getReservations().size();
-        }
+
 
         return employees;
     }
@@ -97,7 +94,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
             Employee employee = retrieveEmployeeByUsername(username);
 
             if (employee.getPassword().equals(password)) {
-                employee.getReservations().size();
+
                 return employee;
             } else {
                 throw new InvalidLoginCredentialException("Username does not exist or invalid password!");

@@ -47,31 +47,33 @@ public class Reservation implements Serializable {
 //    @JoinColumn(nullable = false)
 //    private List<Room> rooms;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Employee employee;
+//    @ManyToOne
+//    private Employee employee;
    
     @ManyToOne
-    @JoinColumn(nullable = false)
+    //@JoinColumn(nullable = false)
     private Guest guest;
     
     @ManyToOne
-    @JoinColumn(nullable = false)
+    //@JoinColumn(nullable = false)
     private Partner partner;
     
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany
+    @JoinColumn(name = "reservationId")
     private List<RoomReservationLineEntity> roomReservationLineEntities;
+    
+    private boolean allocated;
 
     public Reservation() {
         this.roomReservationLineEntities = new ArrayList<>();
+        this.allocated = false;
     }
 
-    public Reservation(Date startDate, Date endDate, BigDecimal totalPrice, Employee employee, Guest guest, Partner partner, List<RoomReservationLineEntity> roomReservationLineEntities) {
+    public Reservation(Date startDate, Date endDate, BigDecimal totalPrice, Guest guest, Partner partner, List<RoomReservationLineEntity> roomReservationLineEntities) {
         this();
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalPrice = totalPrice;
-        this.employee = employee;
         this.guest = guest;
         this.partner = partner;
         this.roomReservationLineEntities = roomReservationLineEntities;
@@ -110,13 +112,13 @@ public class Reservation implements Serializable {
 //        this.rooms = rooms;
 //    }
 
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
+//    public Employee getEmployee() {
+//        return employee;
+//    }
+//
+//    public void setEmployee(Employee employee) {
+//        this.employee = employee;
+//    }
 
     public Guest getGuest() {
         return guest;
@@ -189,6 +191,20 @@ public class Reservation implements Serializable {
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    /**
+     * @return the allocated
+     */
+    public boolean isAllocated() {
+        return allocated;
+    }
+
+    /**
+     * @param allocated the allocated to set
+     */
+    public void setAllocated(boolean allocated) {
+        this.allocated = allocated;
     }
     
 }

@@ -10,6 +10,7 @@ import entity.Reservation;
 import entity.Room;
 import entity.RoomReservationLineEntity;
 import entity.RoomType;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.DeleteRoomException;
@@ -44,6 +45,10 @@ public interface RoomSessionBeanRemote {
     public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException;
 
     public List<RoomReservationLineEntity> retrieveRoomReservationsByRoomId(Long roomId);
+
+    public List<Room> retrieveAvailableAndEnabledRooms();
+
+    public List<Room> retrieveRoomsAvailableForReservation(Date checkInDate, Date checkOutDate);
 
 
     

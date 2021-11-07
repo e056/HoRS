@@ -6,8 +6,11 @@
 package ejb.session.stateless;
 
 import entity.Reservation;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.CreateNewReservationException;
+import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 
 /**
@@ -16,6 +19,11 @@ import util.exception.RoomNotFoundException;
  */
 @Remote
 public interface ReservationSessionBeanRemote {
-    
+
     //public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
+    public List<Reservation> retrieveReservationsByDate(Date dateToday);
+
+    public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException;
+
+    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException;
 }

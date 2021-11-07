@@ -35,4 +35,6 @@ public interface RoomRateSessionBeanLocal {
 
     public void deleteRoomRate(Long rrId) throws RoomRateNotFoundException, DeleteRoomRateException;
 
+    public RoomRate retrievePublishedRoomRateByRoom(Long roomId)  throws RoomRateNotFoundException;
+
 }

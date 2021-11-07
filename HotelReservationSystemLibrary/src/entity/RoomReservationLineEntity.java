@@ -6,12 +6,12 @@
 package entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import javax.persistence.Column;
+import java.util.ArrayList;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 /**
@@ -26,27 +26,39 @@ public class RoomReservationLineEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomReservationLineId;
     
-    @Column
-    private BigDecimal price;
+//    @Column
+//    private BigDecimal price;
     
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private Room room;
     
-    @ManyToOne
-    private Reservation reservation;
+//    @ManyToOne(optional = false)
+//    @JoinColumn(nullable = false)
+//    private Reservation reservation;
+    
+    
 
     public RoomReservationLineEntity() {
     }
 
-    
-    
-    public BigDecimal getPrice() {
-        return price;
+    public RoomReservationLineEntity(Room room) {
+        this.room = room;
+ 
     }
+    
+    
+    
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+    
+    
+//    public BigDecimal getPrice() {
+//        return price;
+//    }
+//
+//    public void setPrice(BigDecimal price) {
+//        this.price = price;
+//    }
 
     public Room getRoom() {
         return room;
@@ -56,13 +68,13 @@ public class RoomReservationLineEntity implements Serializable {
         this.room = room;
     }
 
-    public Reservation getReservation() {
-        return reservation;
-    }
-
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
-    }
+//    public Reservation getReservation() {
+//        return reservation;
+//    }
+//
+//    public void setReservation(Reservation reservation) {
+//        this.reservation = reservation;
+//    }
 
     public Long getRoomReservationLineId() {
         return roomReservationLineId;

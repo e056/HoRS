@@ -38,12 +38,12 @@ public class Employee implements Serializable {
     private String password;
     @Column(nullable = false)
     private AccessRightEnum accessRightEnum;
-
-    @OneToMany(mappedBy = "employee") // lazy fetching
-    private List<Reservation> reservations;
+//
+//    @OneToMany(mappedBy = "employee") // lazy fetching
+//    private List<Reservation> reservations;
 
     public Employee() {
-        this.reservations = new ArrayList<>();
+        //this.reservations = new ArrayList<>();
     }
 
     public Employee(String firstName, String lastName, String username, String password, AccessRightEnum accessRightEnum) {
@@ -150,19 +150,19 @@ public class Employee implements Serializable {
         this.accessRightEnum = accessRightEnum;
     }
 
-    /**
-     * @return the reservations
-     */
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    /**
-     * @param reservations the reservations to set
-     */
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
-    }
+//    /**
+//     * @return the reservations
+//     */
+//    public List<Reservation> getReservations() {
+//        return reservations;
+//    }
+//
+//    /**
+//     * @param reservations the reservations to set
+//     */
+//    public void setReservations(List<Reservation> reservations) {
+//        this.reservations = reservations;
+//    }
 
     /**
      * @return the lastName

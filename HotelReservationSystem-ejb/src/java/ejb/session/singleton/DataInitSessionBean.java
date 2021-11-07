@@ -51,12 +51,12 @@ public class DataInitSessionBean {
 
     @EJB
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
-    
+
     
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-     public DataInitSessionBean() {
+    public DataInitSessionBean() {
     }
 
     @PostConstruct
@@ -76,7 +76,7 @@ public class DataInitSessionBean {
             Employee employee2 = new Employee("opman", "two", "om", "password", AccessRightEnum.OPERATION_MANAGER);
             Employee employee3 = new Employee("saleman", "three", "sm", "password", AccessRightEnum.SALES_MANAGER);
             Employee employee4 = new Employee("guestrln", "four", "gro", "password", AccessRightEnum.GUEST_RELATION);
-            
+
             employeeSessionBeanLocal.createNewEmployee(employee1);
             employeeSessionBeanLocal.createNewEmployee(employee2);
             employeeSessionBeanLocal.createNewEmployee(employee3);
@@ -87,7 +87,7 @@ public class DataInitSessionBean {
             RoomType family = new RoomType("Family Room", junior);
             RoomType premier = new RoomType("Premier Room", family);
             RoomType deluxe = new RoomType("Deluxe Room", premier);
-            
+
             roomTypeSessionBeanLocal.createNewRoomType(grand);
             roomTypeSessionBeanLocal.createNewRoomType(junior);
             roomTypeSessionBeanLocal.createNewRoomType(family);

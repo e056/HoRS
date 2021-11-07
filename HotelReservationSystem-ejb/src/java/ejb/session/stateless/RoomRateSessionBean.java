@@ -17,6 +17,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import util.enumeration.RoomRateType;
 import util.exception.DeleteRoomRateException;
 import util.exception.RoomRateNameExistException;
 import util.exception.RoomRateNotFoundException;
@@ -144,6 +145,20 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
             return (RoomRate) query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new RoomRateNotFoundException("Room Rate " + name + " does not exist!");
+
+        }
+
+    }
+
+    public RoomRate retrievePublishedRoomRateByRoom(Long roomId) throws RoomRateNotFoundException {
+        Query query = entityManager.createQuery("SELECT r FROM RoomRate r WHERE r.roomRateId = :roomId AND r.type = :inType");
+        query.setParameter("roomId", roomId);
+        query.setParameter("inType", RoomRateType.PUBLISHED);
+
+        try {
+            return (RoomRate) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new RoomRateNotFoundException("Room Rate does not exist!");
 
         }
 

@@ -50,6 +50,7 @@ public class Room implements Serializable {
 
     public Room() {
         this.roomReservationLineEntities = new ArrayList<>();
+        this.enabled = true;
     }
 
     public Room(String roomNumber, boolean isAvailable) {
@@ -127,7 +128,7 @@ public class Room implements Serializable {
      * @return the isAvailable
      */
     public Boolean getIsAvailable() {
-        return isIsAvailable();
+        return isAvailable;
     }
 
     /**
@@ -137,19 +138,7 @@ public class Room implements Serializable {
         this.setIsAvailable((boolean) isAvailable);
     }
 
-    /**
-     * @return the isAvailable
-     */
-    public boolean isIsAvailable() {
-        return isAvailable;
-    }
 
-    /**
-     * @param isAvailable the isAvailable to set
-     */
-    public void setIsAvailable(boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
 
     /**
      * @return the roomType
