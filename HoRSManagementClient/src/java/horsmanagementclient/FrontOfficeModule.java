@@ -5,7 +5,6 @@
  */
 package horsmanagementclient;
 
-import ejb.session.stateful.WalkInRoomReservationSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import entity.Employee;
 import entity.Reservation;
@@ -25,6 +24,7 @@ import util.exception.CreateNewReservationException;
 import util.exception.InvalidAccessRightException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNotFoundException;
+import ejb.session.stateful.RoomReservationSessionBeanRemote;
 
 /**
  *
@@ -32,11 +32,11 @@ import util.exception.RoomRateNotFoundException;
  */
 public class FrontOfficeModule {
 
-    private WalkInRoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
+    private RoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
     private RoomSessionBeanRemote roomSessionBeanRemote;
     private Employee currEmployee;
 
-    public FrontOfficeModule(WalkInRoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, Employee currEmployee) {
+    public FrontOfficeModule(RoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, Employee currEmployee) {
         this.walkInRoomReservationSessionBeanRemote = walkInRoomReservationSessionBeanRemote;
         this.roomSessionBeanRemote = roomSessionBeanRemote;
         this.currEmployee = currEmployee;
@@ -122,7 +122,7 @@ public class FrontOfficeModule {
                     try {
                         room = roomSessionBeanRemote.retrieveRoomByRoomNumber(roomNumber);
                         System.out.println("Selecting Room = " + room.getRoomNumber());
-                        BigDecimal subTotal = walkInRoomReservationSessionBeanRemote.addRoom(room);
+                        BigDecimal subTotal = walkInRoomReservationSessionBeanRemote.walkInAddRoom(room);
                         System.out.println(room.getRoomNumber() + " added successfully!: "
                                 + "Price of stay for this room @ " + NumberFormat.getCurrencyInstance().format(subTotal) + "\n");
                     } catch (RoomNotFoundException ex) {
@@ -171,7 +171,7 @@ public class FrontOfficeModule {
         } catch (ParseException ex) {
             System.out.println("Invalid date input!\n");
         } catch (CreateNewReservationException ex) {
-            Logger.getLogger(FrontOfficeModule.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error when creating new Reservation: " + ex.getMessage());
         }
     }
 

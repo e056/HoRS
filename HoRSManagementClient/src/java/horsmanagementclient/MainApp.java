@@ -5,7 +5,6 @@
  */
 package horsmanagementclient;
 
-import ejb.session.stateful.WalkInRoomReservationSessionBeanRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
 import ejb.session.stateless.RoomAllocationSessionBeanRemote;
@@ -16,6 +15,7 @@ import entity.Employee;
 import java.util.Scanner;
 import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
+import ejb.session.stateful.RoomReservationSessionBeanRemote;
 
 /**
  *
@@ -34,7 +34,7 @@ public class MainApp {
     private RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote;
 
     // Front Office Module
-    private WalkInRoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
+    private RoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
 
     private SystemAdministrationModule systemAdministrationModule;
     private HotelOperationModule hotelOperationModule;
@@ -63,7 +63,7 @@ public class MainApp {
             EmployeeSessionBeanRemote employeeSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote,
             RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote,
             RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote,
-            WalkInRoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote) {
+            RoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
         this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;

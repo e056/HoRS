@@ -26,7 +26,7 @@ import util.exception.RoomRateNotFoundException;
  * @author ANGELY
  */
 @Stateful
-public class WalkInRoomReservationSessionBean implements WalkInRoomReservationSessionBeanRemote {
+public class RoomReservationSessionBean implements RoomReservationSessionBeanRemote {
 
     @EJB
     private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
@@ -44,7 +44,7 @@ public class WalkInRoomReservationSessionBean implements WalkInRoomReservationSe
     private List<RoomReservationLineEntity> lineEntities;
     private BigDecimal totalAmount;
 
-    public WalkInRoomReservationSessionBean() {
+    public RoomReservationSessionBean() {
         initialiseState();
     }
 
@@ -76,7 +76,8 @@ public class WalkInRoomReservationSessionBean implements WalkInRoomReservationSe
 
     }
 
-    public BigDecimal addRoom(Room room) throws RoomRateNotFoundException {
+    @Override
+    public BigDecimal walkInAddRoom(Room room) throws RoomRateNotFoundException {
         System.out.println("Add room roomTypeId = " + room.getRoomType().getRoomTypeId());
                 
         System.out.print(checkInDate.toString());

@@ -20,11 +20,9 @@ import util.exception.RoomRateNotFoundException;
  * @author ANGELY
  */
 @Remote
-public interface WalkInRoomReservationSessionBeanRemote {
+public interface RoomReservationSessionBeanRemote {
 
     public List<Room> walkInSearchRoom(Date checkInDate, Date checkOutDate);
-
-    public BigDecimal addRoom(Room room) throws RoomRateNotFoundException;
 
     public Reservation walkInReserveRoom() throws CreateNewReservationException;
 
@@ -40,5 +38,6 @@ public interface WalkInRoomReservationSessionBeanRemote {
 
     public Date getCheckOutDate();
 
-    
+    public BigDecimal walkInAddRoom(Room room) throws RoomRateNotFoundException;
+
 }

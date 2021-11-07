@@ -22,23 +22,80 @@ import javax.persistence.OneToMany;
 @Entity
 public class Guest implements Serializable {
 
+    /**
+     * @return the firstName
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * @return the reservations
+     */
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    /**
+     * @param reservations the reservations to set
+     */
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guestId;
-    
+
     @Column(nullable = false, length = 64, unique = true)
     private String passportNumber;
     @Column(nullable = false, length = 64)
+    private String firstName;
+    @Column(nullable = false, length = 64)
+    private String lastName;
+    @Column(nullable = false, length = 64)
     private String password;
-    
+
     @OneToMany(mappedBy = "guest")
     private List<Reservation> reservations;
 
     public Guest() {
         reservations = new ArrayList<>();
     }
+
+    public Guest(String passportNumber, String firstName, String lastName, String password) {
+        this.passportNumber = passportNumber;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+    }
     
+    public String getFullName() {
+        return this.getFirstName() + " " + this.getLastName();
+    }
+
     public Long getGuestId() {
         return guestId;
     }
@@ -99,5 +156,5 @@ public class Guest implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
 }

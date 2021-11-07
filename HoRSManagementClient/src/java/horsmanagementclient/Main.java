@@ -13,7 +13,7 @@ import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import javax.ejb.EJB;
-import ejb.session.stateful.WalkInRoomReservationSessionBeanRemote;
+import ejb.session.stateful.RoomReservationSessionBeanRemote;
 
 /**
  *
@@ -22,7 +22,7 @@ import ejb.session.stateful.WalkInRoomReservationSessionBeanRemote;
 public class Main {
 
     @EJB
-    private static WalkInRoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
+    private static RoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
 
     @EJB
     private static RoomTypeSessionBeanRemote roomTypeSessionBeanRemote;
