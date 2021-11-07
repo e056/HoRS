@@ -85,8 +85,8 @@ public class FrontOfficeModule {
         try {
             Scanner scanner = new Scanner(System.in);
             Integer response = 0;
-            SimpleDateFormat inputDateFormat = new SimpleDateFormat("d/M/y");
-            SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("d/M/yy");
+            SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             Date startDate;
             Date endDate;
             Room room;
@@ -97,7 +97,7 @@ public class FrontOfficeModule {
             System.out.println("*** Hotel Reservation System :: Walk-In Search Room ***\n");
             System.out.print("Enter Check-In Date (dd/mm/yyyy)> ");
             startDate = inputDateFormat.parse(scanner.nextLine().trim());
-            System.out.print("Enter Check-Out Date (dd/mm/yyyy)> ");
+            System.out.print("Enter Check-Out Date (dd/mm/yyyy)>");
             endDate = inputDateFormat.parse(scanner.nextLine().trim());
             System.out.println("------------------------");
 
@@ -145,9 +145,10 @@ public class FrontOfficeModule {
                                 roomReservationLineEntity.getRoom().getRoomNumber(),
                                 NumberFormat.getCurrencyInstance().format(roomReservationLineEntity.getPrice()));
                     }
-                    System.out.printf("\nNumber of Rooms: %d, Total Amount: %s\n",
+                    System.out.printf("\nNumber of Rooms: %d, Total Amount: %s, Check-in: %s, Check-out:%s\n",
                             walkInRoomReservationSessionBeanRemote.getNumOfRooms(),
-                            NumberFormat.getCurrencyInstance().format(walkInRoomReservationSessionBeanRemote.getTotalAmount()));
+                            NumberFormat.getCurrencyInstance().format(walkInRoomReservationSessionBeanRemote.getTotalAmount())
+                    , outputDateFormat.format(startDate), outputDateFormat.format(endDate));
 
                     System.out.println("------------------------");
                     System.out.print("Confirm reservation? (Enter 'Y' to complete reservation)> ");

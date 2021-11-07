@@ -65,9 +65,7 @@ public class WalkInRoomReservationSessionBean implements WalkInRoomReservationSe
         this.checkInDate = checkInDate;
 
         this.checkOutDate = checkOutDate;
-        
-        System.out.print(checkInDate.toString());
-        System.out.print(checkOutDate.toString());
+
 
         long duration =checkOutDate.getTime() -checkInDate.getTime();
         System.out.print(duration);
@@ -80,6 +78,9 @@ public class WalkInRoomReservationSessionBean implements WalkInRoomReservationSe
 
     public BigDecimal addRoom(Room room) throws RoomRateNotFoundException {
         System.out.println("Add room roomTypeId = " + room.getRoomType().getRoomTypeId());
+                
+        System.out.print(checkInDate.toString());
+        System.out.print(checkOutDate.toString());
 
         BigDecimal roomCost = roomRateSessionBeanLocal.retrievePublishedRoomRateByRoomType(room.getRoomType().getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days));
         System.out.println(days);
