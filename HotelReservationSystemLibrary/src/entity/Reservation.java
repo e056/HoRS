@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,6 +41,9 @@ public class Reservation implements Serializable {
     @Column(nullable = false)
     private Date endDate;
     
+    @Column(nullable = false)
+    private boolean checkedIn;
+    
     @Column
     private BigDecimal totalPrice;
 
@@ -58,8 +62,7 @@ public class Reservation implements Serializable {
     //@JoinColumn(nullable = false)
     private Partner partner;
     
-    @OneToMany
-    @JoinColumn(name = "reservationId")
+    @OneToMany(mappedBy="reservation", cascade = {CascadeType.PERSIST})
     private List<RoomReservationLineEntity> roomReservationLineEntities;
     
     private boolean allocated;
@@ -67,6 +70,7 @@ public class Reservation implements Serializable {
     public Reservation() {
         this.roomReservationLineEntities = new ArrayList<>();
         this.allocated = false;
+        this.checkedIn = false;
     }
 
     public Reservation(Date startDate, Date endDate, BigDecimal totalPrice, Guest guest, Partner partner, List<RoomReservationLineEntity> roomReservationLineEntities) {

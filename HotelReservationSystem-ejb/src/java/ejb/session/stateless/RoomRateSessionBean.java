@@ -150,9 +150,11 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
     }
 
-    public RoomRate retrievePublishedRoomRateByRoom(Long roomId) throws RoomRateNotFoundException {
-        Query query = entityManager.createQuery("SELECT r FROM RoomRate r WHERE r.roomRateId = :roomId AND r.type = :inType");
-        query.setParameter("roomId", roomId);
+    public RoomRate retrievePublishedRoomRateByRoomType(Long roomTypeId) throws RoomRateNotFoundException {
+        System.out.println("Room type id is " + roomTypeId);
+        
+        Query query = entityManager.createQuery("SELECT r FROM RoomRate r WHERE r.roomType.roomTypeId = :roomTypeId AND r.type = :inType");
+        query.setParameter("roomTypeId", roomTypeId);
         query.setParameter("inType", RoomRateType.PUBLISHED);
 
         try {

@@ -214,9 +214,9 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
     public List<Room> retrieveRoomsAvailableForReservation(Date checkInDate, Date checkOutDate) {
-        Query query = entityManager.createQuery("SELECT r FROM Reservation r WHERE r.startDate BETWEEN :ci AND :co ");
-        query.setParameter(":ci", checkInDate);
-        query.setParameter(":co", checkOutDate);
+        Query query = entityManager.createQuery("SELECT r FROM Reservation r WHERE r.startDate >=:startDate AND r.startDate <= :endDate OR r.endDate > :startDate AND r.endDate <= :endDate ");
+        query.setParameter("startDate", checkInDate);
+        query.setParameter("endDate", checkOutDate);
         
         List<Reservation> reservations = query.getResultList();
         List<Room> rooms = retrieveAvailableAndEnabledRooms();

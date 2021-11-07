@@ -31,7 +31,7 @@ public interface RoomRateSessionBeanRemote {
 
     public RoomRate retrieveRoomRateByRoomRateName(String name) throws RoomRateNotFoundException;
 
-    public RoomRate retrievePublishedRoomRateByRoom(Long roomId)  throws RoomRateNotFoundException;
+    public RoomRate retrievePublishedRoomRateByRoomType(Long roomTypeId)  throws RoomRateNotFoundException;
 
     public void updateRoomRate(RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException;
 

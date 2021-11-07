@@ -5,6 +5,7 @@
  */
 package horsmanagementclient;
 
+import ejb.session.stateful.WalkInRoomReservationSessionBeanRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
 import ejb.session.stateless.RoomAllocationSessionBeanRemote;
@@ -25,12 +26,15 @@ public class MainApp {
     // System admin module
     private PartnerSessionBeanRemote partnerSessionBeanRemote;
     private EmployeeSessionBeanRemote employeeSessionBeanRemote;
-    
+
     // Hotel Op module
     private RoomTypeSessionBeanRemote roomTypeSessionBeanRemote;
     private RoomSessionBeanRemote roomSessionBeanRemote;
     private RoomRateSessionBeanRemote roomRateSessionBeanRemote;
     private RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote;
+
+    // Front Office Module
+    private WalkInRoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
 
     private SystemAdministrationModule systemAdministrationModule;
     private HotelOperationModule hotelOperationModule;
@@ -38,12 +42,13 @@ public class MainApp {
 
     private Employee currEmployee;
 
-    // ONLY SYSTEMADMINMODULE
+    // SystemAdmin Mod 
     public MainApp(PartnerSessionBeanRemote partnerSessionBeanRemote, EmployeeSessionBeanRemote employeeSessionBeanRemote) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
     }
 
+    // SystemAdmin Mod and Hotel Op 
     public MainApp(PartnerSessionBeanRemote partnerSessionBeanRemote, EmployeeSessionBeanRemote employeeSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
@@ -51,9 +56,22 @@ public class MainApp {
         this.roomSessionBeanRemote = roomSessionBeanRemote;
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
         this.roomAllocationSessionBeanRemote = roomAllocationSessionBeanRemote;
+
     }
-    
-    
+
+    public MainApp(PartnerSessionBeanRemote partnerSessionBeanRemote,
+            EmployeeSessionBeanRemote employeeSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote,
+            RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote,
+            RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote,
+            WalkInRoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote) {
+        this.partnerSessionBeanRemote = partnerSessionBeanRemote;
+        this.employeeSessionBeanRemote = employeeSessionBeanRemote;
+        this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;
+        this.roomSessionBeanRemote = roomSessionBeanRemote;
+        this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
+        this.roomAllocationSessionBeanRemote = roomAllocationSessionBeanRemote;
+        this.walkInRoomReservationSessionBeanRemote = walkInRoomReservationSessionBeanRemote;
+    }
 
     public void runApp() {
         Scanner scanner = new Scanner(System.in);
@@ -81,6 +99,7 @@ public class MainApp {
                                 roomRateSessionBeanRemote, roomAllocationSessionBeanRemote, currEmployee);
                         this.systemAdministrationModule = new SystemAdministrationModule(partnerSessionBeanRemote,
                                 employeeSessionBeanRemote, currEmployee);
+                        this.frontOfficeModule = new FrontOfficeModule(walkInRoomReservationSessionBeanRemote, roomSessionBeanRemote, currEmployee);
 
                         menuMain();
                     } catch (InvalidLoginCredentialException ex) {
@@ -111,6 +130,7 @@ public class MainApp {
         password = scanner.nextLine().trim();
 
         if (username.length() > 0 && password.length() > 0) {
+            System.out.println("here");
             this.currEmployee = employeeSessionBeanRemote.employeeLogin(username, password);
         } else {
             throw new InvalidLoginCredentialException("Missing login credential!");
@@ -148,11 +168,11 @@ public class MainApp {
                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
                     }
                 } else if (response == 3) {
-//                    try {
-//                        // call meny for front office mod
-//                    } catch (InvalidAccessRightException ex) {
-//                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
-//                    }
+                    try {
+                        frontOfficeModule.menuFrontOffice();
+                    } catch (InvalidAccessRightException ex) {
+                        System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                    }
                 } else if (response == 4) {
                     break;
                 } else {

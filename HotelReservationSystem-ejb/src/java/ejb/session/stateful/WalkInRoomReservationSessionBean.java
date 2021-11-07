@@ -26,7 +26,7 @@ import util.exception.RoomRateNotFoundException;
  * @author ANGELY
  */
 @Stateful
-public class WalkInRoomReservationSessionBean implements RoomReservationSessionBeanRemote {
+public class WalkInRoomReservationSessionBean implements WalkInRoomReservationSessionBeanRemote {
 
     @EJB
     private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
@@ -39,7 +39,7 @@ public class WalkInRoomReservationSessionBean implements RoomReservationSessionB
 
     private Date checkInDate;
     private Date checkOutDate;
-    private long days;
+    private int days;
     private int numOfRooms;
     private List<RoomReservationLineEntity> lineEntities;
     private BigDecimal totalAmount;
@@ -51,7 +51,6 @@ public class WalkInRoomReservationSessionBean implements RoomReservationSessionB
     private void initialiseState() {
         this.checkInDate = null;
         this.checkOutDate = null;
-        this.days = 0;
         this.numOfRooms = 0;
         this.lineEntities = new ArrayList<>();
         this.totalAmount = new BigDecimal("0.00");
@@ -65,23 +64,29 @@ public class WalkInRoomReservationSessionBean implements RoomReservationSessionB
         initialiseState();
         this.checkInDate = checkInDate;
 
-        this.checkOutDate = this.checkOutDate;
+        this.checkOutDate = checkOutDate;
+        
+        System.out.print(checkInDate.toString());
+        System.out.print(checkOutDate.toString());
 
-        long duration = checkInDate.getTime() - checkOutDate.getTime();
+        long duration =checkOutDate.getTime() -checkInDate.getTime();
+        System.out.print(duration);
 
-        this.days = Math.round(TimeUnit.MILLISECONDS.toDays(duration));
+        this.days = (int)Math.round(TimeUnit.MILLISECONDS.toDays(duration));
 
         return roomSessionBeanLocal.retrieveRoomsAvailableForReservation(checkInDate, checkOutDate);
 
     }
 
     public BigDecimal addRoom(Room room) throws RoomRateNotFoundException {
+        System.out.println("Add room roomTypeId = " + room.getRoomType().getRoomTypeId());
 
-        BigDecimal roomCost = roomRateSessionBeanLocal.retrievePublishedRoomRateByRoom(room.getRoomId()).getRatePerNight();
-        this.lineEntities.add(new RoomReservationLineEntity(room));
+        BigDecimal roomCost = roomRateSessionBeanLocal.retrievePublishedRoomRateByRoomType(room.getRoomType().getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days));
+        System.out.println(days);
+
+        this.lineEntities.add(new RoomReservationLineEntity(room, roomCost));
         this.numOfRooms++;
         totalAmount = totalAmount.add(roomCost);
-        this.numOfRooms++;
         return roomCost;
 
     }
@@ -89,6 +94,9 @@ public class WalkInRoomReservationSessionBean implements RoomReservationSessionB
     public Reservation walkInReserveRoom() throws CreateNewReservationException {
         Reservation reservation = new Reservation();
         reservation.setRoomReservationLineEntities(lineEntities);
+        for (RoomReservationLineEntity le : lineEntities) {
+            le.setReservation(reservation);
+        }
         reservation.setStartDate(checkInDate);
         reservation.setEndDate(checkOutDate);
         reservation.setTotalPrice(totalAmount);
@@ -96,4 +104,31 @@ public class WalkInRoomReservationSessionBean implements RoomReservationSessionB
         return reservationSessionBeanLocal.createNewReservation(reservation);
 
     }
+    
+    public int getNumOfRooms() {
+        return numOfRooms;
+    }
+    
+    public void clear() {
+        initialiseState();
+    }
+    
+    public List<RoomReservationLineEntity> getLineEntities() {
+        return this.lineEntities;
+    }
+    
+    public BigDecimal getTotalAmount() {
+        return this.totalAmount;
+    }
+    
+    public Date getCheckInDate() {
+        return this.checkInDate;
+    }
+    
+    public Date getCheckOutDate() {
+        return this.checkOutDate;
+    }
+    
+    
+    
 }

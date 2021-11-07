@@ -19,7 +19,7 @@ import javax.persistence.OneToMany;
  * @author PYT
  */
 @Entity
-public class RoomAllocationExceptionEntity implements Serializable {
+public class RoomAllocationException implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -54,10 +54,10 @@ public class RoomAllocationExceptionEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the roomAllocationExceptionId fields are not set
-        if (!(object instanceof RoomAllocationExceptionEntity)) {
+        if (!(object instanceof RoomAllocationException)) {
             return false;
         }
-        RoomAllocationExceptionEntity other = (RoomAllocationExceptionEntity) object;
+        RoomAllocationException other = (RoomAllocationException) object;
         if ((this.roomAllocationExceptionId == null && other.roomAllocationExceptionId != null) || (this.roomAllocationExceptionId != null && !this.roomAllocationExceptionId.equals(other.roomAllocationExceptionId))) {
             return false;
         }

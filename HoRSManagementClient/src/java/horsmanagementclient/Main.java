@@ -13,12 +13,16 @@ import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import javax.ejb.EJB;
+import ejb.session.stateful.WalkInRoomReservationSessionBeanRemote;
 
 /**
  *
  * @author PYT
  */
 public class Main {
+
+    @EJB
+    private static WalkInRoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
 
     @EJB
     private static RoomTypeSessionBeanRemote roomTypeSessionBeanRemote;
@@ -44,9 +48,9 @@ public class Main {
     public static void main(String[] args) {
         //MainApp mainApp = new MainApp(partnerSessionBeanRemote, employeeSessionBeanRemote); // will need to be changed as more beans are finished
         MainApp mainApp = new MainApp(partnerSessionBeanRemote,
-                employeeSessionBeanRemote,roomTypeSessionBeanRemote, 
-                roomSessionBeanRemote, roomRateSessionBeanRemote, 
-                roomAllocationSessionBeanRemote);
+                employeeSessionBeanRemote, roomTypeSessionBeanRemote,
+                roomSessionBeanRemote, roomRateSessionBeanRemote,
+                roomAllocationSessionBeanRemote, walkInRoomReservationSessionBeanRemote);
 
         mainApp.runApp();
 

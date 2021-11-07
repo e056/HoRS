@@ -6,7 +6,8 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,40 +26,39 @@ public class RoomReservationLineEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomReservationLineId;
-    
-//    @Column
-//    private BigDecimal price;
-    
+
+    @Column(nullable = false, precision = 11, scale = 2)
+    private BigDecimal price;
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Room room;
-    
-//    @ManyToOne(optional = false)
-//    @JoinColumn(nullable = false)
-//    private Reservation reservation;
-    
-    
 
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Reservation reservation;
     public RoomReservationLineEntity() {
     }
 
     public RoomReservationLineEntity(Room room) {
+
         this.room = room;
+
+    }
+
+    public RoomReservationLineEntity(Room room, BigDecimal price) {
+        this.room = room;
+        this.price = price;
  
     }
-    
-    
-    
 
-    
-    
-//    public BigDecimal getPrice() {
-//        return price;
-//    }
-//
-//    public void setPrice(BigDecimal price) {
-//        this.price = price;
-//    }
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     public Room getRoom() {
         return room;
@@ -68,14 +68,13 @@ public class RoomReservationLineEntity implements Serializable {
         this.room = room;
     }
 
-//    public Reservation getReservation() {
-//        return reservation;
-//    }
-//
-//    public void setReservation(Reservation reservation) {
-//        this.reservation = reservation;
-//    }
+    public Reservation getReservation() {
+        return reservation;
+    }
 
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
     public Long getRoomReservationLineId() {
         return roomReservationLineId;
     }
@@ -108,5 +107,5 @@ public class RoomReservationLineEntity implements Serializable {
     public String toString() {
         return "entity.RoomReservationLineEntity[ id=" + roomReservationLineId + " ]";
     }
-    
+
 }
