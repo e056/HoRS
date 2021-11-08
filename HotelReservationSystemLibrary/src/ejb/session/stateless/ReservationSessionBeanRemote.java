@@ -11,7 +11,7 @@ import java.util.List;
 import javax.ejb.Remote;
 import util.exception.CreateNewReservationException;
 import util.exception.ReservationNotFoundException;
-import util.exception.RoomNotFoundException;
+import util.exception.RoomTypeNotFoundException;
 
 /**
  *
@@ -25,5 +25,5 @@ public interface ReservationSessionBeanRemote {
 
     public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException;
 
-    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException;
+    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException;
 }

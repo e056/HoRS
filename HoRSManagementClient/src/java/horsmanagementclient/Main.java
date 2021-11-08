@@ -22,7 +22,7 @@ import ejb.session.stateful.RoomReservationSessionBeanRemote;
 public class Main {
 
     @EJB
-    private static RoomReservationSessionBeanRemote walkInRoomReservationSessionBeanRemote;
+    private static ReservationSessionBeanRemote reservationSessionBeanRemote;
 
     @EJB
     private static RoomTypeSessionBeanRemote roomTypeSessionBeanRemote;
@@ -50,7 +50,7 @@ public class Main {
         MainApp mainApp = new MainApp(partnerSessionBeanRemote,
                 employeeSessionBeanRemote, roomTypeSessionBeanRemote,
                 roomSessionBeanRemote, roomRateSessionBeanRemote,
-                roomAllocationSessionBeanRemote, walkInRoomReservationSessionBeanRemote);
+                roomAllocationSessionBeanRemote, reservationSessionBeanRemote);
 
         mainApp.runApp();
 

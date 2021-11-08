@@ -11,6 +11,7 @@ import entity.RoomReservationLineEntity;
 import entity.RoomType;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -69,11 +70,11 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                 throw new UnknownPersistenceException(ex.getMessage());
             }
         }
-   
+
     }
 
     // Added: Use em to find RoomType, did associations both ways, persisted
-   /* public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
+    /* public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
         try {
 
             RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomTypeId);
@@ -97,7 +98,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             }
         }
     } */
-
     @Override
     public List<Room> retrieveAllRooms() {
         Query query = entityManager.createQuery("SELECT s FROM Room s");
@@ -134,23 +134,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
-//    @Override
-//    public void updateRoom(Room room, RoomType roomType, Reservation reservation) throws RoomNotFoundException, UpdateRoomException {
-//        if (room != null && room.getRoomId() != null) {
-//            Room roomToUpdate = retrieveRoomByRoomId(room.getRoomId());
-//
-//            if (roomToUpdate.getRoomNumber().equals(room.getRoomNumber())) {
-//                roomToUpdate.setIsAvailable(room.getIsAvailable());
-//                roomToUpdate.setRoomType(roomType);
-//                roomToUpdate.setReservation(reservation);
-//                // added setRoomType and setReservation
-//            } else {
-//                throw new UpdateRoomException("Room number of room to be updated does not match the existing record");
-//            }
-//        } else {
-//            throw new RoomNotFoundException("Room ID not provided for room to be updated");
-//        }
-//    }
+
     @Override
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {
         Room roomToRemove = retrieveRoomByRoomId(roomId);
@@ -191,44 +175,42 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
-
     @Override
     public List<Room> retrieveRoomByRoomType(String roomType) throws RoomTypeHasNoRoomException {
         Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.roomType.name = :inroomType");
         query.setParameter("inroomType", roomType);
         List<Room> rooms = query.getResultList();
         //notes: query.getResultList returns a list, if got no results it just returns an empty list, not NULL
-        if(rooms.isEmpty())
-        {
+        if (rooms.isEmpty()) {
             throw new RoomTypeHasNoRoomException("No Room is using this room type");
         } else {
             return rooms;
         }
-   
+
     }
-    
+
     public List<Room> retrieveAvailableAndEnabledRooms() {
         Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.isAvailable = true AND r.enabled = true");
         return query.getResultList();
-        
+
     }
 
     public List<Room> retrieveRoomsAvailableForReservation(Date checkInDate, Date checkOutDate) {
         Query query = entityManager.createQuery("SELECT r FROM Reservation r WHERE r.startDate >=:startDate AND r.startDate <= :endDate OR r.endDate > :startDate AND r.endDate <= :endDate ");
         query.setParameter("startDate", checkInDate);
         query.setParameter("endDate", checkOutDate);
-        
+
         List<Reservation> reservations = query.getResultList();
         List<Room> rooms = retrieveAvailableAndEnabledRooms();
-        
+
         for (Reservation reservation : reservations) {
-            for (RoomReservationLineEntity rrle: reservation.getRoomReservationLineEntities()) {
+            for (RoomReservationLineEntity rrle : reservation.getRoomReservationLineEntities()) {
                 rooms.remove(rrle.getRoom());
-            }   
+            }
         }
-        
+
         return rooms;
 
     }
-    
+
 }

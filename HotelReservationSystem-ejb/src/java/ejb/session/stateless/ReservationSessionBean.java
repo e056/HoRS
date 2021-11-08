@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Reservation;
 import entity.RoomReservationLineEntity;
+import entity.RoomType;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
@@ -18,6 +19,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.CreateNewReservationException;
 import util.exception.ReservationNotFoundException;
+import util.exception.RoomTypeNotFoundException;
 
 /**
  *
@@ -26,15 +28,23 @@ import util.exception.ReservationNotFoundException;
 @Stateless
 public class ReservationSessionBean implements ReservationSessionBeanRemote, ReservationSessionBeanLocal {
 
+    @EJB(name = "RoomTypeSessionBeanLocal")
+    private RoomTypeSessionBeanLocal roomTypeSessionBeanLocal;
+
     @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
+
     @Resource
     private EJBContext eJBContext;
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
-    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException {
+    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException {
+        RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
+
+        rt.getReservations().add(reservation);
+        em.persist(rt);
 
         em.persist(reservation);
 

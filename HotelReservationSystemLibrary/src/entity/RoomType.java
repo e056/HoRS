@@ -58,9 +58,13 @@ public class RoomType implements Serializable {
     @OneToMany(mappedBy = "roomType")
     private List<Room> rooms;
     
+    @OneToMany(mappedBy = "roomType")
+    private List<Reservation> reservations;
+    
     public RoomType() {
         this.roomRates = new ArrayList<>();
         this.rooms = new ArrayList<>();
+        this.reservations = new ArrayList<>();
         this.enabled = true;
     }
 
@@ -275,6 +279,20 @@ public class RoomType implements Serializable {
      */
     public void setNextHigherRoomType(RoomType nextHigherRoomType) {
         this.nextHigherRoomType = nextHigherRoomType;
+    }
+
+    /**
+     * @return the reservations
+     */
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    /**
+     * @param reservations the reservations to set
+     */
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
     }
 
 }

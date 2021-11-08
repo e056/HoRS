@@ -42,6 +42,9 @@ public class Reservation implements Serializable {
     private Date endDate;
     
     @Column(nullable = false)
+    private int numOfRooms;
+    
+    @Column(nullable = false)
     private boolean checkedIn;
     
     @Column
@@ -65,6 +68,9 @@ public class Reservation implements Serializable {
     @OneToMany(mappedBy="reservation", cascade = {CascadeType.PERSIST})
     private List<RoomReservationLineEntity> roomReservationLineEntities;
     
+    @ManyToOne
+    private RoomType roomType;
+    
     private boolean allocated;
 
     public Reservation() {
@@ -73,15 +79,15 @@ public class Reservation implements Serializable {
         this.checkedIn = false;
     }
 
-    public Reservation(Date startDate, Date endDate, BigDecimal totalPrice, Guest guest, Partner partner, List<RoomReservationLineEntity> roomReservationLineEntities) {
-        this();
+    public Reservation(Date startDate, Date endDate, int numOfRooms, BigDecimal totalPrice, RoomType roomType) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.numOfRooms = numOfRooms;
         this.totalPrice = totalPrice;
-        this.guest = guest;
-        this.partner = partner;
-        this.roomReservationLineEntities = roomReservationLineEntities;
+        this.roomType = roomType;
     }
+
+
     
     
 
@@ -209,6 +215,34 @@ public class Reservation implements Serializable {
      */
     public void setAllocated(boolean allocated) {
         this.allocated = allocated;
+    }
+
+    /**
+     * @return the roomType
+     */
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    /**
+     * @param roomType the roomType to set
+     */
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
+    }
+
+    /**
+     * @return the numOfRooms
+     */
+    public int getNumOfRooms() {
+        return numOfRooms;
+    }
+
+    /**
+     * @param numOfRooms the numOfRooms to set
+     */
+    public void setNumOfRooms(int numOfRooms) {
+        this.numOfRooms = numOfRooms;
     }
     
 }

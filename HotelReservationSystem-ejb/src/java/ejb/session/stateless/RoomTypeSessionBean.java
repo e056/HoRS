@@ -5,11 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.Reservation;
 import entity.Room;
 import entity.RoomType;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -47,28 +47,26 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     public Long createNewRoomType(RoomType roomType, String nextHigherRoomTypeName) throws RoomTypeNameExistException, UnknownPersistenceException, RoomTypeNotFoundException {
         Boolean lowestRank = false;
         try {
-            if(nextHigherRoomTypeName.equals("None"))
-            {
+            if (nextHigherRoomTypeName.equals("None")) {
                 RoomType highestRoomType = retrieveHighestRoomType();
                 highestRoomType.setNextHigherRoomType(roomType);
                 entityManager.persist(roomType);
-                entityManager.flush();  
+                entityManager.flush();
             } else {
                 RoomType currentRoomType = retrieveRoomTypeByNextHighestRoomType(nextHigherRoomTypeName);
-                if(currentRoomType != null)
-                {
+                if (currentRoomType != null) {
                     System.out.println(currentRoomType.getName());
                 }
                 RoomType nextHigherRoomType = currentRoomType.getNextHigherRoomType();
                 currentRoomType.setNextHigherRoomType(null);
-                
+
                 roomType.setNextHigherRoomType(nextHigherRoomType);
-                
+
                 entityManager.persist(roomType);
-                
-                entityManager.flush();  
+
+                entityManager.flush();
                 currentRoomType.setNextHigherRoomType(roomType);
-                
+
             }
             return roomType.getRoomTypeId();
         } catch (PersistenceException ex) {
@@ -82,30 +80,27 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                 throw new UnknownPersistenceException(ex.getMessage());
             }
         } catch (RoomTypeIsLowestException ex) {
-             lowestRank = true;
-        } finally
-        {
-            if(lowestRank == true)
-            {
-               roomType.setNextHigherRoomType(retrieveRoomTypeByRoomTypeName(nextHigherRoomTypeName));
-               entityManager.persist(roomType);
-               entityManager.flush(); 
-               return roomType.getRoomTypeId();
+            lowestRank = true;
+        } finally {
+            if (lowestRank == true) {
+                roomType.setNextHigherRoomType(retrieveRoomTypeByRoomTypeName(nextHigherRoomTypeName));
+                entityManager.persist(roomType);
+                entityManager.flush();
+                return roomType.getRoomTypeId();
             } else {
                 return roomType.getRoomTypeId();
             }
-             
+
         }
     }
-    
+
     @Override
-    public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException
-    {
-        try{
+    public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException {
+        try {
             entityManager.persist(roomType);
-            entityManager.flush(); 
+            entityManager.flush();
             return roomType.getRoomTypeId();
-        }catch (PersistenceException ex) {
+        } catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
                     throw new RoomTypeNameExistException("A roomType with this room name already exists!");
@@ -144,27 +139,23 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     public void deleteRoomType(RoomType roomTypeToRemove) throws RoomTypeNotFoundException, DeleteRoomTypeException {
         Boolean isLowest = false;
         Boolean canDelete = true;
-        
-        try{
+
+        try {
             roomSessionBeanLocal.retrieveRoomByRoomType(roomTypeToRemove.getName());
             canDelete = false;
             System.out.println("Cannot delete");
-        } catch(RoomTypeHasNoRoomException ex)
-        {
+        } catch (RoomTypeHasNoRoomException ex) {
             System.out.println("Can delete");
             canDelete = true;
         }
-        
-        if(canDelete)
-        {
-            try{
-                if(retrieveHighestRoomType().equals(roomTypeToRemove))
-                {
+
+        if (canDelete) {
+            try {
+                if (retrieveHighestRoomType().equals(roomTypeToRemove)) {
                     RoomType prevRoomType = retrieveRoomTypeByNextHighestRoomType(roomTypeToRemove.getName());
                     prevRoomType.setNextHigherRoomType(null);
                     entityManager.remove(roomTypeToRemove);
-                } else
-                {
+                } else {
                     Long roomTypeId = roomTypeToRemove.getRoomTypeId();
                     RoomType rt = entityManager.find(RoomType.class, roomTypeId);
                     RoomType prevRoomType = retrieveRoomTypeByNextHighestRoomType(roomTypeToRemove.getName());
@@ -175,13 +166,11 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                     entityManager.remove(rt);
                     prt.setNextHigherRoomType(higherRoomType);
                 }
-                  
+
             } catch (RoomTypeIsLowestException ex) {
                 isLowest = true;
-            } finally
-            {
-                if(isLowest)
-                {
+            } finally {
+                if (isLowest) {
                     //notes: must use em.find BEFORE em.remove for em.remove to work. im not sure why but it solved the bug
                     Long roomTypeId = roomTypeToRemove.getRoomTypeId();
                     RoomType rt = entityManager.find(RoomType.class, roomTypeId);
@@ -189,17 +178,15 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                     entityManager.remove(rt);
                 }
             }
-        } else
-        {
+        } else {
             Long id = roomTypeToRemove.getRoomTypeId();
             RoomType rt = entityManager.find(RoomType.class, id);
             List<Room> roomsToDisable = rt.getRooms();
-            for(Room room : roomsToDisable)
-            {
+            for (Room room : roomsToDisable) {
                 Long roomId = room.getRoomId();
                 Room roomFound = entityManager.find(Room.class, roomId);
                 roomFound.setEnabled(Boolean.FALSE);
-                        
+
             }
             rt.setEnabled(Boolean.FALSE);
             throw new DeleteRoomTypeException("Room Type cannot be deleted as it is currently used by Room or Room Rate. Room Type and its rooms have been set to disabled!");
@@ -213,7 +200,11 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.name = :inName");
         query.setParameter("inName", roomTypeName);
         try {
-            return (RoomType) query.getSingleResult();
+            RoomType rt = (RoomType) query.getSingleResult();
+            rt.getReservations().size();
+            rt.getRoomRates().size();
+            rt.getRooms().size();
+            return rt;
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new RoomTypeNotFoundException("Room Type " + roomTypeName + " does not exist!");
         }
@@ -246,28 +237,52 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     @Override
-    public RoomType retrieveRoomTypeByNextHighestRoomType(String nextHighestRoomTypeName) throws RoomTypeIsLowestException
-    {
-        
-        try{
+    public RoomType retrieveRoomTypeByNextHighestRoomType(String nextHighestRoomTypeName) throws RoomTypeIsLowestException {
+
+        try {
             Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.nextHigherRoomType.name = :inName");
             query.setParameter("inName", nextHighestRoomTypeName);
             return (RoomType) query.getSingleResult();
-        } catch(NoResultException ex)
-        {
+        } catch (NoResultException ex) {
             throw new RoomTypeIsLowestException("Room type is lowest");
         }
-        
+
     }
-    
-    public RoomType retrieveHighestRoomType()
-    {
+
+    public RoomType retrieveHighestRoomType() {
         Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.nextHigherRoomType IS NULL");
-        
+
         RoomType roomType = (RoomType) query.getSingleResult();
-        
+
         return roomType;
     }
 
+    public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate) {
+        System.out.println("Here");
+        List<RoomType> rts = retrieveAllEnabledRoomTypes();
+        List<RoomType> finalRts = retrieveAllEnabledRoomTypes();
+
+        for (RoomType rt : rts) {
+            int inventory = rt.getRooms().size();
+            System.out.println("Curr Room Type: " + rt.getName());
+            System.out.println("Inventory: " + inventory);
+            List<Reservation> roomTypeReservations = rt.getReservations();
+            for (Reservation reservation : roomTypeReservations) {
+                System.out.println(reservation.getStartDate().compareTo(checkInDate));
+                System.out.println(reservation.getStartDate().compareTo(checkOutDate));
+                if ((reservation.getStartDate().compareTo(checkInDate) >= 0 && reservation.getStartDate().compareTo(checkOutDate) <= 0)
+                        || (reservation.getEndDate().compareTo(checkInDate) > 0 && reservation.getEndDate().compareTo(checkOutDate) <= 0)) {
+                    inventory -= reservation.getNumOfRooms();
+                }
+            }
+            if (inventory < numOfRooms) {
+                finalRts.remove(rt);
+            }
+            System.out.println("Final Inventory: " + inventory);
+
+        }
+        return finalRts;
+
+    }
 
 }

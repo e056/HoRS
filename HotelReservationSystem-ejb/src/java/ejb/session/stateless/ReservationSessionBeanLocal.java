@@ -12,6 +12,7 @@ import javax.ejb.Local;
 import util.exception.CreateNewReservationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
+import util.exception.RoomTypeNotFoundException;
 
 /**
  *
@@ -20,12 +21,10 @@ import util.exception.RoomNotFoundException;
 @Local
 public interface ReservationSessionBeanLocal {
 
-    //public List<Reservation> retrieveReservationsByRoomId(Long roomId) throws RoomNotFoundException;
-
     public List<Reservation> retrieveReservationsByDate(Date dateToday);
 
     public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException;
 
-    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException;
-    
+    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException;
+
 }
