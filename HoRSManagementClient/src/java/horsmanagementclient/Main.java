@@ -13,7 +13,6 @@ import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import javax.ejb.EJB;
-import ejb.session.stateful.RoomReservationSessionBeanRemote;
 
 /**
  *

@@ -119,7 +119,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
         if (!roomRate.getRoomType().getRooms().isEmpty()) {
             for (Room room : roomRate.getRoomType().getRooms()) {
-                if (room.getRoomReservationLineEntities().size() != 0) {
+                if (room.getReservations().size() != 0) {
                     roomRate.setEnabled(Boolean.FALSE);
                     break;
                 }

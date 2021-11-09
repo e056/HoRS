@@ -10,8 +10,6 @@ import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import entity.Employee;
 import entity.Reservation;
-import entity.Room;
-import entity.RoomReservationLineEntity;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -22,13 +20,10 @@ import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 import util.exception.CreateNewReservationException;
 import util.exception.InvalidAccessRightException;
-import util.exception.RoomNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import entity.RoomType;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.exception.RoomTypeNotFoundException;
 
 /**

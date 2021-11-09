@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -28,12 +30,16 @@ public class RoomAllocationException implements Serializable {
     
     @OneToMany
     @JoinColumn(name = "roomAllocationExceptionId")
-    private List<RoomReservationLineEntity> typeOneExceptions;
+    private List<Room> typeOneExceptions;
     
-    @OneToMany
-    @JoinColumn(name = "roomAllocationExceptionId")
-    private List<RoomReservationLineEntity> typeTwoExceptions;
+    @OneToOne
+    private Reservation reservation;
     
+    private int numOfTypeTwo;
+
+    public RoomAllocationException() {
+        this.typeOneExceptions = new ArrayList<>();
+    }
     
 
     public Long getRoomAllocationExceptionId() {
@@ -67,6 +73,48 @@ public class RoomAllocationException implements Serializable {
     @Override
     public String toString() {
         return "entity.RoomAllocationExceptionEntity[ id=" + roomAllocationExceptionId + " ]";
+    }
+
+    /**
+     * @return the typeOneExceptions
+     */
+    public List<Room> getTypeOneExceptions() {
+        return typeOneExceptions;
+    }
+
+    /**
+     * @param typeOneExceptions the typeOneExceptions to set
+     */
+    public void setTypeOneExceptions(List<Room> typeOneExceptions) {
+        this.typeOneExceptions = typeOneExceptions;
+    }
+
+    /**
+     * @return the reservation
+     */
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+    /**
+     * @param reservation the reservation to set
+     */
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
+
+    /**
+     * @return the numOfTypeTwo
+     */
+    public int getNumOfTypeTwo() {
+        return numOfTypeTwo;
+    }
+
+    /**
+     * @param numOfTypeTwo the numOfTypeTwo to set
+     */
+    public void setNumOfTypeTwo(int numOfTypeTwo) {
+        this.numOfTypeTwo = numOfTypeTwo;
     }
     
 }
