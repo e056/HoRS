@@ -7,11 +7,9 @@ package ejb.session.stateless;
 
 import entity.Reservation;
 import entity.Room;
-import entity.RoomReservationLineEntity;
 import entity.RoomType;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -105,7 +103,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         List<Room> rooms = query.getResultList();
 
         for (Room r : rooms) {
-            r.getRoomReservationLineEntities();
+            r.getReservations();
             r.getRoomType();
         }
         return rooms;
@@ -134,31 +132,19 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         }
     }
 
-
     @Override
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException {
         Room roomToRemove = retrieveRoomByRoomId(roomId);
 
-        List<RoomReservationLineEntity> roomReservations = retrieveRoomReservationsByRoomId(roomId);
+        List<Reservation> reservations = retrieveRoomByRoomId(roomId).getReservations();
 
-        if (roomReservations.size() == 0) {
+        if (reservations.size() == 0) {
             entityManager.remove(roomToRemove);
         } else {
             roomToRemove.setEnabled(Boolean.FALSE);
             throw new DeleteRoomException("Room is associated with reservation, disabling room for future use.");
 
         }
-    }
-
-    @Override
-    public List<RoomReservationLineEntity> retrieveRoomReservationsByRoomId(Long roomId) {
-        {
-            Query query = entityManager.createQuery("SELECT rr FROM RoomReservationLineEntity rr WHERE rr.room.roomId = :inRoomId");
-            query.setParameter("inRoomId", roomId);
-
-            return query.getResultList();
-        }
-
     }
 
     @Override
@@ -195,6 +181,20 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     }
 
+    public List<Room> retrieveAvailableAndEnabledRoomsByRoomType(Long roomTypeId) {
+
+        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.isAvailable = true AND r.enabled = true AND r.roomType.roomTypeId = :rid");
+        query.setParameter("rid", roomTypeId);
+        return query.getResultList();
+    }
+
+    public List<Room> retrieveAvailableRoomsByRoomType(Long roomTypeId) {
+
+        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.isAvailable = true AND r.roomType.roomTypeId = :rid");
+        query.setParameter("rid", roomTypeId);
+        return query.getResultList();
+    }
+
     public List<Room> retrieveRoomsAvailableForReservation(Date checkInDate, Date checkOutDate) {
         Query query = entityManager.createQuery("SELECT r FROM Reservation r WHERE r.startDate >=:startDate AND r.startDate <= :endDate OR r.endDate > :startDate AND r.endDate <= :endDate ");
         query.setParameter("startDate", checkInDate);
@@ -204,8 +204,8 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         List<Room> rooms = retrieveAvailableAndEnabledRooms();
 
         for (Reservation reservation : reservations) {
-            for (RoomReservationLineEntity rrle : reservation.getRoomReservationLineEntities()) {
-                rooms.remove(rrle.getRoom());
+            for (Room room : reservation.getAllocatedRooms()) {
+                rooms.remove(room);
             }
         }
 

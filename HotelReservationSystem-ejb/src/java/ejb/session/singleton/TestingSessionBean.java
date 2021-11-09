@@ -14,8 +14,6 @@ import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
 import java.math.BigDecimal;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -37,8 +35,8 @@ import util.exception.UnknownPersistenceException;
  */
 @Singleton
 @LocalBean
-//@Startup
-public class DataInitSessionBean {
+@Startup
+public class TestingSessionBean {
 
     @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
@@ -56,7 +54,7 @@ public class DataInitSessionBean {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    public DataInitSessionBean() {
+    public TestingSessionBean() {
     }
 
     @PostConstruct
@@ -138,11 +136,11 @@ public class DataInitSessionBean {
             roomSessionBeanLocal.createNewRoom(dr4, dr);
             roomSessionBeanLocal.createNewRoom(dr5, dr);
             
-            roomSessionBeanLocal.createNewRoom(pr1, pr);
-            roomSessionBeanLocal.createNewRoom(pr2, pr);
-            roomSessionBeanLocal.createNewRoom(pr3, pr);
-            roomSessionBeanLocal.createNewRoom(pr4, pr);
-            roomSessionBeanLocal.createNewRoom(pr5, pr);
+//            roomSessionBeanLocal.createNewRoom(pr1, pr);
+//            roomSessionBeanLocal.createNewRoom(pr2, pr);
+//            roomSessionBeanLocal.createNewRoom(pr3, pr);
+//            roomSessionBeanLocal.createNewRoom(pr4, pr);
+//            roomSessionBeanLocal.createNewRoom(pr5, pr);
            
             roomSessionBeanLocal.createNewRoom(fr1, fr);
             roomSessionBeanLocal.createNewRoom(fr2, fr);

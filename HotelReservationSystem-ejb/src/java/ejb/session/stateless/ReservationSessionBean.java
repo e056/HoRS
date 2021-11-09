@@ -6,7 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Reservation;
-import entity.RoomReservationLineEntity;
+import entity.Room;
 import entity.RoomType;
 import java.util.Date;
 import java.util.List;
@@ -48,8 +48,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         em.persist(reservation);
 
-        for (RoomReservationLineEntity lineEntity : reservation.getRoomReservationLineEntities()) {
-            if (!lineEntity.getRoom().getEnabled() || !lineEntity.getRoom().getIsAvailable()) {
+        for (Room room : reservation.getAllocatedRooms()) {
+            if (!room.getEnabled() || !room.getIsAvailable()) {
                 eJBContext.setRollbackOnly();
                 throw new CreateNewReservationException("Room(s) is not available/enabled for reservation!");
             }

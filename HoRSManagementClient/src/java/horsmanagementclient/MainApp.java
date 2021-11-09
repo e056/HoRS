@@ -16,6 +16,11 @@ import java.util.Scanner;
 import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 import ejb.session.stateless.ReservationSessionBeanRemote;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -81,9 +86,10 @@ public class MainApp {
             System.out.println("*** Welcome to the HoRS Management Client ***\n");
             System.out.println("1: Employee Login");
             System.out.println("2: Exit\n");
+            System.out.println("3: Allocate room to date reservation\n");
             response = 0;
 
-            while (response < 1 || response > 2) {
+            while (response < 1 || response > 3) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
@@ -109,6 +115,9 @@ public class MainApp {
                     }
                 } else if (response == 2) {
                     break;
+                } else if (response == 3) {
+                    allocate();
+
                 } else {
                     System.out.println("Invalid option, please try again!\n");
                 }
@@ -118,6 +127,22 @@ public class MainApp {
                 break;
             }
         }
+    }
+
+    private void allocate() {
+        try {
+            Date startDate;
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("*** HoRS System :: Allocate (Abitrary date) ***\n");
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("d/M/yy");
+            System.out.print("Enter Check-In Date (dd/mm/yyyy)> ");
+            startDate = inputDateFormat.parse(scanner.nextLine().trim());
+            roomAllocationSessionBeanRemote.allocate(startDate);
+        } catch (ParseException ex) {
+            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
     }
 
     private void doLogin() throws InvalidLoginCredentialException {

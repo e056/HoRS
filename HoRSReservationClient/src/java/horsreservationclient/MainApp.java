@@ -5,7 +5,7 @@
  */
 package horsreservationclient;
 
-import ejb.session.stateful.RoomReservationSessionBeanRemote;
+
 import ejb.session.stateless.GuestSessionBeanRemote;
 import entity.Guest;
 import java.util.Scanner;
@@ -19,13 +19,12 @@ import util.exception.UnknownPersistenceException;
  */
 public class MainApp {
 
-    private RoomReservationSessionBeanRemote roomReservationSessionBean;
 
     private GuestSessionBeanRemote guestSessionBeanRemote;
     private Guest currGuest;
 
-    public MainApp(RoomReservationSessionBeanRemote roomReservationSessionBean, GuestSessionBeanRemote guestSessionBeanRemote) {
-        this.roomReservationSessionBean = roomReservationSessionBean;
+    public MainApp(GuestSessionBeanRemote guestSessionBeanRemote) {
+  
         this.guestSessionBeanRemote = guestSessionBeanRemote;
     }
 

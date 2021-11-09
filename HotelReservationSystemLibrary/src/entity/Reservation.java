@@ -10,15 +10,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -49,14 +48,7 @@ public class Reservation implements Serializable {
     
     @Column
     private BigDecimal totalPrice;
-
-//    @OneToMany(mappedBy = "reservation")
-//    @JoinColumn(nullable = false)
-//    private List<Room> rooms;
     
-//    @ManyToOne
-//    private Employee employee;
-   
     @ManyToOne
     //@JoinColumn(nullable = false)
     private Guest guest;
@@ -65,21 +57,25 @@ public class Reservation implements Serializable {
     //@JoinColumn(nullable = false)
     private Partner partner;
     
-    @OneToMany(mappedBy="reservation", cascade = {CascadeType.PERSIST})
-    private List<RoomReservationLineEntity> roomReservationLineEntities;
+    @ManyToMany
+    private List<Room> allocatedRooms;
     
     @ManyToOne
     private RoomType roomType;
     
+    @OneToOne(mappedBy = "reservation")
+    private RoomAllocationException exception;
+    
     private boolean allocated;
 
     public Reservation() {
-        this.roomReservationLineEntities = new ArrayList<>();
+        this.allocatedRooms = new ArrayList<>();
         this.allocated = false;
         this.checkedIn = false;
     }
 
     public Reservation(Date startDate, Date endDate, int numOfRooms, BigDecimal totalPrice, RoomType roomType) {
+        this();
         this.startDate = startDate;
         this.endDate = endDate;
         this.numOfRooms = numOfRooms;
@@ -101,14 +97,6 @@ public class Reservation implements Serializable {
         this.totalPrice = totalPrice;
     }
 
-    public List<RoomReservationLineEntity> getRoomReservationLineEntities() {
-        return roomReservationLineEntities;
-    }
-
-    public void setRoomReservationLineEntities(List<RoomReservationLineEntity> roomReservationLineEntities) {
-        this.roomReservationLineEntities = roomReservationLineEntities;
-    }
-    
     
     public Long getReservationId() {
         return reservationId;
@@ -243,6 +231,20 @@ public class Reservation implements Serializable {
      */
     public void setNumOfRooms(int numOfRooms) {
         this.numOfRooms = numOfRooms;
+    }
+
+    /**
+     * @return the allocatedRooms
+     */
+    public List<Room> getAllocatedRooms() {
+        return allocatedRooms;
+    }
+
+    /**
+     * @param allocatedRooms the allocatedRooms to set
+     */
+    public void setAllocatedRooms(List<Room> allocatedRooms) {
+        this.allocatedRooms = allocatedRooms;
     }
     
 }

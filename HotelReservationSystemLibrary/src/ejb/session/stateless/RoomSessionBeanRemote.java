@@ -5,17 +5,11 @@
  */
 package ejb.session.stateless;
 
-import entity.Partner;
-import entity.Reservation;
 import entity.Room;
-import entity.RoomReservationLineEntity;
-import entity.RoomType;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.DeleteRoomException;
-import util.exception.InvalidLoginCredentialException;
-import util.exception.PartnerNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomTypeHasNoRoomException;
@@ -44,7 +38,6 @@ public interface RoomSessionBeanRemote {
     
     public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException;
 
-    public List<RoomReservationLineEntity> retrieveRoomReservationsByRoomId(Long roomId);
 
     public List<Room> retrieveAvailableAndEnabledRooms();
 

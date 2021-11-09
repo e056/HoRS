@@ -5,15 +5,11 @@
  */
 package ejb.session.stateless;
 
-import entity.Reservation;
 import entity.Room;
-import entity.RoomReservationLineEntity;
-import entity.RoomType;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomException;
-import util.exception.ReservationNotFoundException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomTypeHasNoRoomException;
@@ -42,10 +38,14 @@ public interface RoomSessionBeanLocal {
     
     public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException;
 
-    public List<RoomReservationLineEntity> retrieveRoomReservationsByRoomId(Long roomId);
+
 
     public List<Room> retrieveAvailableAndEnabledRooms();
     public List<Room> retrieveRoomByRoomType(String roomType) throws RoomTypeHasNoRoomException;
+
+    public List<Room> retrieveAvailableAndEnabledRoomsByRoomType(Long roomTypeId);
+
+    public List<Room> retrieveAvailableRoomsByRoomType(Long roomTypeId);
 
 
 }

@@ -268,12 +268,11 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
             System.out.println("Inventory: " + inventory);
             List<Reservation> roomTypeReservations = rt.getReservations();
             for (Reservation reservation : roomTypeReservations) {
-                System.out.println(reservation.getStartDate().compareTo(checkInDate));
-                System.out.println(reservation.getStartDate().compareTo(checkOutDate));
                 if ((reservation.getStartDate().compareTo(checkInDate) >= 0 && reservation.getStartDate().compareTo(checkOutDate) <= 0)
                         || (reservation.getEndDate().compareTo(checkInDate) > 0 && reservation.getEndDate().compareTo(checkOutDate) <= 0)) {
                     inventory -= reservation.getNumOfRooms();
-                }
+                } 
+            
             }
             if (inventory < numOfRooms) {
                 finalRts.remove(rt);

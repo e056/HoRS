@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 /**
  *
@@ -41,15 +40,12 @@ public class Room implements Serializable {
 
     @ManyToOne
     private RoomType roomType;
-//
-//    @ManyToOne
-//    private Reservation reservation;
 
-    @OneToMany(mappedBy = "room")
-    private List<RoomReservationLineEntity> roomReservationLineEntities;
+    @ManyToMany(mappedBy = "allocatedRooms")
+    private List<Reservation> reservations;
 
     public Room() {
-        this.roomReservationLineEntities = new ArrayList<>();
+        this.reservations = new ArrayList<>();
         this.enabled = true;
     }
 
@@ -58,16 +54,9 @@ public class Room implements Serializable {
         this.roomNumber = roomNumber;
         this.isAvailable = isAvailable;
         this.enabled = Boolean.TRUE;
-        this.roomReservationLineEntities = new ArrayList<>();
+        this.reservations = new ArrayList<>();
     }
 
-    public List<RoomReservationLineEntity> getRoomReservationLineEntities() {
-        return roomReservationLineEntities;
-    }
-
-    public void setRoomReservationLineEntities(List<RoomReservationLineEntity> roomReservationLineEntities) {
-        this.roomReservationLineEntities = roomReservationLineEntities;
-    }
 
     public String getFloorNumber() {
         return this.roomNumber.substring(0, 2);
@@ -135,7 +124,7 @@ public class Room implements Serializable {
      * @param isAvailable the isAvailable to set
      */
     public void setIsAvailable(Boolean isAvailable) {
-        this.setIsAvailable((boolean) isAvailable);
+        this.isAvailable = isAvailable;
     }
 
 
@@ -167,5 +156,20 @@ public class Room implements Serializable {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
+
+    /**
+     * @return the reservations
+     */
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    /**
+     * @param reservations the reservations to set
+     */
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
 
 }
