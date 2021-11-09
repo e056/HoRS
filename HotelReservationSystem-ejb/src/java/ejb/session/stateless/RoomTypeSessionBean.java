@@ -258,12 +258,12 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate) {
-        System.out.println("Here");
+ 
         List<RoomType> rts = retrieveAllEnabledRoomTypes();
         List<RoomType> finalRts = retrieveAllEnabledRoomTypes();
 
         for (RoomType rt : rts) {
-            int inventory = rt.getRooms().size();
+            int inventory = roomSessionBeanLocal.retrieveAvailableAndEnabledRoomsByRoomType(rt.getRoomTypeId()).size();
             System.out.println("Curr Room Type: " + rt.getName());
             System.out.println("Inventory: " + inventory);
             List<Reservation> roomTypeReservations = rt.getReservations();
