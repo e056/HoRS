@@ -47,5 +47,7 @@ public interface RoomSessionBeanLocal {
 
     //public List<Room> retrieveAvailableRoomsByRoomType(Long roomTypeId);
 
+    public List<Room> retrieveAvailableRoomsByRoomType(Long roomTypeId);
+
 
 }

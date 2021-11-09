@@ -85,7 +85,7 @@ public class MainApp {
         while (true) {
             System.out.println("*** Welcome to the HoRS Management Client ***\n");
             System.out.println("1: Employee Login");
-            System.out.println("2: Exit\n");
+            System.out.println("2: Exit");
             System.out.println("3: Allocate room to date reservation\n");
             response = 0;
 
