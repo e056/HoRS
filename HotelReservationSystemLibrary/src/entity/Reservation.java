@@ -246,5 +246,19 @@ public class Reservation implements Serializable {
     public void setAllocatedRooms(List<Room> allocatedRooms) {
         this.allocatedRooms = allocatedRooms;
     }
+
+    /**
+     * @return the exception
+     */
+    public RoomAllocationException getException() {
+        return exception;
+    }
+
+    /**
+     * @param exception the exception to set
+     */
+    public void setException(RoomAllocationException exception) {
+        this.exception = exception;
+    }
     
 }
