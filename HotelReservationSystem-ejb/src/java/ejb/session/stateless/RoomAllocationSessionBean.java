@@ -113,7 +113,7 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
                 // get next level
                 RoomType nextLevelType = reservationRoomType.getNextHigherRoomType();
 
-                List<Room> usableRoomsNextLevel = roomSessionBeanLocal.retrieveAvailableAndEnabledRoomsByRoomType(nextLevelType.getRoomTypeId());
+                List<Room> usableRoomsNextLevel = roomSessionBeanLocal.retrieveAvailableRoomsByRoomType(nextLevelType.getRoomTypeId());
                 roomsToRemove = new ArrayList<>();
                 // extract usable rooms
                 for (Room room : usableRoomsNextLevel) {

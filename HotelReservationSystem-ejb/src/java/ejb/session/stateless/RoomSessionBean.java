@@ -187,13 +187,20 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         query.setParameter("rid", roomTypeId);
         return query.getResultList();
     }
-
+    
+    @Override
     public List<Room> retrieveAvailableRoomsByRoomType(Long roomTypeId) {
-
         Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.isAvailable = true AND r.roomType.roomTypeId = :rid");
         query.setParameter("rid", roomTypeId);
         return query.getResultList();
     }
+
+//    public List<Room> retrieveAvailableRoomsByRoomType(Long roomTypeId) {
+//
+//        Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.isAvailable = true AND r.roomType.roomTypeId = :rid");
+//        query.setParameter("rid", roomTypeId);
+//        return query.getResultList();
+//    }
 
     public List<Room> retrieveRoomsAvailableForReservation(Date checkInDate, Date checkOutDate) {
         Query query = entityManager.createQuery("SELECT r FROM Reservation r WHERE r.startDate >=:startDate AND r.startDate <= :endDate OR r.endDate > :startDate AND r.endDate <= :endDate ");
