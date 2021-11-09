@@ -74,7 +74,7 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
             int numOfRooms = reservation.getNumOfRooms();
 
             RoomType reservationRoomType = reservation.getRoomType();
-            List<Room> usableRooms = roomSessionBeanLocal.retrieveAvailableRoomsByRoomType(reservationRoomType.getRoomTypeId());
+            List<Room> usableRooms = roomSessionBeanLocal.retrieveAvailableAndEnabledRoomsByRoomType(reservationRoomType.getRoomTypeId());
             List<Room> roomsToRemove = new ArrayList<>();
 
             for (Room room : usableRooms) {
