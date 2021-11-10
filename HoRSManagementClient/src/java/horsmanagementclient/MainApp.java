@@ -54,7 +54,6 @@ public class MainApp {
     private FrontOfficeModule frontOfficeModule;
     private WalkInGuestSessionBeanRemote walkInGuestSessionBeanRemote;
     private GuestSessionBeanRemote guestSessionBeanRemote;
-    
 
     private Employee currEmployee;
 
@@ -72,7 +71,6 @@ public class MainApp {
         this.roomSessionBeanRemote = roomSessionBeanRemote;
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
         this.roomAllocationSessionBeanRemote = roomAllocationSessionBeanRemote;
-        
 
     }
 
@@ -91,12 +89,12 @@ public class MainApp {
         this.walkInGuestSessionBeanRemote = walkInGuestSessionBeanRemote;
         this.guestSessionBeanRemote = guestSessionBeanRemote;
     }
-    
-        public MainApp(PartnerSessionBeanRemote partnerSessionBeanRemote,
+
+    public MainApp(PartnerSessionBeanRemote partnerSessionBeanRemote,
             EmployeeSessionBeanRemote employeeSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote,
             RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote,
             RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote,
-            ReservationSessionBeanRemote reservationSessionBeanRemote, WalkInGuestSessionBeanRemote walkInGuestSessionBeanRemote, 
+            ReservationSessionBeanRemote reservationSessionBeanRemote, WalkInGuestSessionBeanRemote walkInGuestSessionBeanRemote,
             GuestSessionBeanRemote guestSessionBeanRemote, RoomAllocationExceptionSessionBeanRemote roomAllocationExceptionSessionBeanRemote) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
@@ -110,7 +108,6 @@ public class MainApp {
         this.roomAllocationExceptionSessionBeanRemote = roomAllocationExceptionSessionBeanRemote;
     }
 
-
     public void runApp() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -119,10 +116,10 @@ public class MainApp {
             System.out.println("*** Welcome to the HoRS Management Client ***\n");
             System.out.println("1: Employee Login");
             System.out.println("2: Exit");
-            System.out.println("3: Allocate room to date reservation\n");
+
             response = 0;
 
-            while (response < 1 || response > 3) {
+            while (response < 1 || response > 2) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
@@ -148,8 +145,6 @@ public class MainApp {
                     }
                 } else if (response == 2) {
                     break;
-                } else if (response == 3) {
-                    allocate();
 
                 } else {
                     System.out.println("Invalid option, please try again!\n");
@@ -160,22 +155,6 @@ public class MainApp {
                 break;
             }
         }
-    }
-
-    private void allocate() {
-        try {
-            Date startDate;
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("*** HoRS System :: Allocate (Abitrary date) ***\n");
-            SimpleDateFormat inputDateFormat = new SimpleDateFormat("d/M/yy");
-            System.out.print("Enter Check-In Date (dd/mm/yyyy)> ");
-            startDate = inputDateFormat.parse(scanner.nextLine().trim());
-            roomAllocationSessionBeanRemote.allocate(startDate);
-        } catch (ParseException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-
     }
 
     private void doLogin() throws InvalidLoginCredentialException {
@@ -245,7 +224,5 @@ public class MainApp {
             }
         }
     }
-
- 
 
 }

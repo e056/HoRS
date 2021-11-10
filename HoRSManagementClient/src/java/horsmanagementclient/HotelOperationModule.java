@@ -76,10 +76,11 @@ public class HotelOperationModule {
             System.out.println("*** HoRS System :: Hotel Operation Menu ***\n");
             System.out.println("1: Operation Manager Functions");
             System.out.println("2: Sales Manager Functions");
-            System.out.println("3: Back\n");
+            System.out.println("3: Allocate Room To Reservation For a Date");
+            System.out.println("4: Back\n");
             response = 0;
 
-            while (response < 1 || response > 3) {
+            while (response < 1 || response > 4) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
@@ -99,16 +100,35 @@ public class HotelOperationModule {
 
                     }
                 } else if (response == 3) {
+                    allocate();
+
+                } else if (response == 4) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
 
-            if (response == 3) {
+            if (response == 4) {
                 break;
             }
         }
+    }
+
+    private void allocate() {
+        try {
+            Date startDate;
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("*** HoRS System :: Allocate Room For Reservation (Abitrary date) ***\n");
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd/mm/yyyy");
+            System.out.print("Enter Check-In Date (dd/mm/yyyy)> ");
+            startDate = inputDateFormat.parse(scanner.nextLine().trim());
+            roomAllocationSessionBeanRemote.allocate(startDate);
+            System.out.println("Rooms have been allocated. Please view exception report for exceptions.");
+        } catch (ParseException ex) {
+            System.out.println("Invalid Date Input!");
+        }
+
     }
 
     public void menuOperationManager() throws InvalidAccessRightException {
@@ -573,20 +593,21 @@ public class HotelOperationModule {
 
     // 2: View room rate details
     public void doViewRoomRateDetails() {
+        SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy");
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
-        System.out.println("*** POS System :: System Administration :: View Product Details ***\n");
+        System.out.println("*** POS System :: System Administration :: View Room Rate Details ***\n");
         System.out.print("Enter Room Rate Name> ");
         String name = scanner.nextLine().trim();
 
         try {
             RoomRate rr = roomRateSessionBeanRemote.retrieveRoomRateByRoomRateName(name);
-            System.out.printf("%8s%20s%20s%20s%40s%40s%20s\n", "Room Rate ID", "Room Rate Type", "Room Type", "Rate Per Night", "Validity Start", "Validity End", "Enabled?");
+            System.out.printf("%8s%40s%20s%20s%20s%40s%40s%20s\n", "Room Rate ID", "Name", "Room Rate Type", "Room Type", "Rate Per Night", "Validity Start", "Validity End", "Enabled?");
             String enabled = (rr.getEnabled()) ? "Enabled" : "Disabled";
-            String start = (rr.getValidityStart() == null) ? "-" : rr.getValidityStart().toString();
-            String end = (rr.getValidityEnd() == null) ? "-" : rr.getValidityEnd().toString();
-            System.out.printf("%8s%20s%20s%20s%40s%40s%20s\n", rr.getRoomRateId(),
+            String start = (rr.getValidityStart() == null) ? "-" : df.format(rr.getValidityStart());
+            String end = (rr.getValidityEnd() == null) ? "-" : df.format(rr.getValidityEnd());
+            System.out.printf("%8s%40s%20s%20s%20s%40s%40s%20s\n", rr.getRoomRateId(), rr.getName(),
                     rr.getType().toString(), rr.getRoomType().getName(),
                     NumberFormat.getCurrencyInstance().format(rr.getRatePerNight()),
                     start, end,
@@ -685,21 +706,22 @@ public class HotelOperationModule {
 
     // 3: View all room rates
     public void doViewAllRoomRates() {
-        // TODO: Fix timing
 
+        SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy");
         System.out.println("*** HoRS System :: Hotel Operation Module [Sales Manager] :: View All Room Rates ***\n");
         System.out.println("------------------------");
 
         List<RoomRate> rrs = roomRateSessionBeanRemote.retrieveAllRoomRates();
-        System.out.printf("%8s%20s%20s%20s%40s%40s%20s\n", "Room Rate ID", "Room Rate Type", "Room Type", "Rate Per Night", "Validity Start", "Validity End", "Enabled?");
+        System.out.printf("%8s%20s%20s%20s%30s%20s%20s%20s\n", "Room Rate ID", "Room Rate Type", "Room Type", "Rate Per Night", "Name", "Validity Start", "Validity End", "Enabled?");
         for (RoomRate rr : rrs) {
             String enabled = (rr.getEnabled()) ? "Enabled" : "Disabled";
-            String start = (rr.getValidityStart() == null) ? "-" : rr.getValidityStart().toString();
-            String end = (rr.getValidityEnd() == null) ? "-" : rr.getValidityEnd().toString();
+            String start = (rr.getValidityStart() == null) ? "-" : df.format(rr.getValidityStart());
+            String end = (rr.getValidityEnd() == null) ? "-" : df.format(rr.getValidityEnd());
 
-            System.out.printf("%8s%20s%20s%20s%40s%40s%20s\n", rr.getRoomRateId(),
+            System.out.printf("%8s%20s%20s%20s%30s%20s%20s%20s\n", rr.getRoomRateId(),
                     rr.getType().toString(), rr.getRoomType().getName(),
                     NumberFormat.getCurrencyInstance().format(rr.getRatePerNight()),
+                    rr.getName(),
                     start, end,
                     enabled);
 
