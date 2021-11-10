@@ -86,9 +86,13 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
             for (Room room : usableRooms) {
                 List<Reservation> roomReservations = room.getReservations();
                 for (Reservation roomReservation : roomReservations) {
+                    if (reservation == roomReservation) {
+                        continue;
+                    }
                     if ((reservation.getStartDate().compareTo(checkInDate) >= 0 && reservation.getStartDate().compareTo(checkOutDate) <= 0)
                             || (reservation.getEndDate().compareTo(checkInDate) > 0 && reservation.getEndDate().compareTo(checkOutDate) <= 0)) {
                         roomsToRemove.add(room);
+                        System.out.println("Clash");
                     }
                 }
             }
@@ -122,8 +126,11 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
                 if (nextLevelType == null) { // highest level room, no more higher levels
                     reservation.setAllocated(true);
                     allocationException.setReservation(reservation);
+                    reservation.setException(allocationException);
                     allocationException.setNumOfTypeTwo(remaining);
+
                     em.persist(allocationException);
+
                     return;
                 }
 
@@ -133,6 +140,9 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
                 for (Room room : usableRoomsNextLevel) {
                     List<Reservation> roomReservations = room.getReservations();
                     for (Reservation roomReservation : roomReservations) {
+                        if (reservation == roomReservation) {
+                            continue;
+                        }
                         if ((reservation.getStartDate().compareTo(checkInDate) >= 0 && reservation.getStartDate().compareTo(checkOutDate) <= 0)
                                 || (reservation.getEndDate().compareTo(checkInDate) > 0 && reservation.getEndDate().compareTo(checkOutDate) <= 0)) {
                             roomsToRemove.add(room);
@@ -169,6 +179,7 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
                 }
 
                 allocationException.setReservation(reservation);
+                reservation.setException(allocationException);
                 em.persist(allocationException);
 
             }
@@ -278,5 +289,3 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
 
     }
 }
-
-
