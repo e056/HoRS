@@ -25,6 +25,7 @@ import oracle.jrockit.jfr.parser.ParseException;
 import util.exception.CreateNewReservationException;
 import util.exception.GuestPassportNumExistException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ReservationNotFoundException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -138,11 +139,11 @@ public class MainApp {
         Integer response = 0;
 
         while (true) {
-            System.out.println("*** HoRS Management Client ***\n");
+            System.out.println("*** HoRS Reservation Client ***\n");
             System.out.println("You are login as " + currGuest.getFullName());
             System.out.println("1: Search Hotel Room");
             System.out.println("2: View My Reservation Details");
-            System.out.println("3: Front Office");
+            System.out.println("3: View All My Reservations");
             System.out.println("4: Back\n");
             response = 0;
 
@@ -154,8 +155,10 @@ public class MainApp {
                 if (response == 1) {
                     searchRoom();
                 } else if (response == 2) {
+                    viewReservationDetails();
 
                 } else if (response == 3) {
+                    viewAllReservations();
 
                 } else if (response == 4) {
                     break;
@@ -167,6 +170,48 @@ public class MainApp {
             if (response == 4) {
                 break;
             }
+        }
+    }
+
+    public void viewReservationDetails() {
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+        System.out.println("***  Hotel Reservation System ::  View My Reservation Details ***\n");
+        System.out.print("Enter Reservation ID [Use View All Reservations to find the ID]> ");
+        long reservationId = scanner.nextLong();
+
+        scanner.nextLine();
+
+        try {
+            Reservation r = reservationSessionBeanRemote.retrieveReservationByReservationId(reservationId);
+            System.out.printf("%8s%20s%20s%20s%20s%20s\n", "ID", "Num. Of Rooms", "Check-In", "Check-Out", "Room Type", "Total Price");
+            System.out.printf("%8s%20s%20s%20s%20s%20s\n", r.getReservationId(), r.getNumOfRooms(),
+                    df.format(r.getStartDate()), df.format(r.getEndDate()),
+                    r.getRoomType().getName(), NumberFormat.getCurrencyInstance().format(r.getTotalPrice()));
+
+        } catch (ReservationNotFoundException ex) {
+            System.out.println("An error has occurred while retrieving Reservation: " + ex.getMessage() + "\n");
+        }
+
+    }
+
+    public void viewAllReservations() {
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+        System.out.println("***  Hotel Reservation System ::  View All Reservations ***\n");
+
+        List<Reservation> reservations = reservationSessionBeanRemote.retrieveReservationByGuestId(this.currGuest.getGuestId());
+        int count = 1;
+        if (reservations.size() == 0) {
+            System.out.println("Guest has no reservations.");
+        }
+        for (Reservation r : reservations) {
+            System.out.printf("%8s%20s\n", "No.", "Reservation ID");
+            System.out.printf("%8s%20s\n", count, r.getReservationId());
+            count++;
+
         }
     }
 
@@ -254,7 +299,6 @@ public class MainApp {
 
                 }
             }
-
 
         } catch (CreateNewReservationException ex) {
             System.out.println("Error when creating new Reservation: " + ex.getMessage());

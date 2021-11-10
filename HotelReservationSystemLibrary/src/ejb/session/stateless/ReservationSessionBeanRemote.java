@@ -44,4 +44,6 @@ public interface ReservationSessionBeanRemote {
 
     public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException;
     public void allocateReservation(Reservation reservation);
+
+    public List<Reservation> retrieveReservationByGuestId(Long guestId);
 }

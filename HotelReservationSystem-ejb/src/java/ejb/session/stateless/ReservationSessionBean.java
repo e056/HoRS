@@ -184,6 +184,14 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         return query.getResultList();
     }
 
+    public List<Reservation> retrieveReservationByGuestId(Long guestId
+    ) {
+        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.guest.guestId = :inId");
+        query.setParameter("inId", guestId);
+
+        return query.getResultList();
+    }
+
     @Override
     public RoomAllocationException retrieveraeByReservationId(Long reservationId) throws NoRoomAllocationException {
         try {

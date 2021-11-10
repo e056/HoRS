@@ -34,4 +34,5 @@ public interface ReservationSessionBeanLocal {
     public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId);
 
     public void allocateReservation(Reservation reservation);
+        public List<Reservation> retrieveReservationByGuestId(Long guestId);
 }
