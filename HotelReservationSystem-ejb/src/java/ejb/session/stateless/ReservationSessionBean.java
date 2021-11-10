@@ -10,6 +10,7 @@ import entity.Reservation;
 import entity.Room;
 import entity.RoomAllocationException;
 import entity.RoomType;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
@@ -40,7 +41,6 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
-    
 
     @Resource
     private EJBContext eJBContext;
@@ -93,8 +93,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     @Override
     public void checkInGuest(Reservation reservation) throws ReservationNotFoundException {
         Reservation reservationToUpdate = retrieveReservationByReservationId(reservation.getReservationId());
-        if (reservation != null && reservation.getReservationId()!= null) {
-
+        if (reservation != null && reservation.getReservationId() != null) {
 
             reservationToUpdate.setCheckedIn(true);
 
@@ -102,19 +101,26 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             throw new ReservationNotFoundException("Reservation ID not provided for Reservation to be updated");
         }
     }
-    
+
     @Override
     public void checkOutGuest(Reservation reservation) throws ReservationNotFoundException {
         Reservation reservationToUpdate = retrieveReservationByReservationId(reservation.getReservationId());
-        if (reservation != null && reservation.getReservationId()!= null) {
-    
+        List<Room> roomsToUpdate = reservationToUpdate.getAllocatedRooms();
+        if (reservation != null && reservation.getReservationId() != null) {
+            reservationToUpdate.setAllocatedRooms(new ArrayList<Room>());
+
+            for (Room r : roomsToUpdate) {
+                Room roomToDis = em.find(Room.class, r.getRoomId());
+                roomToDis.getReservations().remove(reservation);
+
+            }
 
             reservationToUpdate.setCheckedOut(true);
         } else {
             throw new ReservationNotFoundException("Reservation ID not provided for Reservation to be updated");
         }
     }
-    
+
     @Override
     public List<Reservation> retrieveReservationsByDate(Date dateToday) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.startDate = :inDateToday");
@@ -125,7 +131,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @Override
     public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException {
-        Reservation reservation = em.find(Reservation.class, reservationId);
+        Reservation reservation = em.find(Reservation.class,
+                reservationId);
         reservation.getAllocatedRooms().size();
         reservation.getException();
         return reservation;
@@ -133,7 +140,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     }
 
     @Override
-    public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId) {
+    public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId
+    ) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.walkInGuest.walkInGuestId = :inId");
         query.setParameter("inId", guestId);
 
@@ -141,12 +149,12 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     }
 
     @Override
-    public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId) {
+    public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId
+    ) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest.walkInGuestId = :inId");
         query.setParameter("inId", guestId);
-         List<Reservation> res = query.getResultList();
-        for(Reservation r : res)
-        {
+        List<Reservation> res = query.getResultList();
+        for (Reservation r : res) {
             r.getAllocatedRooms().size();
         }
 
@@ -154,7 +162,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     }
 
     @Override
-    public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId) {
+    public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId
+    ) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest = :inId");
         query.setParameter("inId", guestId);
 
@@ -173,11 +182,12 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             throw new NoRoomAllocationException("Reservation does not have any room allocation exception!");
         }
     }
-    
+
     public void allocateReservation(Reservation reservation) {
-        Reservation r = em.find(Reservation.class, reservation.getReservationId());
+        Reservation r = em.find(Reservation.class,
+                reservation.getReservationId());
         roomAllocationSessionBeanLocal.allocateAReservation(r);
-        
+
     }
 
 }
