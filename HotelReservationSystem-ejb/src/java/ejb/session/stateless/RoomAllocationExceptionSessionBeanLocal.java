@@ -5,17 +5,13 @@
  */
 package ejb.session.stateless;
 
-import entity.RoomAllocationException;
-import java.util.List;
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
  *
  * @author ANGELY
  */
-@Remote
-public interface RoomAllocationExceptionSessionBeanRemote {
-
-    public List<RoomAllocationException> retrieveAllRoomAllocationExceptions();
+@Local
+public interface RoomAllocationExceptionSessionBeanLocal {
     
 }
