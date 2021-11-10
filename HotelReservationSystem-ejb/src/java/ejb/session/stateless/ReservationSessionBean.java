@@ -75,5 +75,32 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         return reservation;
 
     }
+    
+    @Override
+    public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId)
+    {
+        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.walkInGuest.walkInGuestId = :inId");
+        query.setParameter("inId", guestId);
+        
+        return query.getResultList();
+    }
+    
+    @Override
+    public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId)
+    {
+        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.guest.guestId = :inId");
+        query.setParameter("inId", guestId);
+        
+        return query.getResultList();
+    }
+    
+    @Override
+     public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId)
+    {
+        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest = :inId");
+        query.setParameter("inId", guestId);
+        
+        return query.getResultList();
+    }
 
 }

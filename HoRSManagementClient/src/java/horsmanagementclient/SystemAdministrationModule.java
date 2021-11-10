@@ -7,6 +7,7 @@ package horsmanagementclient;
 
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
+import ejb.session.stateless.WalkInGuestSessionBeanRemote;
 import entity.Employee;
 import entity.Partner;
 import java.util.List;
@@ -30,10 +31,12 @@ public class SystemAdministrationModule {
     private EmployeeSessionBeanRemote employeeSessionBeanRemote;
     private Employee currEmployee;
     
+    
     public SystemAdministrationModule(PartnerSessionBeanRemote partnerSessionBeanRemote, EmployeeSessionBeanRemote employeeSessionBeanRemote, Employee currEmployee) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
         this.currEmployee = currEmployee;
+        
     }
 
     public void menuSystemAdministration() throws InvalidAccessRightException {

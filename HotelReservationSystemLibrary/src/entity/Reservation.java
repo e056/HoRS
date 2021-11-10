@@ -43,8 +43,11 @@ public class Reservation implements Serializable {
     @Column(nullable = false)
     private int numOfRooms;
     
-    @Column(nullable = false)
+    @Column
     private boolean checkedIn;
+    
+    @Column
+    private boolean checkedOut;
     
     @Column
     private BigDecimal totalPrice;
@@ -65,6 +68,9 @@ public class Reservation implements Serializable {
     
     @OneToOne(mappedBy = "reservation")
     private RoomAllocationException exception;
+    
+    @ManyToOne
+    private WalkInGuest walkInGuest;
     
     private boolean allocated;
 
@@ -259,6 +265,48 @@ public class Reservation implements Serializable {
      */
     public void setException(RoomAllocationException exception) {
         this.exception = exception;
+    }
+
+    /**
+     * @return the walkInGuest
+     */
+    public WalkInGuest getWalkInGuest() {
+        return walkInGuest;
+    }
+
+    /**
+     * @param walkInGuest the walkInGuest to set
+     */
+    public void setWalkInGuest(WalkInGuest walkInGuest) {
+        this.walkInGuest = walkInGuest;
+    }
+
+    /**
+     * @return the checkedIn
+     */
+    public boolean isCheckedIn() {
+        return checkedIn;
+    }
+
+    /**
+     * @param checkedIn the checkedIn to set
+     */
+    public void setCheckedIn(boolean checkedIn) {
+        this.checkedIn = checkedIn;
+    }
+
+    /**
+     * @return the checkedOut
+     */
+    public boolean isCheckedOut() {
+        return checkedOut;
+    }
+
+    /**
+     * @param checkedOut the checkedOut to set
+     */
+    public void setCheckedOut(boolean checkedOut) {
+        this.checkedOut = checkedOut;
     }
     
 }

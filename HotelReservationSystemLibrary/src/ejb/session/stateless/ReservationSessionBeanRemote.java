@@ -26,4 +26,12 @@ public interface ReservationSessionBeanRemote {
     public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException;
 
     public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException;
+
+    public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId);
+
+    public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId);
+
+    public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId);
+
+    public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId);
 }

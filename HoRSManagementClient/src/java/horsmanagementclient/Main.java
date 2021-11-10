@@ -6,12 +6,14 @@
 package horsmanagementclient;
 
 import ejb.session.stateless.EmployeeSessionBeanRemote;
+import ejb.session.stateless.GuestSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.RoomAllocationSessionBeanRemote;
 import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
+import ejb.session.stateless.WalkInGuestSessionBeanRemote;
 import javax.ejb.EJB;
 
 /**
@@ -19,6 +21,12 @@ import javax.ejb.EJB;
  * @author PYT
  */
 public class Main {
+
+    @EJB
+    private static GuestSessionBeanRemote guestSessionBeanRemote;
+
+    @EJB
+    private static WalkInGuestSessionBeanRemote walkInGuestSessionBeanRemote;
 
     @EJB
     private static ReservationSessionBeanRemote reservationSessionBeanRemote;
@@ -40,6 +48,10 @@ public class Main {
 
     @EJB
     private static EmployeeSessionBeanRemote employeeSessionBeanRemote;
+    
+    
+    
+    
 
     /**
      * @param args the command line arguments
@@ -49,7 +61,7 @@ public class Main {
         MainApp mainApp = new MainApp(partnerSessionBeanRemote,
                 employeeSessionBeanRemote, roomTypeSessionBeanRemote,
                 roomSessionBeanRemote, roomRateSessionBeanRemote,
-                roomAllocationSessionBeanRemote, reservationSessionBeanRemote);
+                roomAllocationSessionBeanRemote, reservationSessionBeanRemote, walkInGuestSessionBeanRemote, guestSessionBeanRemote);
 
         mainApp.runApp();
 
