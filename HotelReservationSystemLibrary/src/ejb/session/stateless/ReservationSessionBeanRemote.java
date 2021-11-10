@@ -32,6 +32,4 @@ public interface ReservationSessionBeanRemote {
     public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId);
 
     public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId);
-
-    public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId);
 }
