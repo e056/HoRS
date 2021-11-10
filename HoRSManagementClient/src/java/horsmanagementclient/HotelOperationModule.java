@@ -433,7 +433,7 @@ public class HotelOperationModule {
         for (RoomAllocationException e : exceptions) {
             Reservation reservation = e.getReservation();
 
-            System.out.println("Reservation id = " + reservation.getReservationId());
+            System.out.println("Reservation id = " + reservation.getReservationId() + ", Exception id = " + e.getRoomAllocationExceptionId());
             System.out.println("Number of Type One Exceptions = " + e.getTypeOneExceptions().size());
             System.out.println("Number of Type Two Exceptions = " + e.getNumOfTypeTwo());
 
@@ -444,7 +444,7 @@ public class HotelOperationModule {
             }
 
             for (int i = 0; i < e.getNumOfTypeTwo(); i++) {
-                System.out.printf("%20s%20s%20s%30s\n", "Type Two", "NA", "NA", "NA");
+                System.out.printf("%20s%20s%20s%30s\n", "Type Two", reservation.getRoomType().getName(), "NA", "NA");
             }
             System.out.println("------------------------------------------");
 
