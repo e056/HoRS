@@ -39,6 +39,8 @@ public interface ReservationSessionBeanRemote {
     public RoomAllocationException retrieveraeByReservationId(Long reservationId) throws NoRoomAllocationException;
 
     public void checkInGuest(Reservation reservation) throws ReservationNotFoundException;
+    
+    public void checkOutGuest(Reservation reservation) throws ReservationNotFoundException;
 
     public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException;
 }
