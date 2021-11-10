@@ -10,9 +10,13 @@ import entity.Reservation;
 import entity.Room;
 import entity.RoomAllocationException;
 import entity.RoomType;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
@@ -71,19 +75,14 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException {
 
         RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
-        guest.getReservations().add(reservation);
-        reservation.setGuest(guest);
+        Guest g = em.find(Guest.class, guest.getGuestId());
+
+        g.getReservations().add(reservation);
+        reservation.setGuest(g);
         rt.getReservations().add(reservation);
-        em.persist(guest);
+
         em.persist(rt);
         em.persist(reservation);
-
-        for (Room room : reservation.getAllocatedRooms()) {
-            if (!room.getEnabled() || !room.getIsAvailable()) {
-                eJBContext.setRollbackOnly();
-                throw new CreateNewReservationException("Room(s) is not available/enabled for reservation!");
-            }
-        }
 
         em.flush();
 
@@ -125,8 +124,21 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @Override
     public List<Reservation> retrieveReservationsByDate(Date dateToday) {
-        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.startDate = :inDateToday");
-        query.setParameter("inDateToday", dateToday);
+
+        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.startDate = :indate");
+        query.setParameter("indate", dateToday);
+//        List<Reservation> neededReservations = new ArrayList<>();
+//        List<Reservation> reservations = query.getResultList();
+//
+//        for (Reservation r : reservations) {
+//            System.out.println("Found: " + r.getReservationId());
+//            System.out.println("Start Date: " + r.getStartDate());
+//            System.out.println("Start Date: " + dateToday);
+//
+//            if (r.getStartDate().compareTo(dateToday) == 0) {
+//                neededReservations.add(r);
+//            }
+//        }
 
         return query.getResultList();
     }

@@ -120,9 +120,10 @@ public class HotelOperationModule {
             Date startDate;
             Scanner scanner = new Scanner(System.in);
             System.out.println("*** HoRS System :: Allocate Room For Reservation (Abitrary date) ***\n");
-            SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd/mm/yyyy");
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("d/M/yy");
             System.out.print("Enter Check-In Date (dd/mm/yyyy)> ");
             startDate = inputDateFormat.parse(scanner.nextLine().trim());
+            System.out.println(startDate);
             roomAllocationSessionBeanRemote.allocate(startDate);
             System.out.println("Rooms have been allocated. Please view exception report for exceptions.");
         } catch (ParseException ex) {

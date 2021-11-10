@@ -9,6 +9,7 @@ import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -135,10 +136,6 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
     }
 
-    public void persist(Object object) {
-        entityManager.persist(object);
-    }
-
     @Override
     public RoomRate retrieveRoomRateByRoomRateName(String name) throws RoomRateNotFoundException {
         Query query = entityManager.createQuery("SELECT r FROM RoomRate r WHERE r.name = :inName");
@@ -186,40 +183,71 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 //promotion rate is defined for a particular room type on a particular date, it will take 
 //precedence over the normal rate. If both peak rate and promotion rate are defined for a 
 //particular room type on a particular date, the promotion rate will take precedence.
-    public BigDecimal retrieveTotalPriceForOnlineReservationByRoomTyoe(Long roomTypeId, Date checkInDate, Date checkOutDate) {
+    public BigDecimal retrieveTotalPriceForOnlineReservationByRoomType(Long roomTypeId, Date checkInDate, Date checkOutDate) {
         List<RoomRate> rates = retrieveRoomRatesByRoomType(roomTypeId);
-        RoomRate normal = new RoomRate();
-        RoomRate peak = new RoomRate();
-        RoomRate promotion = new RoomRate();
+        RoomRate normal = null;
+        List<RoomRate> peaks = new ArrayList<>();
+        List<RoomRate> promotions = new ArrayList<>();
 
         for (RoomRate rate : rates) {
-            if (rate.getType().equals(RoomRateType.PEAK)) {
-                peak = rate;
-            } else if (rate.getType().equals(RoomRateType.PROMOTION)) {
-                promotion = rate;
-            } else if (rate.getType().equals(RoomRateType.NORMAL)) {
+            System.out.println(rate.getName());
+            if (rate.getType() == RoomRateType.PEAK) {
+
+                peaks.add(rate);
+            } else if (rate.getType() == RoomRateType.PROMOTION) {
+
+                promotions.add(rate);
+            } else if (rate.getType() == RoomRateType.NORMAL) {
                 normal = rate;
             }
         }
 
-        final Calendar current = Calendar.getInstance();
+        Calendar current = Calendar.getInstance();
         current.setTime(checkInDate);
 
-        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal totalAmount = BigDecimal.valueOf(0);
 
         while (!current.getTime().after(checkOutDate)) {
+            //System.out.println("Here");
+
+            RoomRate peak = null;
+            RoomRate promotion = null;
+            for (RoomRate p : peaks) {
+                if (current.getTime().compareTo(p.getValidityStart()) >= 0 && current.getTime().compareTo(p.getValidityEnd()) <= 0) {
+                    peak = p;
+                }
+
+            }
+            for (RoomRate p : promotions) {
+                if (current.getTime().compareTo(p.getValidityStart()) >= 0 && current.getTime().compareTo(p.getValidityEnd()) <= 0) {
+                    promotion = p;
+                }
+            }
+
             if (peak != null && promotion != null) {
-                totalAmount.add(peak.getRatePerNight());
-            } else if (peak == null) {
-                totalAmount.add(promotion.getRatePerNight());
-            } else if (promotion == null) {
-                totalAmount.add(peak.getRatePerNight());
+
+                totalAmount = totalAmount.add(peak.getRatePerNight());
+
+            } else if (peak == null && promotion != null) {
+
+                totalAmount = totalAmount.add(promotion.getRatePerNight());
+
+            } else if (promotion == null && peak != null) {
+
+                totalAmount= totalAmount.add(peak.getRatePerNight());
+
             } else {
-                totalAmount.add(normal.getRatePerNight());
+                System.out.println(normal.getRatePerNight());
+                System.out.println(totalAmount.add(normal.getRatePerNight()));
+                System.out.println("Total Amount = " + totalAmount);
+
+                totalAmount = totalAmount.add(normal.getRatePerNight());
+                System.out.println("Total Amount aft add = " + totalAmount);
             }
 
             current.add(Calendar.DATE, 1);
         }
+        System.out.println(totalAmount);
         return totalAmount;
     }
 }

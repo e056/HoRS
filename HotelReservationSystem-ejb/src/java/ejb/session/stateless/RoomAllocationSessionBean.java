@@ -72,10 +72,12 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
     }
 
     public void allocate(Date date) {
+        System.out.println("Allocating...");
 
         List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByDate(date);
 
         for (Reservation reservation : reservations) {
+            System.out.println("Looping through reservations...");
 
             if (reservation.isAllocated()) {
                 continue;

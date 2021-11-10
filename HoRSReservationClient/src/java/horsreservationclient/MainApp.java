@@ -5,7 +5,6 @@
  */
 package horsreservationclient;
 
-
 import ejb.session.stateless.GuestSessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.RoomRateSessionBeanRemote;
@@ -36,12 +35,11 @@ import util.exception.UnknownPersistenceException;
  */
 public class MainApp {
 
-
     private GuestSessionBeanRemote guestSessionBeanRemote;
     private RoomTypeSessionBeanRemote roomTypeSessionBeanRemote;
     private RoomRateSessionBeanRemote roomRateSessionBeanRemote;
     private ReservationSessionBeanRemote reservationSessionBeanRemote;
-    
+
     private Guest currGuest;
 
     public MainApp(GuestSessionBeanRemote guestSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote) {
@@ -49,10 +47,8 @@ public class MainApp {
         this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
-       
-    }
 
-    
+    }
 
     public void runApp() {
         Scanner scanner = new Scanner(System.in);
@@ -156,8 +152,7 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    
-
+                    searchRoom();
                 } else if (response == 2) {
 
                 } else if (response == 3) {
@@ -174,9 +169,9 @@ public class MainApp {
             }
         }
     }
-    
+
     public void searchRoom() {
-        System.out.println("*** Hotel Reservation System :: Walk-In Search Room ***\n");
+        System.out.println("*** Hotel Reservation System :: Search Room ***\n");
         Scanner scanner = new Scanner(System.in);
         String passportNo = "";
         String name = "";
@@ -205,11 +200,13 @@ public class MainApp {
             int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
 
             List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
-            System.out.printf("%8s%20s%30s%30s\n", "ID", "Room Type", "Rate per night of stay", "Total price for stay");
+            System.out.printf("%8s%20s%30s%30s\n", "ID", "Room Type", "Price (each room)", "Total Price");
             for (RoomType rt : roomTypes) {
+                BigDecimal priceEachRoom = roomRateSessionBeanRemote.retrieveTotalPriceForOnlineReservationByRoomType(rt.getRoomTypeId(), startDate, endDate);
                 System.out.printf("%8s%20s%30s%30s\n", rt.getRoomTypeId(), rt.getName(),
-                        NumberFormat.getCurrencyInstance().format(roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(rt.getRoomTypeId()).getRatePerNight()),
-                        NumberFormat.getCurrencyInstance().format(roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(rt.getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days))));
+                        NumberFormat.getCurrencyInstance().format(priceEachRoom),
+                        NumberFormat.getCurrencyInstance().format(priceEachRoom.multiply(BigDecimal.valueOf(numOfRooms))));
+
             }
 
             System.out.println("------------------------");
@@ -221,9 +218,10 @@ public class MainApp {
 
             if (response == 1) {
 
-                System.out.print("Enter Room Type Name to reserve> ");
+                System.out.print("Enter Room Type Id to reserve> ");
                 try {
-                    roomTypeToReserve = roomTypeSessionBeanRemote.retrieveRoomTypeByRoomTypeName(scanner.nextLine().trim());
+                    roomTypeToReserve = roomTypeSessionBeanRemote.retrieveRoomTypeByRoomId(scanner.nextLong());
+                    scanner.nextLine();
                     if (!roomTypes.contains(roomTypeToReserve)) {
                         throw new CreateNewReservationException("This room type is not available for reservation! Cancelling...");
                     }
@@ -235,7 +233,8 @@ public class MainApp {
 
                 System.out.println("Reserving the following:\n");
                 System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
-                BigDecimal totalPrice = roomRateSessionBeanRemote.retrieveTotalPriceForOnlineReservationByRoomTyoe(roomTypeToReserve.getRoomTypeId(), startDate, endDate);
+                BigDecimal totalPrice = roomRateSessionBeanRemote.retrieveTotalPriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDate, endDate);
+                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
 
                 System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, totalPrice);
                 System.out.print("Confirm? ('Y' to confirm)> ");
@@ -256,15 +255,14 @@ public class MainApp {
                 }
             }
 
-        } catch (RoomRateNotFoundException ex) {
-            System.out.println("An error occured: Room type has no published rate.");
+
         } catch (CreateNewReservationException ex) {
             System.out.println("Error when creating new Reservation: " + ex.getMessage());
         } catch (RoomTypeNotFoundException ex) {
             System.out.println("Error when creating new Reservation: " + ex.getMessage());
         } catch (java.text.ParseException ex) {
             System.out.println("Invalid date input!");
-        } 
+        }
 
     }
 
