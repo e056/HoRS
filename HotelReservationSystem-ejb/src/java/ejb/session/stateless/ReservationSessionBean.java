@@ -110,7 +110,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             throw new ReservationNotFoundException("Reservation ID not provided for Reservation to be updated");
         }
     }
-
+    
     @Override
     public List<Reservation> retrieveReservationsByDate(Date dateToday) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.startDate = :inDateToday");
