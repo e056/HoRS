@@ -72,6 +72,7 @@ public class Reservation implements Serializable {
     @ManyToOne
     private WalkInGuest walkInGuest;
     
+    @Column
     private boolean allocated;
 
     public Reservation() {

@@ -6,10 +6,12 @@
 package ejb.session.stateless;
 
 import entity.Reservation;
+import entity.RoomAllocationException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.CreateNewReservationException;
+import util.exception.NoRoomAllocationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
@@ -32,4 +34,6 @@ public interface ReservationSessionBeanRemote {
     public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId);
 
     public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId);
+
+    public RoomAllocationException retrieveraeByReservationId(Long reservationId) throws NoRoomAllocationException;
 }

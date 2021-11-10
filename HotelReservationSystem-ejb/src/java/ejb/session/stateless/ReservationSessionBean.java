@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Reservation;
 import entity.Room;
+import entity.RoomAllocationException;
 import entity.RoomType;
 import java.util.Date;
 import java.util.List;
@@ -15,9 +16,11 @@ import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.CreateNewReservationException;
+import util.exception.NoRoomAllocationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
@@ -70,37 +73,50 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @Override
     public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException {
-        Reservation reservation = em.find(Reservation.class,
-                reservationId);
+        Reservation reservation = em.find(Reservation.class,reservationId);
+        reservation.getAllocatedRooms().size();
+        reservation.getException();
         return reservation;
 
     }
-    
+
     @Override
-    public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId)
-    {
+    public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.walkInGuest.walkInGuestId = :inId");
         query.setParameter("inId", guestId);
-        
+
         return query.getResultList();
     }
-    
+
     @Override
-    public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId)
-    {
+    public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.guest.guestId = :inId");
         query.setParameter("inId", guestId);
-        
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId) {
+        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest = :inId");
+        query.setParameter("inId", guestId);
+
         return query.getResultList();
     }
     
     @Override
-     public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId)
-    {
-        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest = :inId");
-        query.setParameter("inId", guestId);
-        
-        return query.getResultList();
-    }
+   public RoomAllocationException retrieveraeByReservationId(Long reservationId) throws NoRoomAllocationException
+   {
+       try{
+           Query query = em.createQuery("SELECT r FROM RoomAllocationException r WHERE r.reservation.reservationId = :inId");
+           query.setParameter("inId", reservationId);
+           RoomAllocationException rae = (RoomAllocationException) query.getSingleResult();
+           rae.getTypeOneExceptions().size();
+           return rae;
+       } catch (NoResultException ex)
+       {
+           throw new NoRoomAllocationException("Reservation does not have any room allocation exception!");
+       }
+   }
 
 }
