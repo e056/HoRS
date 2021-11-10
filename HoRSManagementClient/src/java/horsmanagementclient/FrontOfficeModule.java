@@ -156,11 +156,12 @@ public class FrontOfficeModule {
             int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
 
             List<RoomType> roomTypes = roomeTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
-            System.out.printf("%8s%20s%30s%30s\n", "ID", "Room Type", "Rate per night of stay", "Total price for stay");
+            System.out.printf("%8s%20s%30s%30s\n", "ID", "Room Type", "Price (Each Room)", "Total Price");
             for (RoomType rt : roomTypes) {
+                BigDecimal price = roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(rt.getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days));
                 System.out.printf("%8s%20s%30s%30s\n", rt.getRoomTypeId(), rt.getName(),
-                        NumberFormat.getCurrencyInstance().format(roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(rt.getRoomTypeId()).getRatePerNight()),
-                        NumberFormat.getCurrencyInstance().format(roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(rt.getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days))));
+                        NumberFormat.getCurrencyInstance().format(price),
+                        NumberFormat.getCurrencyInstance().format(price.multiply(BigDecimal.valueOf(numOfRooms))));
             }
 
             System.out.println("------------------------");
@@ -188,6 +189,7 @@ public class FrontOfficeModule {
                 System.out.println("Reserving the following:\n");
                 System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
                 BigDecimal totalPrice = roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(roomTypeToReserve.getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days));
+                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
 
                 System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice));
                 System.out.print("Confirm? ('Y' to confirm)> ");
@@ -211,7 +213,7 @@ public class FrontOfficeModule {
                     System.out.println("The time now is: " + dateWithTimeFormat.format(currDate));
                     String dateString2am = dateFormat.format(currDate) + " 02:00:00 AM";
                     String dateStringOnly = dateFormat.format(currDate);
-                    
+
                     if (dateFormat.parse(dateStringOnly).compareTo(startDate) == 0) {
                         if (dateWithTimeFormat.parse(dateString2am).compareTo(currDate) < 0) {
                             System.out.println("Same day check-in after 2am, allocating rooms... ");
