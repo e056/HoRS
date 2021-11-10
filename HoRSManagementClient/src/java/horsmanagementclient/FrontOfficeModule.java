@@ -229,99 +229,6 @@ public class FrontOfficeModule {
 
     }
 
-//    public void searchRoom() {
-//        try {
-//            Scanner scanner = new Scanner(System.in);
-//            Integer response = 0;
-//            SimpleDateFormat inputDateFormat = new SimpleDateFormat("d/M/yy");
-//            SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-//            Date startDate;
-//            Date endDate;
-//            Room room;
-//            String roomNumber;
-//            String moreItem = "";
-//            String comfirmReservation = "";
-//
-//            System.out.println("*** Hotel Reservation System :: Walk-In Search Room ***\n");
-//            System.out.print("Enter Check-In Date (dd/mm/yyyy)> ");
-//            startDate = inputDateFormat.parse(scanner.nextLine().trim());
-//            System.out.print("Enter Check-Out Date (dd/mm/yyyy)>");
-//            endDate = inputDateFormat.parse(scanner.nextLine().trim());
-//            System.out.println("------------------------");
-//
-//            List<Room> rooms = walkInRoomReservationSessionBeanRemote.walkInSearchRoom(startDate, endDate);
-//            System.out.printf("%8s%20s%20s\n", "ID", "Room Number", "Room Type");
-//            for (Room r : rooms) {
-//                System.out.printf("%8s%20s%20s\n", r.getRoomId(), r.getRoomNumber(), r.getRoomType().getName());
-//            }
-//
-//            System.out.println("------------------------");
-//            System.out.println("1: Make Reservation");
-//            System.out.println("2: Back\n");
-//            System.out.print("> ");
-//            response = scanner.nextInt();
-//            scanner.nextLine();
-//
-//            if (response == 1) {
-//                do {
-//                    System.out.print("Enter Room Number> ");
-//                    roomNumber = scanner.nextLine().trim();
-//
-//                    try {
-//                        room = roomSessionBeanRemote.retrieveRoomByRoomNumber(roomNumber);
-//                        System.out.println("Selecting Room = " + room.getRoomNumber());
-//                        BigDecimal subTotal = walkInRoomReservationSessionBeanRemote.walkInAddRoom(room);
-//                        System.out.println(room.getRoomNumber() + " added successfully!: "
-//                                + "Price of stay for this room @ " + NumberFormat.getCurrencyInstance().format(subTotal) + "\n");
-//                    } catch (RoomNotFoundException ex) {
-//                        System.out.println("An error has occurred while retrieving room: " + ex.getMessage() + "\n");
-//                    } catch (RoomRateNotFoundException ex) {
-//                        System.out.println("An error has occurred while retrieving room: The room has no published rate");
-//
-//                    }
-//
-//                    System.out.print("More item? (Enter 'N' to complete reservation)> ");
-//                    moreItem = scanner.nextLine().trim();
-//                } while (!moreItem.equals("N"));
-//
-//                if (walkInRoomReservationSessionBeanRemote.getNumOfRooms() > 0) {
-//                    System.out.println("Reserving the following rooms:\n");
-//                    System.out.printf("\n%20s%30s", "Room Number", "Price of room for duration of stay");
-//
-//                    for (RoomReservationLineEntity roomReservationLineEntity : walkInRoomReservationSessionBeanRemote.getLineEntities()) {
-//                        System.out.printf("\n%20s%30s",
-//                                roomReservationLineEntity.getRoom().getRoomNumber(),
-//                                NumberFormat.getCurrencyInstance().format(roomReservationLineEntity.getPrice()));
-//                    }
-//                    System.out.printf("\nNumber of Rooms: %d, Total Amount: %s, Check-in: %s, Check-out:%s\n",
-//                            walkInRoomReservationSessionBeanRemote.getNumOfRooms(),
-//                            NumberFormat.getCurrencyInstance().format(walkInRoomReservationSessionBeanRemote.getTotalAmount()),
-//                            outputDateFormat.format(startDate), outputDateFormat.format(endDate));
-//
-//                    System.out.println("------------------------");
-//                    System.out.print("Confirm reservation? (Enter 'Y' to complete reservation)> ");
-//                    comfirmReservation = scanner.nextLine().trim();
-//                    if (comfirmReservation.equals("Y")) {
-//
-//                        Reservation reservation = walkInRoomReservationSessionBeanRemote.walkInReserveRoom();
-//                        System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
-//                    } else {
-//                        System.out.println("Cancelled.");
-//                        walkInRoomReservationSessionBeanRemote.clear();
-//                    }
-//
-//                } else {
-//                    System.out.println("Nothing to reserve!");
-//                    walkInRoomReservationSessionBeanRemote.clear();
-//                }
-//
-//            }
-//        } catch (ParseException ex) {
-//            System.out.println("Invalid date input!\n");
-//        } catch (CreateNewReservationException ex) {
-//            System.out.println("Error when creating new Reservation: " + ex.getMessage());
-//        }
-//    }
     private void checkInGuest() {
         Scanner scanner = new Scanner(System.in);
         String passportNo;
@@ -411,19 +318,17 @@ public class FrontOfficeModule {
             for (Reservation ress : reslist) {
                 System.out.printf("%5s%30s%30s\n", ress.getReservationId(), ress.getStartDate(), ress.getEndDate());
             }
-            
+
             System.out.print("Select reservation to check in>");
             Long id = scanner.nextLong();
-            
+
             res = reservationSessionBeanRemote.retrieveReservationByReservationId(id);
-            
-            
-            
+
             System.out.printf("%20s%20s%30s\n", "Room Id", "Room Type", "Room Number");
             for (Room allocatedRooms : res.getAllocatedRooms()) {
                 System.out.printf("%5s%20s%20s\n", allocatedRooms.getRoomId(), allocatedRooms.getRoomType().getName(), allocatedRooms.getRoomNumber());
             }
-            
+
             if (res.getException() != null) {
                 RoomAllocationException rae = reservationSessionBeanRemote.retrieveraeByReservationId(id);
                 for (Room allocatedRooms : rae.getTypeOneExceptions()) {
@@ -433,17 +338,16 @@ public class FrontOfficeModule {
                 if (numTypeTwo > 0) {
                     System.out.println(numTypeTwo + " room(s) were unable to be allocated!");
                 }
-            
+
             }
+            reservationSessionBeanRemote.checkInGuest(res);
+            System.out.println("Guest has been successfully checked-in.");
 
         } catch (ReservationNotFoundException ex) {
             System.out.println("Error when checking in:" + ex.getMessage());
         } catch (NoRoomAllocationException ex) {
             Logger.getLogger(FrontOfficeModule.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            res.setCheckedIn(true);
-            System.out.println("checked in");
-           
+
         }
     }
 
@@ -479,7 +383,7 @@ public class FrontOfficeModule {
             System.out.println("Error when checking in:" + ex.getMessage());
         } catch (NoRoomAllocationException ex) {
             System.out.println("Reservation has no allocation exceptions!");
-        } 
+        }
     }
 
 }

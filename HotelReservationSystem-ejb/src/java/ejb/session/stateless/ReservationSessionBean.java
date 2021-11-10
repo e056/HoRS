@@ -63,6 +63,19 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         return reservation;
     }
 
+
+    public void checkInGuest(Reservation reservation) throws ReservationNotFoundException {
+        Reservation reservationToUpdate = retrieveReservationByReservationId(reservation.getReservationId());
+        if (reservation != null && reservation.getReservationId()!= null) {
+    
+
+            reservationToUpdate.setCheckedIn(true);
+
+        } else {
+            throw new ReservationNotFoundException("Reservation ID not provided for Reservation to be updated");
+        }
+    }
+
     @Override
     public List<Reservation> retrieveReservationsByDate(Date dateToday) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.startDate = :inDateToday");
@@ -73,7 +86,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @Override
     public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException {
-        Reservation reservation = em.find(Reservation.class,reservationId);
+        Reservation reservation = em.find(Reservation.class, reservationId);
         reservation.getAllocatedRooms().size();
         reservation.getException();
         return reservation;
@@ -103,20 +116,18 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         return query.getResultList();
     }
-    
+
     @Override
-   public RoomAllocationException retrieveraeByReservationId(Long reservationId) throws NoRoomAllocationException
-   {
-       try{
-           Query query = em.createQuery("SELECT r FROM RoomAllocationException r WHERE r.reservation.reservationId = :inId");
-           query.setParameter("inId", reservationId);
-           RoomAllocationException rae = (RoomAllocationException) query.getSingleResult();
-           rae.getTypeOneExceptions().size();
-           return rae;
-       } catch (NoResultException ex)
-       {
-           throw new NoRoomAllocationException("Reservation does not have any room allocation exception!");
-       }
-   }
+    public RoomAllocationException retrieveraeByReservationId(Long reservationId) throws NoRoomAllocationException {
+        try {
+            Query query = em.createQuery("SELECT r FROM RoomAllocationException r WHERE r.reservation.reservationId = :inId");
+            query.setParameter("inId", reservationId);
+            RoomAllocationException rae = (RoomAllocationException) query.getSingleResult();
+            rae.getTypeOneExceptions().size();
+            return rae;
+        } catch (NoResultException ex) {
+            throw new NoRoomAllocationException("Reservation does not have any room allocation exception!");
+        }
+    }
 
 }
