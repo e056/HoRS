@@ -284,8 +284,8 @@ public class FrontOfficeModule {
         passportNo = scanner.nextLine().trim();
         int ans = 0;
         try {
-            Guest guest = guestSessionBeanRemote.retrieveGuestByPassportNum(passportNo);
-            List<Reservation> checkedIn = reservationSessionBeanRemote.retrieveCheckedInReservationByGuestId(guest.getGuestId());
+            WalkInGuest guest = walkInGuestSessionBeanRemote.retrieveWalkInGuestByPassportNo(passportNo);
+            List<Reservation> checkedIn = reservationSessionBeanRemote.retrieveCheckedInReservationByGuestId(guest.getWalkInGuestId());
             if (checkedIn.isEmpty()) {
                 System.out.println("Guest is currently not checked into any reservation!");
             } else {
@@ -293,16 +293,17 @@ public class FrontOfficeModule {
                 for (Reservation res : checkedIn) {
 
                     System.out.printf("%20s%20s\n", res.getReservationId(), res.getAllocatedRooms().size());
-                    System.out.println("Checkout? Press 1");
+                    System.out.print("Checkout? Press 1. Else, press 0>");
+                    ans = scanner.nextInt();
                     if (ans == 1) {
-                        Reservation resFound = reservationSessionBeanRemote.retrieveReservationByReservationId(res.getReservationId());
-                        resFound.setCheckedOut(true);
+                        reservationSessionBeanRemote.checkOutGuest(res);
+                        System.out.println("You have successfully checked out from Reservation " + res.getReservationId());
                     }
                 }
             }
-        } catch (GuestNotFoundException ex) {
-            System.out.println("Guest not found!");
         } catch (ReservationNotFoundException ex) {
+            Logger.getLogger(FrontOfficeModule.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (WalkInGuestNotFoundException ex) {
             Logger.getLogger(FrontOfficeModule.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -328,22 +329,32 @@ public class FrontOfficeModule {
             res = reservationSessionBeanRemote.retrieveReservationByReservationId(id);
 
             System.out.printf("%20s%20s%30s\n", "Room Id", "Room Type", "Room Number");
+            
             for (Room allocatedRooms : res.getAllocatedRooms()) {
                 System.out.printf("%5s%20s%20s\n", allocatedRooms.getRoomId(), allocatedRooms.getRoomType().getName(), allocatedRooms.getRoomNumber());
+            }
+            
+            if(!res.getAllocatedRooms().isEmpty())
+            {
+                reservationSessionBeanRemote.checkInGuest(res);
             }
 
             if (res.getException() != null) {
                 RoomAllocationException rae = reservationSessionBeanRemote.retrieveraeByReservationId(id);
-                for (Room allocatedRooms : rae.getTypeOneExceptions()) {
-                    System.out.printf("%20s%20s%30s\n", allocatedRooms.getRoomId(), allocatedRooms.getRoomType().getName(), allocatedRooms.getRoomNumber());
-                }
+//                for (Room allocatedRooms : rae.getTypeOneExceptions()) {
+//                    System.out.printf("%20s%20s%30s\n", allocatedRooms.getRoomId(), allocatedRooms.getRoomType().getName(), allocatedRooms.getRoomNumber());
+//                }
                 int numTypeTwo = rae.getNumOfTypeTwo();
                 if (numTypeTwo > 0) {
                     System.out.println(numTypeTwo + " room(s) were unable to be allocated!");
                     if(numTypeTwo == res.getNumOfRooms())
                     {
-                        res.setCheckedOut(true);
+                        reservationSessionBeanRemote.checkOutGuest(res);
+                    } else {
+                        reservationSessionBeanRemote.checkInGuest(res);
                     }
+                } else {
+                    reservationSessionBeanRemote.checkInGuest(res);
                 }
 
             }

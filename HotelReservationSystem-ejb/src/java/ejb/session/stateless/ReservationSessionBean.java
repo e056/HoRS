@@ -64,6 +64,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     }
 
 
+    @Override
     public void checkInGuest(Reservation reservation) throws ReservationNotFoundException {
         Reservation reservationToUpdate = retrieveReservationByReservationId(reservation.getReservationId());
         if (reservation != null && reservation.getReservationId()!= null) {
@@ -71,6 +72,18 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
             reservationToUpdate.setCheckedIn(true);
 
+        } else {
+            throw new ReservationNotFoundException("Reservation ID not provided for Reservation to be updated");
+        }
+    }
+    
+    @Override
+    public void checkOutGuest(Reservation reservation) throws ReservationNotFoundException {
+        Reservation reservationToUpdate = retrieveReservationByReservationId(reservation.getReservationId());
+        if (reservation != null && reservation.getReservationId()!= null) {
+    
+
+            reservationToUpdate.setCheckedOut(true);
         } else {
             throw new ReservationNotFoundException("Reservation ID not provided for Reservation to be updated");
         }
@@ -103,8 +116,13 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @Override
     public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId) {
-        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.guest.guestId = :inId");
+        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest.walkInGuestId = :inId");
         query.setParameter("inId", guestId);
+         List<Reservation> res = query.getResultList();
+        for(Reservation r : res)
+        {
+            r.getAllocatedRooms().size();
+        }
 
         return query.getResultList();
     }
