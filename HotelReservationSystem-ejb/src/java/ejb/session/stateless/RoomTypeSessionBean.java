@@ -181,15 +181,15 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         } else {
             Long id = roomTypeToRemove.getRoomTypeId();
             RoomType rt = entityManager.find(RoomType.class, id);
-            List<Room> roomsToDisable = rt.getRooms();
-            for (Room room : roomsToDisable) {
-                Long roomId = room.getRoomId();
-                Room roomFound = entityManager.find(Room.class, roomId);
-                roomFound.setEnabled(Boolean.FALSE);
-
-            }
+//            List<Room> roomsToDisable = rt.getRooms();
+//            for (Room room : roomsToDisable) {
+//                Long roomId = room.getRoomId();
+//                Room roomFound = entityManager.find(Room.class, roomId);
+//                roomFound.setEnabled(Boolean.FALSE);
+//
+//            }
             rt.setEnabled(Boolean.FALSE);
-            throw new DeleteRoomTypeException("Room Type cannot be deleted as it is currently used by Room or Room Rate. Room Type and its rooms have been set to disabled!");
+            throw new DeleteRoomTypeException("Room Type cannot be deleted as it is currently used by Room or Room Rate. Room Type has been set to disabled!");
         }
 
     }
@@ -198,6 +198,23 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     public RoomType retrieveRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException {
 
         Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.name = :inName");
+        query.setParameter("inName", roomTypeName);
+        try {
+            RoomType rt = (RoomType) query.getSingleResult();
+            rt.getReservations().size();
+            rt.getRoomRates().size();
+            rt.getRooms().size();
+            return rt;
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new RoomTypeNotFoundException("Room Type " + roomTypeName + " does not exist!");
+        }
+
+    }
+    
+    @Override
+     public RoomType retrieveEnabledRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException {
+
+        Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.name = :inName AND r.enabled = TRUE");
         query.setParameter("inName", roomTypeName);
         try {
             RoomType rt = (RoomType) query.getSingleResult();

@@ -44,6 +44,8 @@ public interface RoomTypeSessionBeanRemote {
     public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException;
 
     public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate);
+    
+    public RoomType retrieveEnabledRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException;
 
     
    
