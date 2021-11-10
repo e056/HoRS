@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Guest;
 import entity.Reservation;
 import entity.Room;
 import entity.RoomAllocationException;
@@ -63,11 +64,31 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         return reservation;
     }
 
+    public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException {
+
+        RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
+        guest.getReservations().add(reservation);
+        reservation.setGuest(guest);
+        rt.getReservations().add(reservation);
+        em.persist(guest);
+        em.persist(rt);
+        em.persist(reservation);
+
+        for (Room room : reservation.getAllocatedRooms()) {
+            if (!room.getEnabled() || !room.getIsAvailable()) {
+                eJBContext.setRollbackOnly();
+                throw new CreateNewReservationException("Room(s) is not available/enabled for reservation!");
+            }
+        }
+
+        em.flush();
+
+        return reservation;
+    }
 
     public void checkInGuest(Reservation reservation) throws ReservationNotFoundException {
         Reservation reservationToUpdate = retrieveReservationByReservationId(reservation.getReservationId());
-        if (reservation != null && reservation.getReservationId()!= null) {
-    
+        if (reservation != null && reservation.getReservationId() != null) {
 
             reservationToUpdate.setCheckedIn(true);
 
@@ -86,7 +107,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @Override
     public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException {
-        Reservation reservation = em.find(Reservation.class, reservationId);
+        Reservation reservation = em.find(Reservation.class,
+                reservationId);
         reservation.getAllocatedRooms().size();
         reservation.getException();
         return reservation;

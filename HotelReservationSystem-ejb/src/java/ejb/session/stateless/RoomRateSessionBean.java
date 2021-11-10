@@ -8,6 +8,9 @@ package ejb.session.stateless;
 import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -152,7 +155,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
     public RoomRate retrievePublishedRoomRateByRoomType(Long roomTypeId) throws RoomRateNotFoundException {
         //System.out.println("Room type id is " + roomTypeId);
-        
+
         Query query = entityManager.createQuery("SELECT r FROM RoomRate r WHERE r.roomType.roomTypeId = :roomTypeId AND r.type = :inType");
         query.setParameter("roomTypeId", roomTypeId);
         query.setParameter("inType", RoomRateType.PUBLISHED);
@@ -163,8 +166,60 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
             throw new RoomRateNotFoundException("Room Rate does not exist!");
 
         }
-    
 
     }
 
+    public List<RoomRate> retrieveRoomRatesByRoomType(Long roomTypeId) {
+        Query query = entityManager.createQuery("SELECT r FROM RoomRate r WHERE r.roomType.roomTypeId = :roomTypeId AND r.type != :published");
+        query.setParameter("roomTypeId", roomTypeId);
+        query.setParameter("published", RoomRateType.PUBLISHED);
+
+        List<RoomRate> roomRates = query.getResultList();
+        return roomRates;
+
+    }
+
+//The total reservation fee payable by the guest for a reservation is calculated by summing the 
+//prevailing rate per night of each night of stay for the entire duration of stay. For example, if a 
+//guest books a Deluxe Room for 3 nights, the reservation fee will be the sum of first day’s rate 
+//per night, second day’s rate per night and third day’s rate per night. If either peak rate or 
+//promotion rate is defined for a particular room type on a particular date, it will take 
+//precedence over the normal rate. If both peak rate and promotion rate are defined for a 
+//particular room type on a particular date, the promotion rate will take precedence.
+    public BigDecimal retrieveTotalPriceForOnlineReservationByRoomTyoe(Long roomTypeId, Date checkInDate, Date checkOutDate) {
+        List<RoomRate> rates = retrieveRoomRatesByRoomType(roomTypeId);
+        RoomRate normal = new RoomRate();
+        RoomRate peak = new RoomRate();
+        RoomRate promotion = new RoomRate();
+
+        for (RoomRate rate : rates) {
+            if (rate.getType().equals(RoomRateType.PEAK)) {
+                peak = rate;
+            } else if (rate.getType().equals(RoomRateType.PROMOTION)) {
+                promotion = rate;
+            } else if (rate.getType().equals(RoomRateType.NORMAL)) {
+                normal = rate;
+            }
+        }
+
+        final Calendar current = Calendar.getInstance();
+        current.setTime(checkInDate);
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        while (!current.getTime().after(checkOutDate)) {
+            if (peak != null && promotion != null) {
+                totalAmount.add(peak.getRatePerNight());
+            } else if (peak == null) {
+                totalAmount.add(promotion.getRatePerNight());
+            } else if (promotion == null) {
+                totalAmount.add(peak.getRatePerNight());
+            } else {
+                totalAmount.add(normal.getRatePerNight());
+            }
+
+            current.add(Calendar.DATE, 1);
+        }
+        return totalAmount;
+    }
 }
