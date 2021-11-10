@@ -32,11 +32,15 @@ import util.exception.RoomTypeNotFoundException;
 @Stateless
 public class ReservationSessionBean implements ReservationSessionBeanRemote, ReservationSessionBeanLocal {
 
+    @EJB(name = "RoomAllocationSessionBeanLocal")
+    private RoomAllocationSessionBeanLocal roomAllocationSessionBeanLocal;
+
     @EJB(name = "RoomTypeSessionBeanLocal")
     private RoomTypeSessionBeanLocal roomTypeSessionBeanLocal;
 
     @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
+    
 
     @Resource
     private EJBContext eJBContext;
@@ -168,6 +172,12 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         } catch (NoResultException ex) {
             throw new NoRoomAllocationException("Reservation does not have any room allocation exception!");
         }
+    }
+    
+    public void allocateReservation(Reservation reservation) {
+        Reservation r = em.find(Reservation.class, reservation.getReservationId());
+        roomAllocationSessionBeanLocal.allocateAReservation(r);
+        
     }
 
 }

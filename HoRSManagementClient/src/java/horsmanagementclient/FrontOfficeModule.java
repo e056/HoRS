@@ -29,19 +29,17 @@ import entity.Room;
 import entity.RoomAllocationException;
 import entity.RoomType;
 import entity.WalkInGuest;
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import util.exception.GuestNotFoundException;
 import util.exception.NoRoomAllocationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.WalkInGuestNotFoundException;
-import util.exception.WalkInGuestPassportNumExistException;
 
 /**
  *
@@ -202,9 +200,23 @@ public class FrontOfficeModule {
                     reservation = reservationSessionBeanRemote.createNewReservation(reservation);
                     if (noAccount) {
                         Long id = walkInGuestSessionBeanRemote.createNewWalkInGuest(guest, reservation.getReservationId());
-
                     } else {
                         walkInGuestSessionBeanRemote.associateGuestWithReservation(reservation, guestId);
+                    }
+
+                    Date currDate = new java.util.Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    SimpleDateFormat dateWithTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss aa");
+                    System.out.println("The time now is: " + dateWithTimeFormat.format(currDate));
+                    String dateString2am = dateFormat.format(currDate) + " 02:00:00 AM";
+                    String dateStringOnly = dateFormat.format(currDate);
+                    
+                    if (dateFormat.parse(dateStringOnly).compareTo(startDate) == 0) {
+                        if (dateWithTimeFormat.parse(dateString2am).compareTo(currDate) < 0) {
+                            System.out.println("Same day check-in after 2am, allocating rooms... ");
+                            reservationSessionBeanRemote.allocateReservation(reservation);
+
+                        }
                     }
 
                     System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
@@ -282,7 +294,7 @@ public class FrontOfficeModule {
         System.out.println("*** Hotel Reservation System :: Check Out Guest ***\n");
         System.out.print("Enter your passport number>");
         passportNo = scanner.nextLine().trim();
-        int ans = 0;
+        String ans = "";
         try {
             WalkInGuest guest = walkInGuestSessionBeanRemote.retrieveWalkInGuestByPassportNo(passportNo);
             List<Reservation> checkedIn = reservationSessionBeanRemote.retrieveCheckedInReservationByGuestId(guest.getWalkInGuestId());
@@ -293,18 +305,20 @@ public class FrontOfficeModule {
                 for (Reservation res : checkedIn) {
 
                     System.out.printf("%20s%20s\n", res.getReservationId(), res.getAllocatedRooms().size());
-                    System.out.print("Checkout? Press 1. Else, press 0>");
-                    ans = scanner.nextInt();
-                    if (ans == 1) {
+                    System.out.print("Checkout? ('Y' to checkout)");
+                    ans = scanner.nextLine().trim();
+                    if (ans.equals("Y")) {
                         reservationSessionBeanRemote.checkOutGuest(res);
                         System.out.println("You have successfully checked out from Reservation " + res.getReservationId());
+                    } else {
+                        System.out.println("Check out cancelled.");
                     }
                 }
             }
         } catch (ReservationNotFoundException ex) {
-            Logger.getLogger(FrontOfficeModule.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Reservation not found.");
         } catch (WalkInGuestNotFoundException ex) {
-            Logger.getLogger(FrontOfficeModule.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Walk-In Guest not found.");
         }
 
     }
@@ -329,13 +343,12 @@ public class FrontOfficeModule {
             res = reservationSessionBeanRemote.retrieveReservationByReservationId(id);
 
             System.out.printf("%20s%20s%30s\n", "Room Id", "Room Type", "Room Number");
-            
+
             for (Room allocatedRooms : res.getAllocatedRooms()) {
                 System.out.printf("%5s%20s%20s\n", allocatedRooms.getRoomId(), allocatedRooms.getRoomType().getName(), allocatedRooms.getRoomNumber());
             }
-            
-            if(!res.getAllocatedRooms().isEmpty())
-            {
+
+            if (!res.getAllocatedRooms().isEmpty()) {
                 reservationSessionBeanRemote.checkInGuest(res);
             }
 
@@ -347,8 +360,7 @@ public class FrontOfficeModule {
                 int numTypeTwo = rae.getNumOfTypeTwo();
                 if (numTypeTwo > 0) {
                     System.out.println(numTypeTwo + " room(s) were unable to be allocated!");
-                    if(numTypeTwo == res.getNumOfRooms())
-                    {
+                    if (numTypeTwo == res.getNumOfRooms()) {
                         reservationSessionBeanRemote.checkOutGuest(res);
                     } else {
                         reservationSessionBeanRemote.checkInGuest(res);

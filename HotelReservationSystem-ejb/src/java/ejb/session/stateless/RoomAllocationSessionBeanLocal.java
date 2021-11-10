@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import entity.Reservation;
+import java.util.Date;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +15,8 @@ import javax.ejb.Local;
  */
 @Local
 public interface RoomAllocationSessionBeanLocal {
+       public void allocate(Date date);
+
+    public void allocateAReservation(Reservation reservation);
     
 }
