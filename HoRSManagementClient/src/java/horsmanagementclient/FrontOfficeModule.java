@@ -388,12 +388,15 @@ public class FrontOfficeModule {
                     System.out.printf("%20s%20s\n", res.getReservationId(), res.getAllocatedRooms().size());
                     System.out.println("Checkout? Press 1");
                     if (ans == 1) {
-                        res.setCheckedOut(true);
+                        Reservation resFound = reservationSessionBeanRemote.retrieveReservationByReservationId(res.getReservationId());
+                        resFound.setCheckedOut(true);
                     }
                 }
             }
         } catch (GuestNotFoundException ex) {
             System.out.println("Guest not found!");
+        } catch (ReservationNotFoundException ex) {
+            Logger.getLogger(FrontOfficeModule.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -432,6 +435,10 @@ public class FrontOfficeModule {
                 int numTypeTwo = rae.getNumOfTypeTwo();
                 if (numTypeTwo > 0) {
                     System.out.println(numTypeTwo + " room(s) were unable to be allocated!");
+                    if(numTypeTwo == res.getNumOfRooms())
+                    {
+                        res.setCheckedOut(true);
+                    }
                 }
             
             }
