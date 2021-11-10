@@ -107,6 +107,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         Reservation reservationToUpdate = retrieveReservationByReservationId(reservation.getReservationId());
         List<Room> roomsToUpdate = reservationToUpdate.getAllocatedRooms();
         if (reservation != null && reservation.getReservationId() != null) {
+            // disassociation done here:
             reservationToUpdate.setAllocatedRooms(new ArrayList<Room>());
 
             for (Room r : roomsToUpdate) {
@@ -114,6 +115,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                 roomToDis.getReservations().remove(reservation);
 
             }
+            // ends here
 
             reservationToUpdate.setCheckedOut(true);
         } else {

@@ -172,9 +172,10 @@ public class FrontOfficeModule {
 
             if (response == 1) {
 
-                System.out.print("Enter Room Type Name to reserve> ");
+                System.out.print("Enter Room Type Id to reserve> ");
                 try {
-                    roomTypeToReserve = roomeTypeSessionBeanRemote.retrieveRoomTypeByRoomTypeName(scanner.nextLine().trim());
+                    roomTypeToReserve = roomeTypeSessionBeanRemote.retrieveRoomTypeByRoomId(scanner.nextLong());
+                    scanner.nextLine();
                     if (!roomTypes.contains(roomTypeToReserve)) {
                         throw new CreateNewReservationException("This room type is not available for reservation! Cancelling...");
                     }

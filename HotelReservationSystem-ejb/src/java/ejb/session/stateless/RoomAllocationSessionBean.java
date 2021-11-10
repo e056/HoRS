@@ -9,14 +9,19 @@ import entity.Reservation;
 import entity.Room;
 import entity.RoomAllocationException;
 import entity.RoomType;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import util.exception.RoomTypeHasNoRoomException;
+import util.exception.ReservationNotFoundException;
 
 /**
  *
@@ -42,28 +47,30 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
     @EJB
     private ReservationSessionBeanLocal reservationSessionBeanLocal;
 
-//    @Schedule(dayOfWeek = "*", hour = "2")
-//    public void allocateRoomToReservation() throws ReservationNotFoundException
-//    {
-//        Date dateToday = new Date();
-//        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-//        System.out.println("********** RoomAllocationSessionBean.allocateRoomToReservation(): Timeout at " + timeStamp);
-//        List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByDate(dateToday);
-//        for(Reservation reservation : reservations)
-//        {
-//            List<Room> rooms = roomSessionBeanLocal.retrieveRoomByReservationId(reservation.getReservationId());
-//            for(Room room : rooms)
-//            {
-//                if(room.getEnabled()== false || room.getIsAvailable() == false)
-//                {
-//                    //check next higher room type. room has to be avail from this duration of reservation
-//                    
-//                }
-//            }
-//        }
-//        
-//    }
-//    
+    @Schedule(dayOfWeek = "*", hour = "2")
+    public void allocateRoomToReservation() throws ReservationNotFoundException {
+// Creating the LocalDatetime object
+        LocalDate currentLocalDate = LocalDate.now();
+
+        // Getting system timezone
+        ZoneId systemTimeZone = ZoneId.systemDefault();
+
+        // converting LocalDateTime to ZonedDateTime with the system timezone
+        ZonedDateTime zonedDateTime = currentLocalDate.atStartOfDay(systemTimeZone);
+
+        // converting ZonedDateTime to Date using Date.from() and ZonedDateTime.toInstant()
+        Date utilDate = Date.from(zonedDateTime.toInstant());
+
+        // Printing the input and output dates
+        System.out.println("LocalDate  : " + currentLocalDate);
+        System.out.println("Util Date : " + utilDate);
+
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+        System.out.println("********** RoomAllocationSessionBean.allocateRoomToReservation(): Timeout at " + timeStamp);
+        allocate(utilDate);
+
+    }
+
     public void allocate(Date date) {
 
         List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByDate(date);
