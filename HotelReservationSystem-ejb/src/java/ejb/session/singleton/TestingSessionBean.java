@@ -136,11 +136,11 @@ public class TestingSessionBean {
             roomSessionBeanLocal.createNewRoom(dr4, dr);
             roomSessionBeanLocal.createNewRoom(dr5, dr);
             
-//            roomSessionBeanLocal.createNewRoom(pr1, pr);
-//            roomSessionBeanLocal.createNewRoom(pr2, pr);
-//            roomSessionBeanLocal.createNewRoom(pr3, pr);
-//            roomSessionBeanLocal.createNewRoom(pr4, pr);
-//            roomSessionBeanLocal.createNewRoom(pr5, pr);
+            roomSessionBeanLocal.createNewRoom(pr1, pr);
+            roomSessionBeanLocal.createNewRoom(pr2, pr);
+            roomSessionBeanLocal.createNewRoom(pr3, pr);
+            roomSessionBeanLocal.createNewRoom(pr4, pr);
+            roomSessionBeanLocal.createNewRoom(pr5, pr);
            
             roomSessionBeanLocal.createNewRoom(fr1, fr);
             roomSessionBeanLocal.createNewRoom(fr2, fr);
