@@ -5,12 +5,15 @@
  */
 package horsmanagementclient;
 
+import ejb.session.stateless.RoomAllocationExceptionSessionBeanRemote;
 import ejb.session.stateless.RoomAllocationSessionBeanRemote;
 import ejb.session.stateless.RoomRateSessionBeanRemote;
 import ejb.session.stateless.RoomSessionBeanRemote;
 import ejb.session.stateless.RoomTypeSessionBeanRemote;
 import entity.Employee;
+import entity.Reservation;
 import entity.Room;
+import entity.RoomAllocationException;
 import entity.RoomRate;
 import entity.RoomType;
 import java.math.BigDecimal;
@@ -20,8 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.enumeration.AccessRightEnum;
 import util.enumeration.RoomRateType;
 import util.exception.DeleteRoomException;
@@ -49,14 +50,16 @@ public class HotelOperationModule {
     private RoomSessionBeanRemote roomSessionBeanRemote;
     private RoomRateSessionBeanRemote roomRateSessionBeanRemote;
     private RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote;
+    private RoomAllocationExceptionSessionBeanRemote roomAllocationExceptionSessionBeanRemote;
 
     private Employee currEmployee;
 
-    public HotelOperationModule(RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote, Employee currEmployee) {
+    public HotelOperationModule(RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote, RoomAllocationExceptionSessionBeanRemote roomAllocationExceptionSessionBeanRemote, Employee currEmployee) {
         this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;
         this.roomSessionBeanRemote = roomSessionBeanRemote;
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
         this.roomAllocationSessionBeanRemote = roomAllocationSessionBeanRemote;
+        this.roomAllocationExceptionSessionBeanRemote = roomAllocationExceptionSessionBeanRemote;
         this.currEmployee = currEmployee;
     }
 
@@ -140,7 +143,7 @@ public class HotelOperationModule {
                 if (response == 1) {
                     doCreateNewRoomType();
                 } else if (response == 2) {
-                    doViewRoomTypeDetails(); 
+                    doViewRoomTypeDetails();
                 } else if (response == 3) {
                     doViewAllRoomTypes();
                 } else if (response == 4) {
@@ -152,7 +155,7 @@ public class HotelOperationModule {
                 } else if (response == 7) {
                     doViewAllRooms();
                 } else if (response == 8) {
-                    doViewAllRooms();
+                    doViewExceptionReport();
                 } else if (response == 9) {
                     break;
                 } else {
@@ -217,29 +220,27 @@ public class HotelOperationModule {
         if (roomTypes.size() != 0) {
             System.out.printf("%8s%30s\n", "Room Name", "Next Higher Room Type");
             for (RoomType roomType : roomTypes) {
-                if(roomType.getNextHigherRoomType() == null)
-                {
+                if (roomType.getNextHigherRoomType() == null) {
                     System.out.printf("%8s%30s\n", roomType.getName(), "None");
                 } else {
                     System.out.printf("%8s%30s\n", roomType.getName(), roomType.getNextHigherRoomType().getName());
                 }
-                
+
             }
             System.out.println("------------------------");
-            
+
             System.out.print("Enter Next Higher Room Type (Type 'None' if this will be the highest room type)>");
             nextHigherRoomTypeName = scanner.nextLine().trim();
-            
+
             newRoomType.setNextHigherRoomType(null);
-            
 
         } else {
             newRoomType.setNextHigherRoomType(null);
         }
 
         try {
-             Long roomTypeId = roomTypeSessionBeanRemote.createNewRoomType(newRoomType, nextHigherRoomTypeName);
-          
+            Long roomTypeId = roomTypeSessionBeanRemote.createNewRoomType(newRoomType, nextHigherRoomTypeName);
+
             System.out.println("New room type created with id = " + roomTypeId + "\n");
         } catch (RoomTypeNameExistException ex) {
             System.out.println(ex.getMessage());
@@ -258,20 +259,19 @@ public class HotelOperationModule {
         System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: View Room Type ***\n");
         System.out.print("Enter Room Type Name> ");
         String rtName = scanner.nextLine().trim();
-        
-         try {
+
+        try {
             RoomType rt = roomTypeSessionBeanRemote.retrieveRoomTypeByRoomTypeName(rtName);
-            System.out.printf("%8s%20s%20s%20s%20s%20s%20s%20s%20s\n", "Room Type ID", "Room Type", "Description", "Room Size", "Room Bed", "Capacity","Amenities", "Next Higher room type", "Enabled?");
+            System.out.printf("%8s%20s%20s%20s%20s%20s%20s%20s%20s\n", "Room Type ID", "Room Type", "Description", "Room Size", "Room Bed", "Capacity", "Amenities", "Next Higher room type", "Enabled?");
             String enabled = (rt.getEnabled()) ? "Enabled" : "Disabled";
             String getHigherRoom = "";
-            if(rt.getNextHigherRoomType() == null)
-            {
+            if (rt.getNextHigherRoomType() == null) {
                 getHigherRoom = "None";
             } else {
                 getHigherRoom = rt.getNextHigherRoomType().getName();
             }
             System.out.printf("%8s%20s%20s%20s%20s%20s%20s%20s%20s\n", rt.getRoomTypeId(),
-                    rt.getName(), rt.getDescription(),rt.getSize(), rt.getBed(), rt.getCapacity(), rt.getAmenities(), getHigherRoom, enabled);
+                    rt.getName(), rt.getDescription(), rt.getSize(), rt.getBed(), rt.getCapacity(), rt.getAmenities(), getHigherRoom, enabled);
             System.out.println("------------------------");
             System.out.println("1: Update Room Type");
             System.out.println("2: Delete Room Type");
@@ -281,7 +281,7 @@ public class HotelOperationModule {
 
             if (response == 1) {
                 doUpdateRoomType(rt);
-                
+
             } else if (response == 2) {
                 doDeleteRoomType(rt);
             }
@@ -299,13 +299,12 @@ public class HotelOperationModule {
         if (roomTypes.size() != 0) {
             System.out.printf("%8s%30s\n", "Room Name", "Next Higher Room Type");
             for (RoomType roomType : roomTypes) {
-                if(roomType.getNextHigherRoomType() == null)
-                {
+                if (roomType.getNextHigherRoomType() == null) {
                     System.out.printf("%8s%30s\n", roomType.getName(), "None");
                 } else {
                     System.out.printf("%8s%30s\n", roomType.getName(), roomType.getNextHigherRoomType().getName());
                 }
-                
+
             }
             System.out.println("------------------------");
         }
@@ -420,6 +419,37 @@ public class HotelOperationModule {
         }
 
         System.out.println("------------------------");
+
+    }
+
+    // 8 : View Exception Report
+    public void doViewExceptionReport() {
+
+        System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: View Exception Report ***\n");
+        System.out.println("=========================Start Of Report============================");
+
+        List<RoomAllocationException> exceptions = roomAllocationExceptionSessionBeanRemote.retrieveAllRoomAllocationExceptions();
+
+        for (RoomAllocationException e : exceptions) {
+            Reservation reservation = e.getReservation();
+
+            System.out.println("Reservation id = " + reservation.getReservationId());
+            System.out.println("Number of Type One Exceptions = " + e.getTypeOneExceptions().size());
+            System.out.println("Number of Type Two Exceptions = " + e.getNumOfTypeTwo());
+
+            System.out.printf("%20s%20s%20s%30s\n", "Exception Type", "Original Room Type", "Upgraded Type", "Upgraded Room Number");
+            for (Room room : e.getTypeOneExceptions()) {
+                System.out.printf("%20s%20s%20s%30s\n", "Type One", reservation.getRoomType().getName(),
+                        room.getRoomType().getName(), room.getRoomNumber());
+            }
+
+            for (int i = 0; i < e.getNumOfTypeTwo(); i++) {
+                System.out.printf("%20s%20s%20s%30s\n", "Type Two", "NA", "NA", "NA");
+            }
+            System.out.println("------------------------------------------");
+
+        }
+        System.out.println("=========================End Of Report============================");
 
     }
 
@@ -570,7 +600,7 @@ public class HotelOperationModule {
 
             if (response == 1) {
                 doUpdateRoomRate(rr);
-                
+
             } else if (response == 2) {
                 doDeleteRoomRate(rr);
             }
@@ -592,13 +622,12 @@ public class HotelOperationModule {
             System.out.println("*** HoRs System :: Hotel Operation Module :: View Room Rate Details :: Update Room Rate ***\n");
 
             System.out.print("Set Rate per Night (blank if no change> ");
-            
+
             bigDecimalInput = scanner.nextBigDecimal();
             scanner.nextLine();
             if (bigDecimalInput.compareTo(BigDecimal.ZERO) > 0) {
                 rr.setRatePerNight(bigDecimalInput);
             }
-            
 
             if (!(rr.getType().equals(RoomRateType.NORMAL) || rr.getType().equals(RoomRateType.PUBLISHED))) {
 
@@ -679,7 +708,7 @@ public class HotelOperationModule {
         System.out.println("------------------------");
 
     }
-    
+
     //business assumption: room ranking cannot be changed
     private void doUpdateRoomType(RoomType rt) {
         System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: Update Room Type***\n");
@@ -694,7 +723,7 @@ public class HotelOperationModule {
 
         try {
             RoomType roomTypeToUpdate = roomTypeSessionBeanRemote.retrieveRoomTypeByRoomTypeName(rt.getName());
-            
+
             System.out.print("Enter Description> ");
             desc = scanner.nextLine().trim();
             roomTypeToUpdate.setDescription(desc);
@@ -710,7 +739,7 @@ public class HotelOperationModule {
             System.out.print("Enter Amen> ");
             amen = scanner.nextLine().trim();
             roomTypeToUpdate.setAmenities(amen);
-            
+
             roomTypeSessionBeanRemote.updateRoomType(roomTypeToUpdate);
             System.out.println("Room Type updated successfully!\n");
 
@@ -731,7 +760,7 @@ public class HotelOperationModule {
         } catch (DeleteRoomTypeException ex) {
             System.out.println("An error has occurred while deleting: " + ex.getMessage());
         }
-        
+
     }
 
 }

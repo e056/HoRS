@@ -69,6 +69,9 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
         List<Reservation> reservations = reservationSessionBeanLocal.retrieveReservationsByDate(date);
 
         for (Reservation reservation : reservations) {
+            if (reservation.isAllocated()) {
+                continue;
+            }
             Date checkInDate = reservation.getStartDate();
             Date checkOutDate = reservation.getEndDate();
             int numOfRooms = reservation.getNumOfRooms();
@@ -112,6 +115,13 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
 
                 // get next level
                 RoomType nextLevelType = reservationRoomType.getNextHigherRoomType();
+                if (nextLevelType == null) { // highest level room, no more higher levels
+                    reservation.setAllocated(true);
+                    allocationException.setReservation(reservation);
+                    allocationException.setNumOfTypeTwo(remaining);
+                    em.persist(allocationException);
+                    return;
+                }
 
                 List<Room> usableRoomsNextLevel = roomSessionBeanLocal.retrieveAvailableRoomsByRoomType(nextLevelType.getRoomTypeId());
                 roomsToRemove = new ArrayList<>();
