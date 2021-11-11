@@ -63,10 +63,12 @@ public class horswebservice {
         Partner partner = partnerSessionBeanLocal.partnerLogin(username, password);
         em.detach(partner);
 
-        for (Reservation reservation : partner.getReservations()) {
-            em.detach(reservation);
-            reservation.setPartner(null);
-        }
+//        for (Reservation reservation : partner.getReservations()) {
+//            em.detach(reservation);
+//            reservation.setPartner(null);
+//        }
+        
+        partner.setReservations(null);
 
         return partner;
 
@@ -152,38 +154,43 @@ public class horswebservice {
 
     @WebMethod(operationName = "searchRoom")
     public List<RoomType> searchRoom(int numOfRooms, Date start, Date end) {
+        System.out.println("Here");
         List<RoomType> rts = roomTypeSessionBeanLocal.retrieveRoomTypesAvailableForReservation(numOfRooms, start, end);
+        List<RoomType> newRts = new ArrayList<>();
+        // RESERVATION : ROOMTYPE = N : 1
         for (RoomType rt : rts) {
             em.detach(rt);
-            List<RoomRate> rr = rt.getRoomRates();
-            for (RoomRate rate : rr) {
-                em.detach(rate);
-                rate.setRoomType(null);
+            for (Reservation reservation : rt.getReservations()) {
+                em.detach(reservation);
+                reservation.setRoomType(null);
+                
             }
-            List<Room> r = rt.getRooms();
-            for (Room room : r) {
-                em.detach(room);
-                room.setRoomType(null);
-            }
-            List<Reservation> reservations = rt.getReservations();
-            for (Reservation res : reservations) {
-                em.detach(res);
-                res.setRoomType(null);
-            }
+            
+            rt.setNextHigherRoomType(null);
+    
+            rt.getReservations().clear();
+            rt.setRoomRates(null);
+            rt.setRooms(null);
+            newRts.add(rt);
         }
 
-        return rts;
+        return newRts;
     }
 
     @WebMethod(operationName = "onlineReservationAmount")
-    public BigDecimal onlineReservationAmount(RoomType roomTypeToReserve, Date startDate, Date endDate, int numOfRooms) {
+    public BigDecimal onlineReservationAmount(RoomType roomTypeToReserve, Date startDate,
+            Date endDate, int numOfRooms
+    ) {
         BigDecimal price = reservationSessionBeanLocal.calculateFinalOnlineReservationAmount(roomTypeToReserve, startDate, endDate, numOfRooms);
         return price;
     }
 
     @WebMethod(operationName = "retrievePriceForOnlineReservationByRoomType")
-    public BigDecimal retrievePriceForOnlineReservationByRoomType(Long roomTypeId, Date checkInDate, Date checkOutDate) {
+    public BigDecimal retrievePriceForOnlineReservationByRoomType(Long roomTypeId, Date checkInDate,
+            Date checkOutDate
+    ) {
         BigDecimal price = roomRateSessionBeanLocal.retrievePriceForOnlineReservationByRoomType(roomTypeId, checkInDate, checkOutDate);
+        
         return price;
     }
 
@@ -191,35 +198,40 @@ public class horswebservice {
     public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException {
         Reservation res = reservationSessionBeanLocal.createNewOnlineReservation(reservation, guest);
         em.detach(res);
-        for (Room room : res.getAllocatedRooms()) {
-            em.detach(room);
-            for (Reservation ress : room.getReservations()) {
-                room.getReservations().remove(reservation);
-            }
-        }
-
-        em.detach(guest);
-        for (Reservation guestR : guest.getReservations()) {
-            guest.getReservations().remove(guestR);
-        }
-        RoomType roomType = res.getRoomType();
-        em.detach(roomType);
-        for (Reservation roomTypeR : roomType.getReservations()) {
-            roomType.getReservations().remove(roomTypeR);
-        }
-
-        if (res.getException() != null) {
-            RoomAllocationException rae = res.getException();
-            em.detach(rae);
-            rae.setReservation(null);
-        }
-
-        Partner partner = res.getPartner();
-
-        em.detach(partner);
-        for (Reservation partnerR : partner.getReservations()) {
-            partner.getReservations().remove(partnerR);
-        }
+        res.getRoomType().setNextHigherRoomType(null);
+        res.setRoomType(null);
+        res.setAllocatedRooms(null);
+        res.setGuest(null);
+        res.setRoomType(null);
+//        for (Room room : res.getAllocatedRooms()) {
+//            em.detach(room);
+//            for (Reservation ress : room.getReservations()) {
+//                room.getReservations().remove(reservation);
+//            }
+//        }
+//
+//        em.detach(guest);
+//        for (Reservation guestR : guest.getReservations()) {
+//            guest.getReservations().remove(guestR);
+//        }
+//        RoomType roomType = res.getRoomType();
+//        em.detach(roomType);
+//        for (Reservation roomTypeR : roomType.getReservations()) {
+//            roomType.getReservations().remove(roomTypeR);
+//        }
+//
+//        if (res.getException() != null) {
+//            RoomAllocationException rae = res.getException();
+//            em.detach(rae);
+//            rae.setReservation(null);
+//        }
+//
+//        Partner partner = res.getPartner();
+//
+//        em.detach(partner);
+//        for (Reservation partnerR : partner.getReservations()) {
+//            partner.getReservations().remove(partnerR);
+//        }
         return res;
     }
 
@@ -228,41 +240,45 @@ public class horswebservice {
 
         Reservation res = reservationSessionBeanLocal.createNewReservation(reservation);
         em.detach(res);
-        List<Reservation> reservationsToRemove = new ArrayList<>();
-        for (Room room : res.getAllocatedRooms()) {
-            em.detach(room);
-            for (Reservation ress : room.getReservations()) {
-                reservationsToRemove.add(ress);
+        res.setAllocatedRooms(null);
+        res.setException(null);
+        res.setPartner(null);
+        res.setGuest(null);
+        res.setRoomType(null);
+//        List<Reservation> reservationsToRemove = new ArrayList<>();
 
-            }
-            room.getReservations().removeAll(reservationsToRemove);
-        }
-
-        RoomType roomType = res.getRoomType();
-        em.detach(roomType);
-      
-        for (Reservation roomTypeR : roomType.getReservations()) {
-            roomType.getReservations().remove(roomTypeR);
-        }
-
-        if (res.getException() != null) {
-            RoomAllocationException rae = res.getException();
-            em.detach(rae);
-            rae.setReservation(null);
-        }
-
-        Partner partner = res.getPartner();
-        if (partner != null) {
-            em.detach(partner);
-            reservationsToRemove = new ArrayList<>();
-            for (Reservation partnerR : partner.getReservations()) {
-                reservationsToRemove.add(partnerR);
-
-            }
-            partner.getReservations().removeAll(reservationsToRemove);
-
-        }
-
+//        for (Room room : res.getAllocatedRooms()) {
+//            em.detach(room);
+//            for (Reservation ress : room.getReservations()) {
+//                reservationsToRemove.add(ress);
+//
+//            }
+//            room.getReservations().removeAll(reservationsToRemove);
+//        }
+//        RoomType roomType = res.getRoomType();
+//        em.detach(roomType);
+//        
+//        for (Reservation roomTypeR : roomType.getReservations()) {
+//            roomType.getReservations().remove(roomTypeR);
+//        }
+//        
+//        if (res.getException() != null) {
+//            RoomAllocationException rae = res.getException();
+//            em.detach(rae);
+//            rae.setReservation(null);
+//        }
+//        
+//        Partner partner = res.getPartner();
+//        if (partner != null) {
+//            em.detach(partner);
+//            reservationsToRemove = new ArrayList<>();
+//            for (Reservation partnerR : partner.getReservations()) {
+//                reservationsToRemove.add(partnerR);
+//                
+//            }
+//            partner.getReservations().removeAll(reservationsToRemove);
+//            
+//        }
         return res;
 
     }
@@ -271,6 +287,7 @@ public class horswebservice {
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException {
         RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomId);
         em.detach(rt);
+        rt.setNextHigherRoomType(null);
         List<RoomRate> rr = rt.getRoomRates();
         for (RoomRate rate : rr) {
             em.detach(rate);

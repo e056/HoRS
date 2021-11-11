@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package entity;
 
 import java.io.Serializable;
@@ -17,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -30,7 +30,6 @@ public class RoomType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
 
-    
     @Column(nullable = false, length = 64, unique = true)
     private String name;
     @Column(length = 64)
@@ -47,20 +46,20 @@ public class RoomType implements Serializable {
     private Boolean enabled;
     //@Column(nullable = false, unique = true)
     //private Integer ranking;
-    
+
     @OneToOne
     @JoinColumn(unique = true)
     private RoomType nextHigherRoomType;
-    
+
     @OneToMany(mappedBy = "roomType")
     private List<RoomRate> roomRates;
-    
+
     @OneToMany(mappedBy = "roomType")
     private List<Room> rooms;
-    
+
     @OneToMany(mappedBy = "roomType")
     private List<Reservation> reservations;
-    
+
     public RoomType() {
         this.roomRates = new ArrayList<>();
         this.rooms = new ArrayList<>();
@@ -80,7 +79,7 @@ public class RoomType implements Serializable {
         //this.ranking = ranking;
         this.nextHigherRoomType = roomType;
     }
-    
+
     public RoomType(String name, RoomType roomType) {
         this();
         this.name = name;
@@ -89,8 +88,6 @@ public class RoomType implements Serializable {
         this.roomRates = new ArrayList<>();
         this.rooms = new ArrayList<>();
     }
-    
-    
 
     public Long getRoomTypeId() {
         return roomTypeId;
@@ -195,8 +192,6 @@ public class RoomType implements Serializable {
         this.capacity = capacity;
     }
 
-
-
     /**
      * @return the enabled
      */
@@ -213,18 +208,15 @@ public class RoomType implements Serializable {
 
     /**
      * @return the ranking
-     
-    public Integer getRanking() {
-        return ranking;
-    } */
-
+     *
+     * public Integer getRanking() { return ranking; }
+     */
     /**
      * @param ranking the ranking to set
-     
-    public void setRanking(Integer ranking) {
-        this.ranking = ranking;
-    }*/
-
+     *
+     * public void setRanking(Integer ranking) { this.ranking = ranking;
+    }
+     */
     /**
      * @return the roomRates
      */
