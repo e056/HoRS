@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.RoomType;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomTypeException;
@@ -36,4 +37,6 @@ public interface RoomTypeSessionBeanLocal {
     public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException;
 
     public RoomType retrieveEnabledRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException;
+    
+    public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate);
 }

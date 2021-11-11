@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Guest;
 import entity.Reservation;
 import entity.RoomType;
 import java.math.BigDecimal;
@@ -42,4 +43,8 @@ public interface ReservationSessionBeanLocal {
     public Reservation retrieveReservationByOnlineGuestIdAndReservationId(Long guestId, Long reservationId) throws ReservationNotFoundException;
 
     public BigDecimal calculateFinalOnlineReservationAmount(RoomType roomTypeToReserve, Date startDate, Date endDate, int numOfRooms);
+    
+    public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException;
+    
+  
 }
