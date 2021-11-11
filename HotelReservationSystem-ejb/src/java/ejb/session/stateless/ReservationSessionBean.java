@@ -53,6 +53,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     private EntityManager em;
 
     public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException {
+
         RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
 
         rt.getReservations().add(reservation);
@@ -68,8 +69,11 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         }
 
         em.flush();
+        allocateAfter2am(reservation);
+   
 
         return reservation;
+
     }
 
     public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException {
@@ -86,7 +90,37 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         em.flush();
 
+        allocateAfter2am(reservation);
+
         return reservation;
+    }
+
+    public void allocateAfter2am(Reservation reservation) {
+        try {
+            Date currDate = new java.util.Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat dateWithTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss aa");
+            System.out.println("Time this reservation is made: " + dateWithTimeFormat.format(currDate));
+            String dateString2am = dateFormat.format(currDate) + " 02:00:00 AM";
+            String dateStringOnly = dateFormat.format(currDate);
+            if (dateFormat.parse(dateStringOnly).compareTo(reservation.getStartDate()) == 0) {
+                if (dateWithTimeFormat.parse(dateString2am).compareTo(currDate) < 0) {
+                    System.out.println("Same day check-in after 2am, allocating rooms... ");
+                    allocateReservation(reservation);
+
+                }
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(ReservationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void allocateReservation(Reservation reservation) {
+        Reservation r = em.find(Reservation.class,
+                reservation.getReservationId());
+        roomAllocationSessionBeanLocal.allocateAReservation(r);
+
     }
 
     @Override
@@ -127,18 +161,6 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.startDate = :indate");
         query.setParameter("indate", dateToday);
-//        List<Reservation> neededReservations = new ArrayList<>();
-//        List<Reservation> reservations = query.getResultList();
-//
-//        for (Reservation r : reservations) {
-//            System.out.println("Found: " + r.getReservationId());
-//            System.out.println("Start Date: " + r.getStartDate());
-//            System.out.println("Start Date: " + dateToday);
-//
-//            if (r.getStartDate().compareTo(dateToday) == 0) {
-//                neededReservations.add(r);
-//            }
-//        }
 
         return query.getResultList();
     }
@@ -205,11 +227,17 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         }
     }
 
-    public void allocateReservation(Reservation reservation) {
-        Reservation r = em.find(Reservation.class,
-                reservation.getReservationId());
-        roomAllocationSessionBeanLocal.allocateAReservation(r);
+    @Override
+    public Reservation retrieveReservationByOnlineGuestIdAndReservationId(Long guestId, Long reservationId) throws ReservationNotFoundException {
+        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.guest.guestId = :inId AND r.reservationId = :rId");
 
+        query.setParameter("inId", guestId);
+        query.setParameter("rId", reservationId);
+        try {
+            return (Reservation) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new ReservationNotFoundException("This reservation for this guest " + guestId + " does not exist.");
+        }
     }
 
 }

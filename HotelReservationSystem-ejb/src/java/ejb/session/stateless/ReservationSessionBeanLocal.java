@@ -26,7 +26,7 @@ public interface ReservationSessionBeanLocal {
     public Reservation retrieveReservationByReservationId(Long reservationId) throws ReservationNotFoundException;
 
     public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException;
-    
+
     public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId);
 
     public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId);
@@ -34,5 +34,8 @@ public interface ReservationSessionBeanLocal {
     public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId);
 
     public void allocateReservation(Reservation reservation);
-        public List<Reservation> retrieveReservationByGuestId(Long guestId);
+
+    public List<Reservation> retrieveReservationByGuestId(Long guestId);
+
+    public Reservation retrieveReservationByOnlineGuestIdAndReservationId(Long guestId, Long reservationId) throws ReservationNotFoundException;
 }

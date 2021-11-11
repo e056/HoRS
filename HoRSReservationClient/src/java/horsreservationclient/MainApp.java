@@ -19,14 +19,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import oracle.jrockit.jfr.parser.ParseException;
 import util.exception.CreateNewReservationException;
 import util.exception.GuestPassportNumExistException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.ReservationNotFoundException;
-import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 
@@ -184,7 +180,7 @@ public class MainApp {
         scanner.nextLine();
 
         try {
-            Reservation r = reservationSessionBeanRemote.retrieveReservationByReservationId(reservationId);
+            Reservation r = reservationSessionBeanRemote.retrieveReservationByOnlineGuestIdAndReservationId(this.currGuest.getGuestId(), reservationId);
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", "ID", "Num. Of Rooms", "Check-In", "Check-Out", "Room Type", "Total Price");
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", r.getReservationId(), r.getNumOfRooms(),
                     df.format(r.getStartDate()), df.format(r.getEndDate()),
@@ -281,7 +277,7 @@ public class MainApp {
                 BigDecimal totalPrice = roomRateSessionBeanRemote.retrieveTotalPriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDate, endDate);
                 totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
 
-                System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, totalPrice);
+                System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice));
                 System.out.print("Confirm? ('Y' to confirm)> ");
 
                 comfirmReservation = scanner.nextLine().trim();

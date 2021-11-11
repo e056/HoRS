@@ -46,4 +46,7 @@ public interface ReservationSessionBeanRemote {
     public void allocateReservation(Reservation reservation);
 
     public List<Reservation> retrieveReservationByGuestId(Long guestId);
+
+
+    public Reservation retrieveReservationByOnlineGuestIdAndReservationId(Long guestId, Long reservationId) throws ReservationNotFoundException;
 }

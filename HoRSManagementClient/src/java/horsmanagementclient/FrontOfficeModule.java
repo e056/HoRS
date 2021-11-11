@@ -207,20 +207,6 @@ public class FrontOfficeModule {
                         walkInGuestSessionBeanRemote.associateGuestWithReservation(reservation, guestId);
                     }
 
-                    Date currDate = new java.util.Date();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                    SimpleDateFormat dateWithTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss aa");
-                    System.out.println("The time now is: " + dateWithTimeFormat.format(currDate));
-                    String dateString2am = dateFormat.format(currDate) + " 02:00:00 AM";
-                    String dateStringOnly = dateFormat.format(currDate);
-
-                    if (dateFormat.parse(dateStringOnly).compareTo(startDate) == 0) {
-                        if (dateWithTimeFormat.parse(dateString2am).compareTo(currDate) < 0) {
-                            System.out.println("Same day check-in after 2am, allocating rooms... ");
-                            reservationSessionBeanRemote.allocateReservation(reservation);
-
-                        }
-                    }
 
                     System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
 
@@ -359,9 +345,7 @@ public class FrontOfficeModule {
             if (res.getException() != null) {
                 System.out.println("here");
                 RoomAllocationException rae = reservationSessionBeanRemote.retrieveraeByReservationId(id);
-//                for (Room allocatedRooms : rae.getTypeOneExceptions()) {
-//                    System.out.printf("%20s%20s%30s\n", allocatedRooms.getRoomId(), allocatedRooms.getRoomType().getName(), allocatedRooms.getRoomNumber());
-//                }
+
                 int numTypeTwo = rae.getNumOfTypeTwo();
                 if (numTypeTwo > 0) {
                     System.out.println(numTypeTwo + " room(s) were unable to be allocated!");
