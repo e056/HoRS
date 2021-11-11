@@ -6,14 +6,18 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import ejb.session.stateless.PartnerSessionBeanLocal;
 import ejb.session.stateless.RoomRateSessionBeanLocal;
 import ejb.session.stateless.RoomSessionBeanLocal;
 import ejb.session.stateless.RoomTypeSessionBeanLocal;
 import entity.Employee;
+import entity.Partner;
 import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
 import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -23,6 +27,7 @@ import util.enumeration.AccessRightEnum;
 import util.enumeration.RoomRateType;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
+import util.exception.PartnerUsernameExistException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomRateNameExistException;
 import util.exception.RoomTypeNameExistException;
@@ -37,6 +42,9 @@ import util.exception.UnknownPersistenceException;
 @LocalBean
 @Startup
 public class TestingSessionBean {
+
+    @EJB
+    private PartnerSessionBeanLocal partnerSessionBeanLocal;
 
     @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
@@ -193,6 +201,10 @@ public class TestingSessionBean {
             roomRateSessionBeanLocal.createNewRoomRate(gsp, grand.getRoomTypeId());
             roomRateSessionBeanLocal.createNewRoomRate(gsn, grand.getRoomTypeId());
             
+            //partner
+            Partner partner = new Partner("Partner", "One","partner1","password");
+            partnerSessionBeanLocal.createNewPartner(partner);
+            
             
         } catch (EmployeeUsernameExistException ex) {
             ex.printStackTrace();
@@ -205,6 +217,8 @@ public class TestingSessionBean {
         } catch (RoomTypeNotFoundException ex) {
             ex.printStackTrace();
         } catch (RoomRateNameExistException ex) {
+            ex.printStackTrace();
+        } catch (PartnerUsernameExistException ex) {
             ex.printStackTrace();
         }
     }

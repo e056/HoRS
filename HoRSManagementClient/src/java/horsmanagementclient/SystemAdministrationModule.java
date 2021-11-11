@@ -7,7 +7,6 @@ package horsmanagementclient;
 
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.PartnerSessionBeanRemote;
-import ejb.session.stateless.WalkInGuestSessionBeanRemote;
 import entity.Employee;
 import entity.Partner;
 import java.util.List;

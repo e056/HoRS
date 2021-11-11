@@ -69,8 +69,7 @@ public class Reservation implements Serializable {
     @OneToOne(mappedBy = "reservation")
     private RoomAllocationException exception;
     
-    @ManyToOne
-    private WalkInGuest walkInGuest;
+   
     
     @Column
     private boolean allocated;
@@ -271,16 +270,7 @@ public class Reservation implements Serializable {
     /**
      * @return the walkInGuest
      */
-    public WalkInGuest getWalkInGuest() {
-        return walkInGuest;
-    }
-
-    /**
-     * @param walkInGuest the walkInGuest to set
-     */
-    public void setWalkInGuest(WalkInGuest walkInGuest) {
-        this.walkInGuest = walkInGuest;
-    }
+    
 
     /**
      * @return the checkedIn

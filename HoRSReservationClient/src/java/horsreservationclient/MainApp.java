@@ -214,7 +214,6 @@ public class MainApp {
     public void searchRoom() {
         System.out.println("*** Hotel Reservation System :: Search Room ***\n");
         Scanner scanner = new Scanner(System.in);
-        String passportNo = "";
         String name = "";
 
         try {

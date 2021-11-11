@@ -18,7 +18,6 @@ import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 import ejb.session.stateless.ReservationSessionBeanRemote;
 import ejb.session.stateless.RoomAllocationExceptionSessionBeanRemote;
-import ejb.session.stateless.WalkInGuestSessionBeanRemote;
 import entity.RoomAllocationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,7 +51,6 @@ public class MainApp {
     private SystemAdministrationModule systemAdministrationModule;
     private HotelOperationModule hotelOperationModule;
     private FrontOfficeModule frontOfficeModule;
-    private WalkInGuestSessionBeanRemote walkInGuestSessionBeanRemote;
     private GuestSessionBeanRemote guestSessionBeanRemote;
 
     private Employee currEmployee;
@@ -78,7 +76,7 @@ public class MainApp {
             EmployeeSessionBeanRemote employeeSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote,
             RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote,
             RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote,
-            ReservationSessionBeanRemote reservationSessionBeanRemote, WalkInGuestSessionBeanRemote walkInGuestSessionBeanRemote, GuestSessionBeanRemote guestSessionBeanRemote) {
+            ReservationSessionBeanRemote reservationSessionBeanRemote, GuestSessionBeanRemote guestSessionBeanRemote) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
         this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;
@@ -86,7 +84,7 @@ public class MainApp {
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
         this.roomAllocationSessionBeanRemote = roomAllocationSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
-        this.walkInGuestSessionBeanRemote = walkInGuestSessionBeanRemote;
+       
         this.guestSessionBeanRemote = guestSessionBeanRemote;
     }
 
@@ -94,7 +92,7 @@ public class MainApp {
             EmployeeSessionBeanRemote employeeSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote,
             RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote,
             RoomAllocationSessionBeanRemote roomAllocationSessionBeanRemote,
-            ReservationSessionBeanRemote reservationSessionBeanRemote, WalkInGuestSessionBeanRemote walkInGuestSessionBeanRemote,
+            ReservationSessionBeanRemote reservationSessionBeanRemote, 
             GuestSessionBeanRemote guestSessionBeanRemote, RoomAllocationExceptionSessionBeanRemote roomAllocationExceptionSessionBeanRemote) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
@@ -103,7 +101,7 @@ public class MainApp {
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
         this.roomAllocationSessionBeanRemote = roomAllocationSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
-        this.walkInGuestSessionBeanRemote = walkInGuestSessionBeanRemote;
+        
         this.guestSessionBeanRemote = guestSessionBeanRemote;
         this.roomAllocationExceptionSessionBeanRemote = roomAllocationExceptionSessionBeanRemote;
     }
@@ -137,7 +135,7 @@ public class MainApp {
                                 employeeSessionBeanRemote, currEmployee);
                         this.frontOfficeModule = new FrontOfficeModule(roomTypeSessionBeanRemote,
                                 roomSessionBeanRemote, roomRateSessionBeanRemote,
-                                reservationSessionBeanRemote, currEmployee, walkInGuestSessionBeanRemote, guestSessionBeanRemote);
+                                reservationSessionBeanRemote, currEmployee, guestSessionBeanRemote);
 
                         menuMain();
                     } catch (InvalidLoginCredentialException ex) {

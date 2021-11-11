@@ -80,8 +80,11 @@ public class PartnerSessionBean implements PartnerSessionBeanRemote, PartnerSess
     public List<Reservation> retrieveReservationsByPartnerId(Long partnerId) throws PartnerNotFoundException {
         Partner partner = retrievePartnerByPartnerId(partnerId);
         List<Reservation> reservations = partner.getReservations();
-
-        // Might have to do smth here? Lazy fetching for rooms
+        for(Reservation res : reservations)
+        {
+            res.getAllocatedRooms().size();
+        }
+        
         return reservations;
     }
 
