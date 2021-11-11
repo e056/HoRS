@@ -71,11 +71,6 @@ public class horswebservice {
 
     }
 
-    @WebMethod(operationName = "searchRoom")
-    public void searchRoom() throws InvalidLoginCredentialException {
-
-    }
-
     @WebMethod(operationName = "viewReservation")
     public List<Reservation> viewReservation(Long partnerId) throws PartnerNotFoundException {
         List<Reservation> reservations = partnerSessionBeanLocal.retrieveReservationsByPartnerId(partnerId);
@@ -110,12 +105,6 @@ public class horswebservice {
                 partner.getReservations().remove(partnerR);
             }
 
-//            if(res.getWalkInGuest() != null)
-//            {
-//                W
-//            }
-//            WalkInGuest walkInGuest = res.getWalkInGuest();
-//            em.detach(guest);
         }
 
         return reservations;

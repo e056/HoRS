@@ -37,7 +37,7 @@ import util.exception.NoRoomAllocationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
-import util.exception.WalkInGuestNotFoundException;
+
 
 /**
  *

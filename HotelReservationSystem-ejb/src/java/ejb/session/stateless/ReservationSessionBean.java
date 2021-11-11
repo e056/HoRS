@@ -49,8 +49,6 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
-    
-    
 
     @Resource
     private EJBContext eJBContext;
@@ -76,7 +74,6 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         em.flush();
         allocateAfter2am(reservation);
-   
 
         return reservation;
 
@@ -128,12 +125,11 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         roomAllocationSessionBeanLocal.allocateAReservation(r);
 
     }
-    
+
     public BigDecimal calculateFinalOnlineReservationAmount(RoomType roomTypeToReserve, Date startDate, Date endDate, int numOfRooms) {
-       return roomRateSessionBeanLocal.retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDate, endDate).multiply(BigDecimal.valueOf(numOfRooms));
-        
+        return roomRateSessionBeanLocal.retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDate, endDate).multiply(BigDecimal.valueOf(numOfRooms));
+
     }
-    
 
     @Override
     public void checkInGuest(Reservation reservation) throws ReservationNotFoundException {
@@ -187,37 +183,36 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     }
 
+//    @Override
+//    public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId
+//    ) {
+//        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.walkInGuest.walkInGuestId = :inId");
+//        query.setParameter("inId", guestId);
+//
+//        return query.getResultList();
+//    }
+//
+//    @Override
+//    public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId
+//    ) {
+//        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.estId = :inId");
+//        query.setParameter("inId", guestId);
+//        List<Reservation> res = query.getResultList();
+//        for (Reservation r : res) {
+//            r.getAllocatedRooms().size();
+//        }
+//
+//        return query.getResultList();
+//    }
+//    @Override
+//    public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId
+//    ) {
+//        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest = :inId");
+//        query.setParameter("inId", guestId);
+//
+//        return query.getResultList();
+//    }
     @Override
-    public List<Reservation> retrieveReservationByWalkInGuestId(Long guestId
-    ) {
-        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.walkInGuest.walkInGuestId = :inId");
-        query.setParameter("inId", guestId);
-
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Reservation> retrieveCheckedInReservationByGuestId(Long guestId
-    ) {
-        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest.walkInGuestId = :inId");
-        query.setParameter("inId", guestId);
-        List<Reservation> res = query.getResultList();
-        for (Reservation r : res) {
-            r.getAllocatedRooms().size();
-        }
-
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Reservation> retrieveCheckedInReservationByWalkInGuestId(Long guestId
-    ) {
-        Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.checkedIn = TRUE AND r.walkInGuest = :inId");
-        query.setParameter("inId", guestId);
-
-        return query.getResultList();
-    }
-
     public List<Reservation> retrieveReservationByGuestId(Long guestId
     ) {
         Query query = em.createQuery("SELECT r FROM Reservation r WHERE r.guest.guestId = :inId");
@@ -251,5 +246,6 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             throw new ReservationNotFoundException("This reservation for this guest " + guestId + " does not exist.");
         }
     }
+
 
 }
