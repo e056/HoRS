@@ -244,8 +244,5 @@ public class horswebservice {
         return rt;
     }
 
-    public void persist(Object object) {
-        em.persist(object);
-    }
 
 }
