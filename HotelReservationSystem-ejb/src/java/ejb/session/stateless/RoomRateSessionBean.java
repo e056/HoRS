@@ -183,7 +183,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 //promotion rate is defined for a particular room type on a particular date, it will take 
 //precedence over the normal rate. If both peak rate and promotion rate are defined for a 
 //particular room type on a particular date, the promotion rate will take precedence.
-    public BigDecimal retrieveTotalPriceForOnlineReservationByRoomType(Long roomTypeId, Date checkInDate, Date checkOutDate) {
+    public BigDecimal retrievePriceForOnlineReservationByRoomType(Long roomTypeId, Date checkInDate, Date checkOutDate) {
         List<RoomRate> rates = retrieveRoomRatesByRoomType(roomTypeId);
         RoomRate normal = null;
         List<RoomRate> peaks = new ArrayList<>();

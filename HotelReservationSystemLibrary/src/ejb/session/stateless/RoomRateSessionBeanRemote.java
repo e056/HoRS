@@ -39,5 +39,5 @@ public interface RoomRateSessionBeanRemote {
 
     public void deleteRoomRate(Long rrId) throws RoomRateNotFoundException, DeleteRoomRateException;
 
-    public BigDecimal retrieveTotalPriceForOnlineReservationByRoomType(Long roomTypeId, Date checkInDate, Date checkOutDate);
+    public BigDecimal retrievePriceForOnlineReservationByRoomType(Long roomTypeId, Date checkInDate, Date checkOutDate);
 }

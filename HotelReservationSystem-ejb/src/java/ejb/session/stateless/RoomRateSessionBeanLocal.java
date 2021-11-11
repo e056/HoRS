@@ -7,6 +7,8 @@ package ejb.session.stateless;
 
 import entity.RoomRate;
 import entity.RoomType;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomRateException;
@@ -36,5 +38,7 @@ public interface RoomRateSessionBeanLocal {
     public void deleteRoomRate(Long rrId) throws RoomRateNotFoundException, DeleteRoomRateException;
 
     public RoomRate retrievePublishedRoomRateByRoomType(Long roomTypeId)  throws RoomRateNotFoundException;
+    
+    public BigDecimal retrievePriceForOnlineReservationByRoomType(Long roomTypeId, Date checkInDate, Date checkOutDate);
 
 }

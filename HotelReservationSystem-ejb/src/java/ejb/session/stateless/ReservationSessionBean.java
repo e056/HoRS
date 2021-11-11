@@ -10,6 +10,7 @@ import entity.Reservation;
 import entity.Room;
 import entity.RoomAllocationException;
 import entity.RoomType;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +38,9 @@ import util.exception.RoomTypeNotFoundException;
 @Stateless
 public class ReservationSessionBean implements ReservationSessionBeanRemote, ReservationSessionBeanLocal {
 
+    @EJB(name = "RoomRateSessionBeanLocal")
+    private RoomRateSessionBeanLocal roomRateSessionBeanLocal;
+
     @EJB(name = "RoomAllocationSessionBeanLocal")
     private RoomAllocationSessionBeanLocal roomAllocationSessionBeanLocal;
 
@@ -45,6 +49,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
     @EJB
     private RoomSessionBeanLocal roomSessionBeanLocal;
+    
+    
 
     @Resource
     private EJBContext eJBContext;
@@ -122,6 +128,12 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         roomAllocationSessionBeanLocal.allocateAReservation(r);
 
     }
+    
+    public BigDecimal calculateFinalOnlineReservationAmount(RoomType roomTypeToReserve, Date startDate, Date endDate, int numOfRooms) {
+       return roomRateSessionBeanLocal.retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDate, endDate).multiply(BigDecimal.valueOf(numOfRooms));
+        
+    }
+    
 
     @Override
     public void checkInGuest(Reservation reservation) throws ReservationNotFoundException {
