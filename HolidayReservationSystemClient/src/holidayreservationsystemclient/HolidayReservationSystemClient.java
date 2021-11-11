@@ -5,18 +5,27 @@
  */
 package holidayreservationsystemclient;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import ws.client.CreateNewReservationException_Exception;
 import ws.client.Horswebservice_Service;
 import ws.client.InvalidLoginCredentialException_Exception;
 import ws.client.Partner;
 import ws.client.PartnerNotFoundException_Exception;
 import ws.client.Reservation;
 import ws.client.ReservationNotFoundException_Exception;
+import ws.client.RoomTypeNotFoundException_Exception;
 
 /**
  *
@@ -117,8 +126,108 @@ public class HolidayReservationSystemClient {
     }
 
     private static void doSearchRoom() {
-        Scanner scanner = new Scanner(System.in);
-        Horswebservice_Service service = new Horswebservice_Service();
+        try {
+            Scanner scanner = new Scanner(System.in);
+            Horswebservice_Service service = new Horswebservice_Service();
+            System.out.println("*** Holiday Reservation System :: Partner Search Room ***\n");
+            Integer response = 0;
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date startDate;
+            Date endDate;
+            int numOfRooms;
+            ws.client.RoomType roomTypeToReserve;
+            String comfirmReservation = "";
+
+            System.out.print("Enter Number of Rooms> ");
+            numOfRooms = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Enter Check-In Date (dd/mm/yyyy)> ");
+            startDate = inputDateFormat.parse(scanner.nextLine().trim());
+            System.out.print("Enter Check-Out Date (dd/mm/yyyy)> ");
+            endDate = inputDateFormat.parse(scanner.nextLine().trim());
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(startDate);
+            XMLGregorianCalendar startDateXML = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+
+            c = new GregorianCalendar();
+            c.setTime(endDate);
+            XMLGregorianCalendar endDateXML = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+            
+            System.out.println(startDateXML);
+            System.out.println(endDateXML);
+
+            List<ws.client.RoomType> roomTypes = service.getHorswebservicePort().searchRoom(numOfRooms, startDateXML, endDateXML);
+            System.out.printf("%8s%20s%30s\n", "ID", "Room Type", "Total Price");
+            for (ws.client.RoomType rt : roomTypes) {
+                BigDecimal priceEachRoom = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(rt.getRoomTypeId(), startDateXML, endDateXML);
+                System.out.printf("%8s%20s%30s\n", rt.getRoomTypeId(), rt.getName(),
+                        NumberFormat.getCurrencyInstance().format(priceEachRoom.multiply(BigDecimal.valueOf(numOfRooms))));
+     
+            }
+            
+              System.out.println("------------------------");
+            System.out.println("1: Make Reservation");
+            System.out.println("2: Back\n");
+            System.out.print("> ");
+            response = scanner.nextInt();
+            scanner.nextLine();
+            if (response == 1) {
+
+                System.out.print("Enter Room Type Id to reserve> ");
+                try {
+                    roomTypeToReserve = service.getHorswebservicePort().retrieveRoomTypeByRoomId(scanner.nextLong());
+                    scanner.nextLine();
+   
+                } catch (ws.client.RoomTypeNotFoundException_Exception ex) {
+                    System.out.println("An error has occurred while retrieving Room Type: " + ex.getMessage() + "\n");
+                    System.out.println("Cancelling reservation...");
+                    return;
+                }
+
+                System.out.println("Reserving the following:\n");
+                System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
+                BigDecimal totalPrice = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDateXML, endDateXML);
+                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
+
+                System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice));
+                System.out.print("Confirm? ('Y' to confirm)> ");
+
+                comfirmReservation = scanner.nextLine().trim();
+
+                if (comfirmReservation.equals("Y")) {
+                    ws.client.Reservation reservation = new Reservation();
+                    reservation.setStartDate(startDateXML);
+                    reservation.setEndDate(endDateXML);
+                    reservation.setNumOfRooms(numOfRooms);
+                    reservation.setTotalPrice(totalPrice);
+                    reservation.setRoomType(roomTypeToReserve);
+                    // ws.client.Reservation reservation = new ws.client.Reservation(startDate, endDate, numOfRooms, totalPrice, roomTypeToReserve);
+                    
+                    reservation.setAllocated(false);
+
+                    reservation = service.getHorswebservicePort().createNewReservation(reservation);
+
+                    //System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
+
+                } else {
+                    System.out.println("Cancelled reservation.");
+
+                }
+            }
+            
+            
+            
+        } catch (ParseException ex) {
+            System.out.println("Invalid Date Format!");
+        } catch (DatatypeConfigurationException ex) {
+            Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CreateNewReservationException_Exception ex) {
+            Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RoomTypeNotFoundException_Exception ex) {
+            Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private static void doViewReservationDetails() {

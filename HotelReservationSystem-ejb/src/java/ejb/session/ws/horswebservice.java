@@ -17,6 +17,7 @@ import entity.RoomAllocationException;
 import entity.RoomRate;
 import entity.RoomType;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -222,6 +223,50 @@ public class horswebservice {
         return res;
     }
 
+    @WebMethod(operationName = "createNewReservation")
+    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException {
+
+        Reservation res = reservationSessionBeanLocal.createNewReservation(reservation);
+        em.detach(res);
+        List<Reservation> reservationsToRemove = new ArrayList<>();
+        for (Room room : res.getAllocatedRooms()) {
+            em.detach(room);
+            for (Reservation ress : room.getReservations()) {
+                reservationsToRemove.add(ress);
+
+            }
+            room.getReservations().removeAll(reservationsToRemove);
+        }
+
+        RoomType roomType = res.getRoomType();
+        em.detach(roomType);
+      
+        for (Reservation roomTypeR : roomType.getReservations()) {
+            roomType.getReservations().remove(roomTypeR);
+        }
+
+        if (res.getException() != null) {
+            RoomAllocationException rae = res.getException();
+            em.detach(rae);
+            rae.setReservation(null);
+        }
+
+        Partner partner = res.getPartner();
+        if (partner != null) {
+            em.detach(partner);
+            reservationsToRemove = new ArrayList<>();
+            for (Reservation partnerR : partner.getReservations()) {
+                reservationsToRemove.add(partnerR);
+
+            }
+            partner.getReservations().removeAll(reservationsToRemove);
+
+        }
+
+        return res;
+
+    }
+
     @WebMethod(operationName = "retrieveRoomTypeByRoomId")
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException {
         RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomId);
@@ -243,6 +288,5 @@ public class horswebservice {
         }
         return rt;
     }
-
 
 }

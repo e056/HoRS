@@ -14,6 +14,10 @@
 
 <xs:element name="createNewOnlineReservationResponse" type="tns:createNewOnlineReservationResponse"/>
 
+<xs:element name="createNewReservation" type="tns:createNewReservation"/>
+
+<xs:element name="createNewReservationResponse" type="tns:createNewReservationResponse"/>
+
 <xs:element name="onlineReservationAmount" type="tns:onlineReservationAmount"/>
 
 <xs:element name="onlineReservationAmountResponse" type="tns:onlineReservationAmountResponse"/>
@@ -42,26 +46,9 @@
 
 <xs:element name="viewReservationResponse" type="tns:viewReservationResponse"/>
 
-<xs:complexType name="partnerLogin">
+<xs:complexType name="createNewReservation">
 <xs:sequence>
-<xs:element name="arg0" type="xs:string" minOccurs="0"/>
-<xs:element name="arg1" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerLoginResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:partner" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partner">
-<xs:sequence>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
-<xs:element name="partnerId" type="xs:long" minOccurs="0"/>
-<xs:element name="password" type="xs:string" minOccurs="0"/>
-<xs:element name="reservations" type="tns:reservation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="username" type="xs:string" minOccurs="0"/>
+<xs:element name="arg0" type="tns:reservation" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -144,25 +131,48 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="InvalidLoginCredentialException">
+<xs:complexType name="partner">
+<xs:sequence>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="partnerId" type="xs:long" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="reservations" type="tns:reservation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="username" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createNewReservationResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:reservation" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CreateNewReservationException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="retrieveRoomTypeByRoomId">
-<xs:sequence>
-<xs:element name="arg0" type="xs:long" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveRoomTypeByRoomIdResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:roomType" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="RoomTypeNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerLogin">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerLoginResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:partner" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="InvalidLoginCredentialException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -186,18 +196,28 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="onlineReservationAmount">
+<xs:complexType name="retrieveRoomTypeByRoomId">
 <xs:sequence>
-<xs:element name="arg0" type="tns:roomType" minOccurs="0"/>
-<xs:element name="arg1" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="arg3" type="xs:int"/>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="onlineReservationAmountResponse">
+<xs:complexType name="retrieveRoomTypeByRoomIdResponse">
 <xs:sequence>
-<xs:element name="return" type="xs:decimal" minOccurs="0"/>
+<xs:element name="return" type="tns:roomType" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createNewOnlineReservation">
+<xs:sequence>
+<xs:element name="arg0" type="tns:reservation" minOccurs="0"/>
+<xs:element name="arg1" type="tns:guest" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createNewOnlineReservationResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:reservation" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -219,22 +239,18 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createNewOnlineReservation">
+<xs:complexType name="onlineReservationAmount">
 <xs:sequence>
-<xs:element name="arg0" type="tns:reservation" minOccurs="0"/>
-<xs:element name="arg1" type="tns:guest" minOccurs="0"/>
+<xs:element name="arg0" type="tns:roomType" minOccurs="0"/>
+<xs:element name="arg1" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="arg2" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="arg3" type="xs:int"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createNewOnlineReservationResponse">
+<xs:complexType name="onlineReservationAmountResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:reservation" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="CreateNewReservationException">
-<xs:sequence>
-<xs:element name="message" type="xs:string" minOccurs="0"/>
+<xs:element name="return" type="xs:decimal" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
