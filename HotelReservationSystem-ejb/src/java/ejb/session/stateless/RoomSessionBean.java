@@ -28,8 +28,6 @@ import util.exception.UpdateRoomException;
 
 /**
  *
- * @author ANGELY Added: Create new room, view all rooms Unfinished: update
- * room, delete room
  *
  */
 @Stateless
