@@ -46,7 +46,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException {
         try {
 
-            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomTypeId);
+            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeId(roomTypeId);
 
             roomRate.setRoomType(roomType);
             roomType.getRoomRates().add(roomRate);

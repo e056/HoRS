@@ -116,22 +116,19 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     @Override
     public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException {
         if (roomType != null && roomType.getName() != null) {
-            RoomType roomTypeToUpdate = retrieveRoomTypeByRoomTypeName(roomType.getName());
+            RoomType roomTypeToUpdate = retrieveRoomTypeByRoomTypeId(roomType.getRoomTypeId());
+            roomTypeToUpdate.setName(roomType.getName());
+            roomTypeToUpdate.setDescription(roomType.getDescription());
+            roomTypeToUpdate.setSize(roomType.getSize());
+            roomTypeToUpdate.setBed(roomType.getBed());
+            roomTypeToUpdate.setCapacity(roomType.getCapacity());
+            roomTypeToUpdate.setAmenities(roomType.getAmenities());
 
-            if (roomTypeToUpdate.getName().equals(roomType.getName())) {
-                roomTypeToUpdate.setDescription(roomType.getDescription());
-                roomTypeToUpdate.setSize(roomType.getSize());
-                roomTypeToUpdate.setBed(roomType.getBed());
-                roomTypeToUpdate.setCapacity(roomType.getCapacity());
-                roomTypeToUpdate.setAmenities(roomType.getAmenities());
-
-            } else {
-                throw new UpdateRoomTypeException("Name of room type record to be updated does not match the existing record");
-            }
         } else {
             throw new RoomTypeNotFoundException("Room type name not provided for room type to be updated");
         }
     }
+    
 
     // check if room type is linked to any room or room rate. if not, only then can delete & rearrange the ranks
     // if room type is linked to any rooms and we disable room type, we must also disable all rooms belonging to this room type
@@ -210,9 +207,9 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         }
 
     }
-    
+
     @Override
-     public RoomType retrieveEnabledRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException {
+    public RoomType retrieveEnabledRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException {
 
         Query query = entityManager.createQuery("SELECT r FROM RoomType r WHERE r.name = :inName AND r.enabled = TRUE");
         query.setParameter("inName", roomTypeName);
@@ -228,7 +225,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
     }
 
-    public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException {
+    public RoomType retrieveRoomTypeByRoomTypeId(Long roomId) throws RoomTypeNotFoundException {
         RoomType roomType = entityManager.find(RoomType.class, roomId);
         if (roomType == null) {
             throw new RoomTypeNotFoundException("Room Type ID " + roomId + " does not exist!");
@@ -275,7 +272,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate) {
- 
+
         List<RoomType> rts = retrieveAllEnabledRoomTypes();
         List<RoomType> finalRts = retrieveAllEnabledRoomTypes();
 
@@ -288,8 +285,8 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                 if ((reservation.getStartDate().compareTo(checkInDate) >= 0 && reservation.getStartDate().compareTo(checkOutDate) <= 0)
                         || (reservation.getEndDate().compareTo(checkInDate) > 0 && reservation.getEndDate().compareTo(checkOutDate) <= 0)) {
                     inventory -= reservation.getNumOfRooms();
-                } 
-            
+                }
+
             }
             if (inventory < numOfRooms) {
                 finalRts.remove(rt);
@@ -300,7 +297,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         return finalRts;
 
     }
-    
+
     public String retrieveRoomTypeNameByReservation(Long reservationId) {
         Reservation res = entityManager.find(Reservation.class, reservationId);
         return res.getRoomType().getName();

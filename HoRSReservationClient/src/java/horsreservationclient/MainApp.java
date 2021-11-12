@@ -260,7 +260,7 @@ public class MainApp {
 
                 System.out.print("Enter Room Type Id to reserve> ");
                 try {
-                    roomTypeToReserve = roomTypeSessionBeanRemote.retrieveRoomTypeByRoomId(scanner.nextLong());
+                    roomTypeToReserve = roomTypeSessionBeanRemote.retrieveRoomTypeByRoomTypeId(scanner.nextLong());
                     scanner.nextLine();
                     if (!roomTypes.contains(roomTypeToReserve)) {
                         throw new CreateNewReservationException("This room type is not available for reservation! Cancelling...");

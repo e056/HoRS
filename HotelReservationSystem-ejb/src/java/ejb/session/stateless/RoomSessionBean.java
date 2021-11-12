@@ -73,7 +73,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     /* public Long createNewRoom(Room room, Long roomTypeId) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
         try {
 
-            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomTypeId);
+            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeId(roomTypeId);
 
             room.setRoomType(roomType);
             roomType.getRooms().add(room);

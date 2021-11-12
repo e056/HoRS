@@ -747,6 +747,14 @@ public class HotelOperationModule {
         try {
             RoomType roomTypeToUpdate = roomTypeSessionBeanRemote.retrieveRoomTypeByRoomTypeName(rt.getName());
 
+            System.out.println("Leave blank for no change. ");
+            System.out.print("Enter Room Type Name> ");
+            name = scanner.nextLine().trim();
+            if (name.length() > 0) {
+                roomTypeToUpdate.setName(name);
+                
+            }
+
             System.out.print("Enter Description> ");
             desc = scanner.nextLine().trim();
             roomTypeToUpdate.setDescription(desc);

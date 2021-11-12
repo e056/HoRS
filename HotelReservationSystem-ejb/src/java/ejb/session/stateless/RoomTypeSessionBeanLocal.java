@@ -32,7 +32,7 @@ public interface RoomTypeSessionBeanLocal {
 
     public RoomType retrieveRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException;
 
-    public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException;
+    public RoomType retrieveRoomTypeByRoomTypeId(Long roomId) throws RoomTypeNotFoundException;
     
     public Long createNewRoomType(RoomType roomType) throws RoomTypeNameExistException, UnknownPersistenceException;
 

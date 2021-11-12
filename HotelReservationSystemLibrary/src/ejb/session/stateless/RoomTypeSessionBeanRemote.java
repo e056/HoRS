@@ -35,7 +35,7 @@ public interface RoomTypeSessionBeanRemote {
 
     public List<RoomType> retrieveAllEnabledRoomTypes();
     
-    public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException;
+    public RoomType retrieveRoomTypeByRoomTypeId(Long roomId) throws RoomTypeNotFoundException;
 
     public RoomType retrieveRoomTypeByNextHighestRoomType(String roomTypeName)throws RoomTypeIsLowestException;
 
@@ -46,6 +46,7 @@ public interface RoomTypeSessionBeanRemote {
     public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate);
     
     public RoomType retrieveEnabledRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException;
+
 
     
    

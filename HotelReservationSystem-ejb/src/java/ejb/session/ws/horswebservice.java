@@ -361,7 +361,7 @@ public class horswebservice {
 
     @WebMethod(operationName = "retrieveRoomTypeByRoomId")
     public RoomType retrieveRoomTypeByRoomId(Long roomId) throws RoomTypeNotFoundException {
-        RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomId(roomId);
+        RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeId(roomId);
         em.detach(rt);
         rt.setNextHigherRoomType(null);
         List<RoomRate> rr = rt.getRoomRates();

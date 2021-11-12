@@ -45,7 +45,7 @@ import util.exception.UnknownPersistenceException;
  */
 public class FrontOfficeModule {
 
-    private RoomTypeSessionBeanRemote roomeTypeSessionBeanRemote;
+    private RoomTypeSessionBeanRemote roomTypeSessionBeanRemote;
     private RoomSessionBeanRemote roomSessionBeanRemote;
     private RoomRateSessionBeanRemote roomRateSessionBeanRemote;
     private ReservationSessionBeanRemote reservationSessionBeanRemote;
@@ -53,8 +53,8 @@ public class FrontOfficeModule {
    
     private GuestSessionBeanRemote guestSessionBeanRemote;
 
-    public FrontOfficeModule(RoomTypeSessionBeanRemote roomeTypeSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, Employee currEmployee, GuestSessionBeanRemote guestSessionBeanRemote) {
-        this.roomeTypeSessionBeanRemote = roomeTypeSessionBeanRemote;
+    public FrontOfficeModule(RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, Employee currEmployee, GuestSessionBeanRemote guestSessionBeanRemote) {
+        this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;
         this.roomSessionBeanRemote = roomSessionBeanRemote;
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
@@ -144,7 +144,7 @@ public class FrontOfficeModule {
             long duration = endDate.getTime() - startDate.getTime();
             int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
 
-            List<RoomType> roomTypes = roomeTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
+            List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
             System.out.printf("%8s%20s%30s%30s\n", "ID", "Room Type", "Price (Each Room)", "Total Price");
             for (RoomType rt : roomTypes) {
                 BigDecimal price = roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(rt.getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days));
@@ -164,7 +164,7 @@ public class FrontOfficeModule {
 
                 System.out.print("Enter Room Type Id to reserve> ");
                 try {
-                    roomTypeToReserve = roomeTypeSessionBeanRemote.retrieveRoomTypeByRoomId(scanner.nextLong());
+                    roomTypeToReserve = roomTypeSessionBeanRemote.retrieveRoomTypeByRoomTypeId(scanner.nextLong());
                     scanner.nextLine();
                     if (!roomTypes.contains(roomTypeToReserve)) {
                         throw new CreateNewReservationException("This room type is not available for reservation! Cancelling...");
