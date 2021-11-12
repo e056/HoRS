@@ -49,6 +49,7 @@ public class RoomType implements Serializable {
 
     @OneToOne
     @JoinColumn(unique = true)
+    //@XmlTransient
     private RoomType nextHigherRoomType;
 
     @OneToMany(mappedBy = "roomType")
@@ -214,8 +215,7 @@ public class RoomType implements Serializable {
     /**
      * @param ranking the ranking to set
      *
-     * public void setRanking(Integer ranking) { this.ranking = ranking;
-    }
+     * public void setRanking(Integer ranking) { this.ranking = ranking; }
      */
     /**
      * @return the roomRates
@@ -262,6 +262,7 @@ public class RoomType implements Serializable {
     /**
      * @return the nextHigherRoomType
      */
+    @XmlTransient
     public RoomType getNextHigherRoomType() {
         return nextHigherRoomType;
     }
@@ -269,6 +270,7 @@ public class RoomType implements Serializable {
     /**
      * @param nextHigherRoomType the nextHigherRoomType to set
      */
+    @XmlTransient
     public void setNextHigherRoomType(RoomType nextHigherRoomType) {
         this.nextHigherRoomType = nextHigherRoomType;
     }
@@ -276,6 +278,7 @@ public class RoomType implements Serializable {
     /**
      * @return the reservations
      */
+    //@XmlTransient
     public List<Reservation> getReservations() {
         return reservations;
     }

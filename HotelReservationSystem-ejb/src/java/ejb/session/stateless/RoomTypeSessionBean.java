@@ -300,5 +300,10 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         return finalRts;
 
     }
+    
+    public String retrieveRoomTypeNameByReservation(Long reservationId) {
+        Reservation res = entityManager.find(Reservation.class, reservationId);
+        return res.getRoomType().getName();
+    }
 
 }

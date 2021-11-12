@@ -32,6 +32,8 @@ import ws.client.RoomTypeNotFoundException_Exception;
  * @author PYT
  */
 public class HolidayReservationSystemClient {
+    
+    private static ws.client.Partner currPartner;
 
     /**
      * @param args the command line arguments
@@ -110,7 +112,7 @@ public class HolidayReservationSystemClient {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    doSearchRoom();
+                    doSearchRoom(partner);
                 } else if (response == 2) {
                     doViewReservationDetails();
                 } else if (response == 3) {
@@ -125,7 +127,7 @@ public class HolidayReservationSystemClient {
         }
     }
 
-    private static void doSearchRoom() {
+    private static void doSearchRoom(Partner partner) {
         try {
             Scanner scanner = new Scanner(System.in);
             Horswebservice_Service service = new Horswebservice_Service();
@@ -207,9 +209,9 @@ public class HolidayReservationSystemClient {
                     
                     reservation.setAllocated(false);
 
-                    reservation = service.getHorswebservicePort().createNewReservation(reservation);
+                    reservation = service.getHorswebservicePort().createNewPartnerReservation(reservation, partner);
 
-                    //System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
+                    System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
 
                 } else {
                     System.out.println("Cancelled reservation.");
@@ -241,10 +243,11 @@ public class HolidayReservationSystemClient {
 
         try {
             Reservation r = service.getHorswebservicePort().viewReservationDetails(resId);
+            String roomTypeName = service.getHorswebservicePort().retrieveRoomTypeNameByReservation(resId);
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", "ID", "Num. Of Rooms", "Check-In", "Check-Out", "Room Type", "Total Price");
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", r.getReservationId(), r.getNumOfRooms(),
-                    df.format(r.getStartDate()), df.format(r.getEndDate()),
-                    r.getRoomType().getName(), NumberFormat.getCurrencyInstance().format(r.getTotalPrice()));
+                    df.format(r.getStartDate().toGregorianCalendar().getTime()), df.format(r.getEndDate().toGregorianCalendar().getTime()), 
+                    roomTypeName, NumberFormat.getCurrencyInstance().format(r.getTotalPrice()));
         } catch (InvalidLoginCredentialException_Exception ex) {
             System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
         } catch (ReservationNotFoundException_Exception ex) {

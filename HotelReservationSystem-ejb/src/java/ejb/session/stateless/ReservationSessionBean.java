@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Guest;
+import entity.Partner;
 import entity.Reservation;
 import entity.Room;
 import entity.RoomAllocationException;
@@ -86,6 +87,25 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         g.getReservations().add(reservation);
         reservation.setGuest(g);
+        rt.getReservations().add(reservation);
+
+        em.persist(rt);
+        em.persist(reservation);
+
+        em.flush();
+
+        allocateAfter2am(reservation);
+
+        return reservation;
+    }
+
+    public Reservation createNewPartnerReservation(Reservation reservation, Partner partner) throws RoomTypeNotFoundException, CreateNewReservationException {
+
+        RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
+        Partner p = em.find(Partner.class, partner.getPartnerId());
+
+        p.getReservations().add(reservation);
+        reservation.setPartner(p);
         rt.getReservations().add(reservation);
 
         em.persist(rt);
@@ -246,6 +266,5 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             throw new ReservationNotFoundException("This reservation for this guest " + guestId + " does not exist.");
         }
     }
-
 
 }

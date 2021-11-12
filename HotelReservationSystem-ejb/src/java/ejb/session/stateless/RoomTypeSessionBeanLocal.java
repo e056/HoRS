@@ -39,4 +39,6 @@ public interface RoomTypeSessionBeanLocal {
     public RoomType retrieveEnabledRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException;
     
     public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate);
+
+    public String retrieveRoomTypeNameByReservation(Long reservationId);
 }
