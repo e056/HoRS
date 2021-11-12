@@ -14,8 +14,6 @@ import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
 import java.math.BigDecimal;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -37,7 +35,7 @@ import util.exception.UnknownPersistenceException;
  */
 @Singleton
 @LocalBean
-//@Startup
+@Startup
 public class DataInitSessionBean {
 
     @EJB
@@ -72,10 +70,10 @@ public class DataInitSessionBean {
     private void doLoadData(){
         try {
             //employee 
-            Employee employee1 = new Employee("sysad", "one", "sa", "password", AccessRightEnum.SYSTEM_ADMIN);
-            Employee employee2 = new Employee("opman", "two", "om", "password", AccessRightEnum.OPERATION_MANAGER);
-            Employee employee3 = new Employee("saleman", "three", "sm", "password", AccessRightEnum.SALES_MANAGER);
-            Employee employee4 = new Employee("guestrln", "four", "gro", "password", AccessRightEnum.GUEST_RELATION);
+            Employee employee1 = new Employee("sysad", "one", "sysadmin", "password", AccessRightEnum.SYSTEM_ADMIN);
+            Employee employee2 = new Employee("opman", "two", "opmanager", "password", AccessRightEnum.OPERATION_MANAGER);
+            Employee employee3 = new Employee("saleman", "three", "salesmanager", "password", AccessRightEnum.SALES_MANAGER);
+            Employee employee4 = new Employee("guestrln", "four", "guestrelo", "password", AccessRightEnum.GUEST_RELATION);
 
             employeeSessionBeanLocal.createNewEmployee(employee1);
             employeeSessionBeanLocal.createNewEmployee(employee2);
