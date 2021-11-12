@@ -238,6 +238,7 @@ public class MainApp {
 
             long duration = endDate.getTime() - startDate.getTime();
             int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
+            System.out.println("DAYS: " + days);
 
             List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
             System.out.printf("%8s%20s%30s%30s\n", "ID", "Room Type", "Price (each room)", "Total Price");

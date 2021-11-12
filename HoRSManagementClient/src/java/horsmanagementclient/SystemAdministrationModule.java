@@ -29,13 +29,12 @@ public class SystemAdministrationModule {
     private PartnerSessionBeanRemote partnerSessionBeanRemote;
     private EmployeeSessionBeanRemote employeeSessionBeanRemote;
     private Employee currEmployee;
-    
-    
+
     public SystemAdministrationModule(PartnerSessionBeanRemote partnerSessionBeanRemote, EmployeeSessionBeanRemote employeeSessionBeanRemote, Employee currEmployee) {
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
         this.currEmployee = currEmployee;
-        
+
     }
 
     public void menuSystemAdministration() throws InvalidAccessRightException {
@@ -128,10 +127,10 @@ public class SystemAdministrationModule {
         System.out.println("*** HoRS System :: System Administration :: View All Employee Details ***\n");
 
         List<Employee> employees = employeeSessionBeanRemote.retrieveAllEmployees();
-
+        System.out.printf("%8s%20s%20s%20s%25s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username", "Password");
         System.out.println("------------------------");
         for (Employee employee : employees) {
-            System.out.printf("%8s%20s%20s%20s%25s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username", "Password");
+
             System.out.printf("%8s%20s%20s%20s%25s%20s\n", employee.getEmployeeId().toString(),
                     employee.getFirstName(), employee.getLastName(), employee.getAccessRightEnum().toString(),
                     employee.getUsername(), employee.getPassword());
@@ -143,11 +142,11 @@ public class SystemAdministrationModule {
     }
 
     private void doCreateNewPartner() {
-        
+
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.println("*** HoRS System :: System Administration :: Create New Partner ***\n");
-        
+
         Partner newPartner = new Partner();
         System.out.print("Enter Name> ");
         newPartner.setName(scanner.nextLine().trim());
@@ -155,7 +154,7 @@ public class SystemAdministrationModule {
         newPartner.setUsername(scanner.nextLine().trim());
         System.out.print("Enter Password> ");
         newPartner.setPassword(scanner.nextLine().trim());
-        
+
         try {
             Long partnerId = partnerSessionBeanRemote.createNewPartner(newPartner);
             System.out.println("New partner created successfully!: " + partnerId + "\n");
@@ -164,17 +163,17 @@ public class SystemAdministrationModule {
         } catch (UnknownPersistenceException ex) {
             System.out.println("An unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
         }
-        
+
     }
 
     private void doViewAllPartnerDetails() {
-        
+
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.println("*** HoRS System :: System Administration :: View All Partners ***\n");
-        
+
         List<Partner> partners = partnerSessionBeanRemote.retrieveAllPartners();
-        
+
         System.out.println("------------------------");
         for (Partner partner : partners) {
             System.out.printf("%8s%20s%25s%20s\n", "Partner ID", "Name", "Username", "Password");
@@ -183,7 +182,6 @@ public class SystemAdministrationModule {
 
         }
         System.out.println("------------------------");
-     
+
     }
 }
-

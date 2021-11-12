@@ -38,7 +38,6 @@ import util.exception.ReservationNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
 
-
 /**
  *
  * @author ANGELY
@@ -50,7 +49,7 @@ public class FrontOfficeModule {
     private RoomRateSessionBeanRemote roomRateSessionBeanRemote;
     private ReservationSessionBeanRemote reservationSessionBeanRemote;
     private Employee currEmployee;
-   
+
     private GuestSessionBeanRemote guestSessionBeanRemote;
 
     public FrontOfficeModule(RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, Employee currEmployee, GuestSessionBeanRemote guestSessionBeanRemote) {
@@ -59,7 +58,7 @@ public class FrontOfficeModule {
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
         this.currEmployee = currEmployee;
-        
+
         this.guestSessionBeanRemote = guestSessionBeanRemote;
     }
 
@@ -289,6 +288,7 @@ public class FrontOfficeModule {
     }
 
     private void doCheckInGuest() {
+        SimpleDateFormat df = new SimpleDateFormat("d/M/yy");
         Scanner scanner = new Scanner(System.in);
         Long resId;
         System.out.println("*** Hotel Reservation System :: Check In Guest ***\n");
@@ -299,8 +299,10 @@ public class FrontOfficeModule {
 
             System.out.println("List Of reservation to check in:\n");
 
-            System.out.printf("%20s%30s%30s\n", "Reservation ID", "Start date", "End date");
+            System.out.printf("%20s%20s%20s\n", "Reservation ID", "Start date", "End date");
             Reservation res = reservationSessionBeanRemote.retrieveReservationByReservationId(resId);
+            System.out.printf("%20s%20s%20s\n", res.getReservationId(), df.format(res.getStartDate()), df.format(res.getEndDate()));
+            
 
             System.out.printf("%20s%20s%20s\n", "Room Id", "Room Type", "Room Number");
 
@@ -312,6 +314,7 @@ public class FrontOfficeModule {
                 reservationSessionBeanRemote.checkInGuest(res);
             }
 
+            System.out.println(res.getException().getNumOfTypeTwo());
             if (res.getException() != null) {
                 System.out.println("here");
                 RoomAllocationException rae = reservationSessionBeanRemote.retrieveraeByReservationId(resId);
@@ -373,5 +376,4 @@ public class FrontOfficeModule {
 //            System.out.println("Reservation has no allocation exceptions!");
 //        }
 //    }
-
 }

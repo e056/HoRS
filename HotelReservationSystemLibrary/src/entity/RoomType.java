@@ -262,7 +262,7 @@ public class RoomType implements Serializable {
     /**
      * @return the nextHigherRoomType
      */
-    @XmlTransient
+    //@XmlTransient
     public RoomType getNextHigherRoomType() {
         return nextHigherRoomType;
     }
@@ -270,7 +270,7 @@ public class RoomType implements Serializable {
     /**
      * @param nextHigherRoomType the nextHigherRoomType to set
      */
-    @XmlTransient
+    //@XmlTransient
     public void setNextHigherRoomType(RoomType nextHigherRoomType) {
         this.nextHigherRoomType = nextHigherRoomType;
     }

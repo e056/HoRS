@@ -190,6 +190,8 @@ public class RoomAllocationSessionBean implements RoomAllocationSessionBeanRemot
                 allocationException.setReservation(reservation);
                 reservation.setException(allocationException);
                 em.persist(allocationException);
+                em.persist(reservation);
+                em.flush();
 
             }
 

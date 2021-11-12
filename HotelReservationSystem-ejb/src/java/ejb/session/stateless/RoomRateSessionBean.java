@@ -9,6 +9,9 @@ import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -190,6 +193,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         List<RoomRate> promotions = new ArrayList<>();
 
         for (RoomRate rate : rates) {
+            System.out.println(rate.getType());
             System.out.println(rate.getName());
             if (rate.getType() == RoomRateType.PEAK) {
 
@@ -198,7 +202,9 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
                 promotions.add(rate);
             } else if (rate.getType() == RoomRateType.NORMAL) {
+
                 normal = rate;
+                System.out.println("DEBUGGING :" + normal.getName());
             }
         }
 
@@ -207,19 +213,25 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
         BigDecimal totalAmount = BigDecimal.valueOf(0);
 
-        while (!current.getTime().after(checkOutDate)) {
-            //System.out.println("Here");
+        LocalDate startDateLocal = checkInDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endDateLocal = checkOutDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        for (LocalDate date = startDateLocal; date.isBefore(endDateLocal); date = date.plusDays(1)) {
+            System.out.println(current.toString());
+            System.out.println("LOOPED");
+            
+            Date curr = localDateToDate(date);
 
             RoomRate peak = null;
             RoomRate promotion = null;
             for (RoomRate p : peaks) {
-                if (current.getTime().compareTo(p.getValidityStart()) >= 0 && current.getTime().compareTo(p.getValidityEnd()) <= 0) {
+                if (curr.compareTo(p.getValidityStart()) >= 0 && curr.compareTo(p.getValidityEnd()) <= 0) {
                     peak = p;
                 }
 
             }
             for (RoomRate p : promotions) {
-                if (current.getTime().compareTo(p.getValidityStart()) >= 0 && current.getTime().compareTo(p.getValidityEnd()) <= 0) {
+                if (curr.compareTo(p.getValidityStart()) >= 0 && curr.compareTo(p.getValidityEnd()) <= 0) {
                     promotion = p;
                 }
             }
@@ -234,7 +246,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
             } else if (promotion == null && peak != null) {
 
-                totalAmount= totalAmount.add(peak.getRatePerNight());
+                totalAmount = totalAmount.add(peak.getRatePerNight());
 
             } else {
                 System.out.println(normal.getRatePerNight());
@@ -250,4 +262,62 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         System.out.println(totalAmount);
         return totalAmount;
     }
+    
+    public Date localDateToDate(LocalDate lDate) {
+        ZoneId systemTimeZone = ZoneId.systemDefault();
+        ZonedDateTime  zonedDateTime = lDate.atStartOfDay(systemTimeZone);
+        Date utilDate = Date.from(zonedDateTime.toInstant());
+        return utilDate;
+        
+        
+        
+    }
+
 }
+//
+//            while (!curr.after(checkOutDate)) {
+//                System.out.println(current.toString());
+//                System.out.println("LOOPED");
+//
+//                RoomRate peak = null;
+//                RoomRate promotion = null;
+//                for (RoomRate p : peaks) {
+//                    if (curr.compareTo(p.getValidityStart()) >= 0 && curr.compareTo(p.getValidityEnd()) <= 0) {
+//                        peak = p;
+//                    }
+//
+//                }
+//                for (RoomRate p : promotions) {
+//                    if (curr.compareTo(p.getValidityStart()) >= 0 && curr.compareTo(p.getValidityEnd()) <= 0) {
+//                        promotion = p;
+//                    }
+//                }
+//
+//                if (peak != null && promotion != null) {
+//
+//                    totalAmount = totalAmount.add(peak.getRatePerNight());
+//
+//                } else if (peak == null && promotion != null) {
+//
+//                    totalAmount = totalAmount.add(promotion.getRatePerNight());
+//
+//                } else if (promotion == null && peak != null) {
+//
+//                    totalAmount = totalAmount.add(peak.getRatePerNight());
+//
+//                } else {
+//                    System.out.println(normal.getRatePerNight());
+//                    System.out.println(totalAmount.add(normal.getRatePerNight()));
+//                    System.out.println("Total Amount = " + totalAmount);
+//
+//                    totalAmount = totalAmount.add(normal.getRatePerNight());
+//                    System.out.println("Total Amount aft add = " + totalAmount);
+//                }
+//
+//                current.add(Calendar.DATE, 1);
+//            }
+//            System.out.println(totalAmount);
+//            return totalAmount;
+//        }
+
+

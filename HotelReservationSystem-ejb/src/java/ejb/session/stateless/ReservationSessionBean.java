@@ -98,6 +98,8 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         return reservation;
     }
+    
+    
 
     public Reservation createNewPartnerReservation(Reservation reservation, Partner partner) throws RoomTypeNotFoundException, CreateNewReservationException {
 
