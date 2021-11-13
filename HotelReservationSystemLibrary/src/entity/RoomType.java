@@ -38,23 +38,23 @@ public class RoomType implements Serializable {
     private String name;
     
     @Column(length = 128)
-    @Size(min = 1, max = 128)
+    @Size(max = 128)
     private String description;
     
     @Column(length = 32)
-    @Size(min = 1, max = 32)
+    @Size(max = 32)
     private String size;
     
     @Column(length = 32)
-    @Size(min = 1, max = 32)
+    @Size(max = 32)
     private String bed;
     
     @Column(length = 32)
-    @Size(min = 1, max = 32)
+    @Size(max = 32)
     private String capacity;
     
     @Column
-    @Size(min = 1, max = 32)
+    @Size(max = 32)
     private String amenities;
     
     @Column
