@@ -244,32 +244,22 @@ public class HotelOperationModule {
         String amenities = scanner.nextLine().trim();
         newRoomType.setAmenities(amenities);
 
-//        do{
-//            System.out.print("Enter Room Amenities > ");
-//            String amenity = scanner.nextLine().trim();
-//            amenities.add(amenity);
-//            
-//            System.out.print("More amenity? (Enter 'N' to stop adding amenities)> ");
-//            input = scanner.nextLine().trim();
-//        }
-//        while(!input.equals("N"));
-        //newRoomType.setAmenities(amenities);
         System.out.println("Select room rank. Current room types: ");
         System.out.println("------------------------");
         List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
         if (roomTypes.size() != 0) {
-            System.out.printf("%8s%30s\n", "Room Name", "Next Higher Room Type");
+            System.out.printf("%20s%30s\n", "Room Name", "Next Higher Room Type");
             for (RoomType roomType : roomTypes) {
                 if (roomType.getNextHigherRoomType() == null) {
-                    System.out.printf("%8s%30s\n", roomType.getName(), "None");
+                    System.out.printf("%20s%30s\n", roomType.getName(), "None");
                 } else {
-                    System.out.printf("%8s%30s\n", roomType.getName(), roomType.getNextHigherRoomType().getName());
+                    System.out.printf("%20s%30s\n", roomType.getName(), roomType.getNextHigherRoomType().getName());
                 }
 
             }
             System.out.println("------------------------");
 
-            System.out.print("Enter Next Higher Room Type (Type 'None' if this will be the highest room type)>");
+            System.out.print("Enter Next Higher Room Type Name (Type 'None' if this will be the highest room type)>");
             nextHigherRoomTypeName = scanner.nextLine().trim();
 
             newRoomType.setNextHigherRoomType(null);
@@ -345,12 +335,12 @@ public class HotelOperationModule {
         Scanner scanner = new Scanner(System.in);
         List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveAllEnabledRoomTypes();
         if (roomTypes.size() != 0) {
-            System.out.printf("%8s%30s\n", "Room Name", "Next Higher Room Type");
+            System.out.printf("%8s%30s%30s\n", "ID", "Room Name", "Next Higher Room Type");
             for (RoomType roomType : roomTypes) {
                 if (roomType.getNextHigherRoomType() == null) {
-                    System.out.printf("%8s%30s\n", roomType.getName(), "None");
+                    System.out.printf("%8s%30s%30s\n", roomType.getRoomTypeId(), roomType.getName(), "NONE");
                 } else {
-                    System.out.printf("%8s%30s\n", roomType.getName(), roomType.getNextHigherRoomType().getName());
+                    System.out.printf("%8s%30s%30s\n", roomType.getRoomTypeId(),  roomType.getName(), roomType.getNextHigherRoomType().getName());
                 }
 
             }

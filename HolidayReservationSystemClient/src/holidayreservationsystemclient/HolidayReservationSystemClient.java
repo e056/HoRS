@@ -33,7 +33,7 @@ import ws.client.RoomTypeNotFoundException_Exception;
  * @author PYT
  */
 public class HolidayReservationSystemClient {
-    
+
     private static ws.client.Partner currPartner;
 
     /**
@@ -61,7 +61,6 @@ public class HolidayReservationSystemClient {
                 if (response == 1) {
 
                     doLogin();
-                    
 
                 } else if (response == 2) {
                     break;
@@ -158,7 +157,7 @@ public class HolidayReservationSystemClient {
             c = new GregorianCalendar();
             c.setTime(endDate);
             XMLGregorianCalendar endDateXML = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-            
+
             System.out.println(startDateXML);
             System.out.println(endDateXML);
 
@@ -168,10 +167,10 @@ public class HolidayReservationSystemClient {
                 BigDecimal priceEachRoom = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(rt.getRoomTypeId(), startDateXML, endDateXML);
                 System.out.printf("%8s%20s%30s\n", rt.getRoomTypeId(), rt.getName(),
                         NumberFormat.getCurrencyInstance().format(priceEachRoom.multiply(BigDecimal.valueOf(numOfRooms))));
-     
+
             }
-            
-              System.out.println("------------------------");
+
+            System.out.println("------------------------");
             System.out.println("1: Make Reservation");
             System.out.println("2: Back\n");
             System.out.print("> ");
@@ -183,7 +182,7 @@ public class HolidayReservationSystemClient {
                 try {
                     roomTypeToReserve = service.getHorswebservicePort().retrieveRoomTypeByRoomId(scanner.nextLong());
                     scanner.nextLine();
-   
+
                 } catch (ws.client.RoomTypeNotFoundException_Exception ex) {
                     System.out.println("An error has occurred while retrieving Room Type: " + ex.getMessage() + "\n");
                     System.out.println("Cancelling reservation...");
@@ -194,7 +193,7 @@ public class HolidayReservationSystemClient {
                 System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
 //                BigDecimal totalPrice = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDateXML, endDateXML);
 //                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
-                
+
                 BigDecimal totalPrice = service.getHorswebservicePort().calculateFinalOnlineReservationAmount(roomTypeToReserve,
                         startDateXML, endDateXML, numOfRooms);
 
@@ -211,7 +210,7 @@ public class HolidayReservationSystemClient {
                     reservation.setTotalPrice(totalPrice);
                     reservation.setRoomType(roomTypeToReserve);
                     // ws.client.Reservation reservation = new ws.client.Reservation(startDate, endDate, numOfRooms, totalPrice, roomTypeToReserve);
-                    
+
                     reservation.setAllocated(false);
 
                     reservation = service.getHorswebservicePort().createNewPartnerReservation(reservation, partner);
@@ -223,15 +222,13 @@ public class HolidayReservationSystemClient {
 
                 }
             }
-            
-            
-            
+
         } catch (ParseException ex) {
             System.out.println("Invalid Date Format!");
         } catch (DatatypeConfigurationException ex) {
             Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (CreateNewReservationException_Exception ex) {
-            Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error when creating new reservation: " + ex.getMessage());
         } catch (RoomTypeNotFoundException_Exception ex) {
             Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InputDataValidationException_Exception ex) {
@@ -253,7 +250,7 @@ public class HolidayReservationSystemClient {
             //String roomTypeName = service.getHorswebservicePort().retrieveRoomTypeNameByReservation(resId);
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", "ID", "Num. Of Rooms", "Check-In", "Check-Out", "Room Type", "Total Price");
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", r.getReservationId(), r.getNumOfRooms(),
-                    df.format(r.getStartDate().toGregorianCalendar().getTime()), df.format(r.getEndDate().toGregorianCalendar().getTime()), 
+                    df.format(r.getStartDate().toGregorianCalendar().getTime()), df.format(r.getEndDate().toGregorianCalendar().getTime()),
                     r.getRoomType().getName(), NumberFormat.getCurrencyInstance().format(r.getTotalPrice()));
         } catch (InvalidLoginCredentialException_Exception ex) {
             System.out.println("Invalid login credential: " + ex.getMessage() + "\n");

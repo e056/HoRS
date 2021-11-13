@@ -188,7 +188,8 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
                 if (retrieveHighestRoomType().equals(roomTypeToRemove)) {
                     RoomType prevRoomType = retrieveRoomTypeByNextHighestRoomType(roomTypeToRemove.getName());
                     prevRoomType.setNextHigherRoomType(null);
-                    entityManager.remove(roomTypeToRemove);
+                    RoomType managedRt = entityManager.find(RoomType.class, roomTypeToRemove.getRoomTypeId());
+                    entityManager.remove(managedRt);
                 } else {
                     Long roomTypeId = roomTypeToRemove.getRoomTypeId();
                     RoomType rt = entityManager.find(RoomType.class, roomTypeId);
