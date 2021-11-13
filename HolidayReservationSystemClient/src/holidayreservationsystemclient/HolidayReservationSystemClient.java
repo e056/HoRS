@@ -60,7 +60,7 @@ public class HolidayReservationSystemClient {
                 if (response == 1) {
 
                     doLogin();
-                    System.out.println("Login successful!\n");
+                    
 
                 } else if (response == 2) {
                     break;
@@ -86,6 +86,7 @@ public class HolidayReservationSystemClient {
 
         try {
             Partner partner = service.getHorswebservicePort().partnerLogin(username, password);
+            System.out.println("Login successful!\n");
             menuMain(partner);
         } catch (InvalidLoginCredentialException_Exception ex) {
             System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
@@ -190,8 +191,11 @@ public class HolidayReservationSystemClient {
 
                 System.out.println("Reserving the following:\n");
                 System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
-                BigDecimal totalPrice = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDateXML, endDateXML);
-                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
+//                BigDecimal totalPrice = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDateXML, endDateXML);
+//                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
+                
+                BigDecimal totalPrice = service.getHorswebservicePort().calculateFinalOnlineReservationAmount(roomTypeToReserve,
+                        startDateXML, endDateXML, numOfRooms);
 
                 System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice));
                 System.out.print("Confirm? ('Y' to confirm)> ");
@@ -243,11 +247,11 @@ public class HolidayReservationSystemClient {
 
         try {
             Reservation r = service.getHorswebservicePort().viewReservationDetails(resId);
-            String roomTypeName = service.getHorswebservicePort().retrieveRoomTypeNameByReservation(resId);
+            //String roomTypeName = service.getHorswebservicePort().retrieveRoomTypeNameByReservation(resId);
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", "ID", "Num. Of Rooms", "Check-In", "Check-Out", "Room Type", "Total Price");
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", r.getReservationId(), r.getNumOfRooms(),
                     df.format(r.getStartDate().toGregorianCalendar().getTime()), df.format(r.getEndDate().toGregorianCalendar().getTime()), 
-                    roomTypeName, NumberFormat.getCurrencyInstance().format(r.getTotalPrice()));
+                    r.getRoomType().getName(), NumberFormat.getCurrencyInstance().format(r.getTotalPrice()));
         } catch (InvalidLoginCredentialException_Exception ex) {
             System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
         } catch (ReservationNotFoundException_Exception ex) {
