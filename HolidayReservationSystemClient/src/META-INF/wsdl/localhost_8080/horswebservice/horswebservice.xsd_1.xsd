@@ -44,6 +44,10 @@
 
 <xs:element name="retrieveRoomTypeByRoomIdResponse" type="tns:retrieveRoomTypeByRoomIdResponse"/>
 
+<xs:element name="retrieveRoomTypeNameByReservation" type="tns:retrieveRoomTypeNameByReservation"/>
+
+<xs:element name="retrieveRoomTypeNameByReservationResponse" type="tns:retrieveRoomTypeNameByReservationResponse"/>
+
 <xs:element name="searchRoom" type="tns:searchRoom"/>
 
 <xs:element name="searchRoomResponse" type="tns:searchRoomResponse"/>
@@ -173,6 +177,18 @@
 <xs:complexType name="InputDataValidationException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveRoomTypeNameByReservation">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveRoomTypeNameByReservationResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

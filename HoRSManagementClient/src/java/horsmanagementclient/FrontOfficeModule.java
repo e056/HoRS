@@ -183,10 +183,11 @@ public class FrontOfficeModule {
                 }
 
                 System.out.println("Reserving the following:\n");
-                System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
+                System.out.printf("%20s%20s%30s%30s%30s\n", "Room Type", "Num of Rooms", "Total Price", "CI", "CO");
                 BigDecimal totalPrice = reservationSessionBeanRemote.calculateFinalWalkInReservationAmount(roomTypeToReserve, startDate, endDate, numOfRooms);
 
-                System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice));
+                System.out.printf("%20s%20s%30s%30s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice),
+                        outputDateFormat.format(startDate), outputDateFormat.format(endDate));
                 System.out.print("Confirm? ('Y' to confirm)> ");
 
                 comfirmReservation = scanner.nextLine().trim();
@@ -306,7 +307,7 @@ public class FrontOfficeModule {
         Scanner scanner = new Scanner(System.in);
         Long resId;
         System.out.println("*** Hotel Reservation System :: Check In Guest ***\n");
-        System.out.println("Enter reservation Id");
+        System.out.print("Enter reservation Id> ");
         resId = scanner.nextLong();
 
         try {
@@ -327,7 +328,7 @@ public class FrontOfficeModule {
                 reservationSessionBeanRemote.checkInGuest(res);
             }
 
-            System.out.println(res.getException().getNumOfTypeTwo());
+            //System.out.println(res.getException().getNumOfTypeTwo());
             if (res.getException() != null) {
                 //System.out.println("here");
                 RoomAllocationException rae = reservationSessionBeanRemote.retrieveraeByReservationId(resId);

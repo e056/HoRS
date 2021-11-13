@@ -92,11 +92,11 @@ public class horswebservice {
 
     }
     
-//    @WebMethod(operationName = "retrieveRoomTypeNameByReservation")
-//    public String retrieveRoomTypeNameByReservation(Long reservationId) {
-//        return roomTypeSessionBeanLocal.retrieveRoomTypeNameByReservation(reservationId);
-//        
-//    }
+    @WebMethod(operationName = "retrieveRoomTypeNameByReservation")
+    public String retrieveRoomTypeNameByReservation(Long reservationId) {
+        return roomTypeSessionBeanLocal.retrieveRoomTypeNameByReservation(reservationId);
+        
+    }
 
     @WebMethod(operationName = "viewReservationDetails")
     public Reservation viewReservationDetails(Long reservationId) throws InvalidLoginCredentialException, ReservationNotFoundException {

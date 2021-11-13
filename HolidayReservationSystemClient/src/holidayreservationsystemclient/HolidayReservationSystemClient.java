@@ -190,14 +190,15 @@ public class HolidayReservationSystemClient {
                 }
 
                 System.out.println("Reserving the following:\n");
-                System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
+                System.out.printf("%20s%20s%30s%30s%30s\n", "Room Type", "Num of Rooms", "Total Price", "CI", "CO");
 //                BigDecimal totalPrice = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDateXML, endDateXML);
 //                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
 
                 BigDecimal totalPrice = service.getHorswebservicePort().calculateFinalOnlineReservationAmount(roomTypeToReserve,
                         startDateXML, endDateXML, numOfRooms);
 
-                System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice));
+                System.out.printf("%20s%20s%30s%30s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice),
+                        outputDateFormat.format(startDate), outputDateFormat.format(endDate));
                 System.out.print("Confirm? ('Y' to confirm)> ");
 
                 comfirmReservation = scanner.nextLine().trim();
@@ -247,11 +248,11 @@ public class HolidayReservationSystemClient {
 
         try {
             Reservation r = service.getHorswebservicePort().viewReservationDetails(resId);
-            //String roomTypeName = service.getHorswebservicePort().retrieveRoomTypeNameByReservation(resId);
+            String roomTypeName = service.getHorswebservicePort().retrieveRoomTypeNameByReservation(resId);
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", "ID", "Num. Of Rooms", "Check-In", "Check-Out", "Room Type", "Total Price");
             System.out.printf("%8s%20s%20s%20s%20s%20s\n", r.getReservationId(), r.getNumOfRooms(),
                     df.format(r.getStartDate().toGregorianCalendar().getTime()), df.format(r.getEndDate().toGregorianCalendar().getTime()),
-                    r.getRoomType().getName(), NumberFormat.getCurrencyInstance().format(r.getTotalPrice()));
+                    roomTypeName, NumberFormat.getCurrencyInstance().format(r.getTotalPrice()));
         } catch (InvalidLoginCredentialException_Exception ex) {
             System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
         } catch (ReservationNotFoundException_Exception ex) {
