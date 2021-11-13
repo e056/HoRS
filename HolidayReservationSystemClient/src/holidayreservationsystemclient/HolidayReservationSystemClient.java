@@ -125,6 +125,9 @@ public class HolidayReservationSystemClient {
                 }
 
             }
+            if (response == 4) {
+                break;
+            }
         }
     }
 
@@ -158,9 +161,8 @@ public class HolidayReservationSystemClient {
             c.setTime(endDate);
             XMLGregorianCalendar endDateXML = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
 
-            System.out.println(startDateXML);
-            System.out.println(endDateXML);
-
+            //System.out.println(startDateXML);
+            //System.out.println(endDateXML);
             List<ws.client.RoomType> roomTypes = service.getHorswebservicePort().searchRoom(numOfRooms, startDateXML, endDateXML);
             System.out.printf("%8s%20s%30s\n", "ID", "Room Type", "Total Price");
             for (ws.client.RoomType rt : roomTypes) {
@@ -216,7 +218,7 @@ public class HolidayReservationSystemClient {
 
                     reservation = service.getHorswebservicePort().createNewPartnerReservation(reservation, partner);
 
-                    System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
+                    System.out.println("Reservation completed successfully! Id = " + reservation.getReservationId() + "\n");
 
                 } else {
                     System.out.println("Cancelled reservation.");
@@ -265,7 +267,9 @@ public class HolidayReservationSystemClient {
         Horswebservice_Service service = new Horswebservice_Service();
         System.out.println("***  Holiday Reservation System ::  View All Reservations ***\n");
         try {
+            
             List<Reservation> reservations = service.getHorswebservicePort().viewReservation(partner.getPartnerId());
+            System.out.println(reservations.size());
             int count = 1;
             if (reservations.isEmpty()) {
                 System.out.println("Partner has no reservations.");

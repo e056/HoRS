@@ -314,7 +314,7 @@ public class MainApp {
 
                         reservation = reservationSessionBeanRemote.createNewOnlineReservation(reservation, currGuest);
 
-                        System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
+                        System.out.println("Reservation completed successfully! Id = " + reservation.getReservationId() + "\n");
                     } else {
                         showInputDataValidationErrorsForReservation(constraintViolations);
                     }

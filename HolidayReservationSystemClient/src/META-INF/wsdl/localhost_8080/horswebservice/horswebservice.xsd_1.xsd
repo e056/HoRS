@@ -16,17 +16,9 @@
 
 <xs:element name="calculateFinalOnlineReservationAmountResponse" type="tns:calculateFinalOnlineReservationAmountResponse"/>
 
-<xs:element name="createNewOnlineReservation" type="tns:createNewOnlineReservation"/>
-
-<xs:element name="createNewOnlineReservationResponse" type="tns:createNewOnlineReservationResponse"/>
-
 <xs:element name="createNewPartnerReservation" type="tns:createNewPartnerReservation"/>
 
 <xs:element name="createNewPartnerReservationResponse" type="tns:createNewPartnerReservationResponse"/>
-
-<xs:element name="createNewReservation" type="tns:createNewReservation"/>
-
-<xs:element name="createNewReservationResponse" type="tns:createNewReservationResponse"/>
 
 <xs:element name="onlineReservationAmount" type="tns:onlineReservationAmount"/>
 
@@ -192,18 +184,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createNewReservation">
-<xs:sequence>
-<xs:element name="arg0" type="tns:reservation" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createNewReservationResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:reservation" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="partnerLogin">
 <xs:sequence>
 <xs:element name="arg0" type="xs:string" minOccurs="0"/>
@@ -250,19 +230,6 @@
 <xs:complexType name="PartnerNotFoundException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createNewOnlineReservation">
-<xs:sequence>
-<xs:element name="arg0" type="tns:reservation" minOccurs="0"/>
-<xs:element name="arg1" type="tns:guest" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createNewOnlineReservationResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:reservation" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

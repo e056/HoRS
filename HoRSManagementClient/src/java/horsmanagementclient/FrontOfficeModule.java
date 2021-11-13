@@ -206,7 +206,7 @@ public class FrontOfficeModule {
 //                        walkInGuestSessionBeanRemote.associateGuestWithReservation(reservation, guestId);
 //                    }
 
-                        System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
+                        System.out.println("Reservation completed successfully! Id = " + reservation.getReservationId() + "\n");
                     } else {
                         showInputDataValidationErrorsForReservation(constraintViolations);
                     }

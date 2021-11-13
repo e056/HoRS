@@ -338,6 +338,12 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
     public String retrieveRoomTypeNameByReservation(Long reservationId) {
         Reservation res = entityManager.find(Reservation.class, reservationId);
+        res.getRoomType();
+        res.getAllocatedRooms();
+        res.getGuest();
+        res.getReservationId();
+        System.out.println(res.getTotalPrice());
+        
         return res.getRoomType().getName();
     }
 
