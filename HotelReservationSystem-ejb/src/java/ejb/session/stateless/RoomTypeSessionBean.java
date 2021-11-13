@@ -114,21 +114,31 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     @Override
-    public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException {
+    public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException, RoomTypeNameExistException {
+        List<RoomType> rts = retrieveAllRoomTypes();
+        for (RoomType rt : rts) {
+            if (rt.getName().equals(roomType.getName()) && !rt.getRoomTypeId().equals(roomType.getRoomTypeId())) {
+
+                throw new RoomTypeNameExistException("A roomType with this room name already exists!");
+
+            }
+        }
         if (roomType != null && roomType.getName() != null) {
             RoomType roomTypeToUpdate = retrieveRoomTypeByRoomTypeId(roomType.getRoomTypeId());
+
             roomTypeToUpdate.setName(roomType.getName());
             roomTypeToUpdate.setDescription(roomType.getDescription());
             roomTypeToUpdate.setSize(roomType.getSize());
             roomTypeToUpdate.setBed(roomType.getBed());
             roomTypeToUpdate.setCapacity(roomType.getCapacity());
+            entityManager.persist(roomTypeToUpdate);
+
             roomTypeToUpdate.setAmenities(roomType.getAmenities());
 
         } else {
             throw new RoomTypeNotFoundException("Room type name not provided for room type to be updated");
         }
     }
-    
 
     // check if room type is linked to any room or room rate. if not, only then can delete & rearrange the ranks
     // if room type is linked to any rooms and we disable room type, we must also disable all rooms belonging to this room type

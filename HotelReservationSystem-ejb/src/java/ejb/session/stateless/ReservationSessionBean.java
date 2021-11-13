@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -30,6 +31,7 @@ import javax.persistence.Query;
 import util.exception.CreateNewReservationException;
 import util.exception.NoRoomAllocationException;
 import util.exception.ReservationNotFoundException;
+import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
 /**
@@ -100,8 +102,6 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         return reservation;
     }
-    
-    
 
     @Override
     public Reservation createNewPartnerReservation(Reservation reservation, Partner partner) throws RoomTypeNotFoundException, CreateNewReservationException {
@@ -155,6 +155,18 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     @Override
     public BigDecimal calculateFinalOnlineReservationAmount(RoomType roomTypeToReserve, Date startDate, Date endDate, int numOfRooms) {
         return roomRateSessionBeanLocal.retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDate, endDate).multiply(BigDecimal.valueOf(numOfRooms));
+
+    }
+
+    @Override
+    public BigDecimal calculateFinalWalkInReservationAmount(RoomType rt, Date startDate, Date endDate, int numOfRooms) throws RoomRateNotFoundException {
+
+    
+            long duration = endDate.getTime() - startDate.getTime();
+            int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
+            BigDecimal price = roomRateSessionBeanLocal.retrievePublishedRoomRateByRoomType(rt.getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days));
+            return price.multiply(BigDecimal.valueOf(numOfRooms));
+   
 
     }
 

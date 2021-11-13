@@ -167,7 +167,7 @@ public class MainApp {
         password = scanner.nextLine().trim();
 
         if (username.length() > 0 && password.length() > 0) {
-            System.out.println("here");
+            //System.out.println("here");
             this.currEmployee = employeeSessionBeanRemote.employeeLogin(username, password);
         } else {
             throw new InvalidLoginCredentialException("Missing login credential!");

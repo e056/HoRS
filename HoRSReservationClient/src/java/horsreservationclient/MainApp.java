@@ -241,12 +241,11 @@ public class MainApp {
             System.out.println("DAYS: " + days);
 
             List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
-            System.out.printf("%8s%20s%30s%30s\n", "ID", "Room Type", "Price (each room)", "Total Price");
+            System.out.printf("%8s%20s%30s\n", "ID", "Room Type", "Price (each room)", "Total Price");
             for (RoomType rt : roomTypes) {
-                BigDecimal priceEachRoom = roomRateSessionBeanRemote.retrievePriceForOnlineReservationByRoomType(rt.getRoomTypeId(), startDate, endDate);
-                System.out.printf("%8s%20s%30s%30s\n", rt.getRoomTypeId(), rt.getName(),
-                        NumberFormat.getCurrencyInstance().format(priceEachRoom),
-                        NumberFormat.getCurrencyInstance().format(priceEachRoom.multiply(BigDecimal.valueOf(numOfRooms))));
+                BigDecimal price = reservationSessionBeanRemote.calculateFinalOnlineReservationAmount(rt, startDate, endDate, numOfRooms);
+                System.out.printf("%8s%20s%30s\n", rt.getRoomTypeId(), rt.getName(),
+                        NumberFormat.getCurrencyInstance().format(price));
 
             }
 
@@ -274,8 +273,7 @@ public class MainApp {
 
                 System.out.println("Reserving the following:\n");
                 System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
-                BigDecimal totalPrice = roomRateSessionBeanRemote.retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDate, endDate);
-                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
+                BigDecimal totalPrice = reservationSessionBeanRemote.calculateFinalOnlineReservationAmount(roomTypeToReserve, startDate, endDate, numOfRooms);
 
                 System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice));
                 System.out.print("Confirm? ('Y' to confirm)> ");

@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.enumeration.AccessRightEnum;
 import util.enumeration.RoomRateType;
 import util.exception.DeleteRoomException;
@@ -144,7 +146,7 @@ public class HotelOperationModule {
             System.out.println("*** HoRS System :: Operation Manager Menu ***");
             System.out.println("** Hotel Operation Module **\n");
             System.out.println("1: Create New Room Type");
-            System.out.println("2: View Room Type Details [Update, Delete here]");
+            System.out.println("2: View Room Type Details [Update, Delete]");
             System.out.println("3: View All Room Types");
             System.out.println("-----------------------");
             System.out.println("4: Create New Room");
@@ -491,7 +493,7 @@ public class HotelOperationModule {
             System.out.println("*** HoRS System :: Sales Manager Menu ***");
             System.out.println("** Hotel Operation Module **\n");
             System.out.println("1: Create New Room Rate");
-            System.out.println("2: View Room Rate Details [Update, Delete here]");
+            System.out.println("2: View Room Rate Details [Update, Delete]");
             System.out.println("3: View All Room Rates");
 
             System.out.println("4: Back\n");
@@ -778,6 +780,8 @@ public class HotelOperationModule {
             System.out.println("An error has occurred while updating: The room type does not exist.");
         } catch (UpdateRoomTypeException ex) {
             System.out.println("An error has occurred while updating: " + ex.getMessage());
+        } catch (RoomTypeNameExistException ex) {
+         System.out.println("An error has occurred while updating: " + ex.getMessage());
         }
     }
 

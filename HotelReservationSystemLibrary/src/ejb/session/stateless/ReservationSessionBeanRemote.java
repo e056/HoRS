@@ -16,6 +16,7 @@ import javax.ejb.Remote;
 import util.exception.CreateNewReservationException;
 import util.exception.NoRoomAllocationException;
 import util.exception.ReservationNotFoundException;
+import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
 
 /**
@@ -53,5 +54,7 @@ public interface ReservationSessionBeanRemote {
     public Reservation retrieveReservationByOnlineGuestIdAndReservationId(Long guestId, Long reservationId) throws ReservationNotFoundException;
     
     public BigDecimal calculateFinalOnlineReservationAmount(RoomType roomTypeToReserve, Date startDate, Date endDate, int numOfRooms);
+
+    public BigDecimal calculateFinalWalkInReservationAmount(RoomType rt, Date startDate, Date endDate, int numOfRooms) throws RoomRateNotFoundException;
     
 }

@@ -139,17 +139,16 @@ public class FrontOfficeModule {
             System.out.print("Enter Check-Out Date (dd/mm/yyyy)> ");
             endDate = inputDateFormat.parse(scanner.nextLine().trim());
             System.out.println("------------------------");
-
-            long duration = endDate.getTime() - startDate.getTime();
-            int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
+//
+//            long duration = endDate.getTime() - startDate.getTime();
+//            int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
 
             List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
-            System.out.printf("%8s%20s%30s%30s\n", "ID", "Room Type", "Price (Each Room)", "Total Price");
+            System.out.printf("%8s%20s%30s\n", "ID", "Room Type", "Total Price");
             for (RoomType rt : roomTypes) {
-                BigDecimal price = roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(rt.getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days));
-                System.out.printf("%8s%20s%30s%30s\n", rt.getRoomTypeId(), rt.getName(),
-                        NumberFormat.getCurrencyInstance().format(price),
-                        NumberFormat.getCurrencyInstance().format(price.multiply(BigDecimal.valueOf(numOfRooms))));
+                BigDecimal price = reservationSessionBeanRemote.calculateFinalWalkInReservationAmount(rt, startDate, endDate, numOfRooms);
+                System.out.printf("%8s%20s%30s\n", rt.getRoomTypeId(), rt.getName(),
+                        NumberFormat.getCurrencyInstance().format(price));
             }
 
             System.out.println("------------------------");
@@ -176,9 +175,9 @@ public class FrontOfficeModule {
 
                 System.out.println("Reserving the following:\n");
                 System.out.printf("%20s%20s%30s\n", "Room Type", "Num of Rooms", "Total Price");
-                BigDecimal totalPrice = roomRateSessionBeanRemote.retrievePublishedRoomRateByRoomType(roomTypeToReserve.getRoomTypeId()).getRatePerNight().multiply(BigDecimal.valueOf(days));
-                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
+                BigDecimal totalPrice = reservationSessionBeanRemote.calculateFinalWalkInReservationAmount(roomTypeToReserve, startDate, endDate, numOfRooms);
 
+                        
                 System.out.printf("%20s%20s%30s\n", roomTypeToReserve.getName(), numOfRooms, NumberFormat.getCurrencyInstance().format(totalPrice));
                 System.out.print("Confirm? ('Y' to confirm)> ");
 
@@ -189,11 +188,6 @@ public class FrontOfficeModule {
                     reservation.setAllocated(false);
 
                     reservation = reservationSessionBeanRemote.createNewReservation(reservation);
-//                    if (noAccount) {
-//                        Long id = walkInGuestSessionBeanRemote.createNewWalkInGuest(guest, reservation.getReservationId());
-//                    } else {
-//                        walkInGuestSessionBeanRemote.associateGuestWithReservation(reservation, guestId);
-//                    }
 
                     System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
 
@@ -316,7 +310,7 @@ public class FrontOfficeModule {
 
             System.out.println(res.getException().getNumOfTypeTwo());
             if (res.getException() != null) {
-                System.out.println("here");
+                //System.out.println("here");
                 RoomAllocationException rae = reservationSessionBeanRemote.retrieveraeByReservationId(resId);
 
                 int numTypeTwo = rae.getNumOfTypeTwo();
