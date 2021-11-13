@@ -466,11 +466,12 @@ public class HotelOperationModule {
         System.out.println("------------------------");
 
         List<Room> rooms = roomSessionBeanRemote.retrieveAllRooms();
-        System.out.printf("%8s%20s%20s%20s\n", "Room ID", "Room Number", "Room Status", "Room Enabled");
+        System.out.printf("%8s%20s%20s%20s%30s\n", "Room ID", "Room Number", "Room Status", "Room Enabled", "Room Type");
         for (Room room : rooms) {
             String roomStatus = (room.getIsAvailable()) ? "Available" : "Not Available";
             String roomEnabled = (room.getEnabled()) ? "Enabled" : "Disabled";
-            System.out.printf("%8s%20s%20s%20s\n", room.getRoomId(), room.getRoomNumber(), roomStatus, roomEnabled);
+            System.out.printf("%8s%20s%20s%20s%30s\n", room.getRoomId(), room.getRoomNumber(), roomStatus, roomEnabled
+            , room.getRoomType().getName());
         }
 
         System.out.println("------------------------");
@@ -685,7 +686,7 @@ public class HotelOperationModule {
 
             System.out.println("*** HoRs System :: Hotel Operation Module :: View Room Rate Details :: Update Room Rate ***\n");
 
-            System.out.print("Set Rate per Night (blank if no change> ");
+            System.out.print("Set Rate per Night (blank if no change>> ");
 
             bigDecimalInput = scanner.nextBigDecimal();
             scanner.nextLine();
@@ -758,7 +759,7 @@ public class HotelOperationModule {
     // 3: View all room rates
     public void doViewAllRoomRates() {
 
-        SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         System.out.println("*** HoRS System :: Hotel Operation Module [Sales Manager] :: View All Room Rates ***\n");
         System.out.println("------------------------");
 
@@ -806,20 +807,32 @@ public class HotelOperationModule {
             }
 
             System.out.print("Enter Description> ");
+
             desc = scanner.nextLine().trim();
-            roomTypeToUpdate.setDescription(desc);
+            if (desc.length() > 0) {
+                roomTypeToUpdate.setDescription(desc);
+            }
+
             System.out.print("Enter Size> ");
             size = scanner.nextLine().trim();
-            roomTypeToUpdate.setSize(size);
+            if (size.length() > 0) {
+                roomTypeToUpdate.setSize(size);
+            }
             System.out.print("Enter Bed> ");
             bed = scanner.nextLine().trim();
-            roomTypeToUpdate.setBed(bed);
+            if (bed.length() > 0) {
+                roomTypeToUpdate.setBed(bed);
+            }
             System.out.print("Enter Capacity> ");
             capacity = scanner.nextLine().trim();
-            roomTypeToUpdate.setCapacity(capacity);
-            System.out.print("Enter Amen> ");
+            if (capacity.length() > 0) {
+                roomTypeToUpdate.setCapacity(capacity);
+            }
+            System.out.print("Enter Amenities> ");
             amen = scanner.nextLine().trim();
-            roomTypeToUpdate.setAmenities(amen);
+            if (amen.length() > 0) {
+                roomTypeToUpdate.setAmenities(amen);
+            }
 
             Set<ConstraintViolation<RoomType>> constraintViolations = validator.validate(roomTypeToUpdate);
 
@@ -846,7 +859,7 @@ public class HotelOperationModule {
         System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: Delete Room Type***\n");
         try {
             roomTypeSessionBeanRemote.deleteRoomType(rt);
-            System.out.println("Room Type " + rt.getRoomTypeId() + " deleted successfully!\n");
+            System.out.println("Room Type of id = " + rt.getRoomTypeId() + " deleted successfully!\n");
         } catch (RoomTypeNotFoundException ex) {
             System.out.println("An error has occurred while deleting: " + ex.getMessage());
         } catch (DeleteRoomTypeException ex) {
