@@ -20,6 +20,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import ws.client.CreateNewReservationException_Exception;
 import ws.client.Horswebservice_Service;
+import ws.client.InputDataValidationException_Exception;
 import ws.client.InvalidLoginCredentialException_Exception;
 import ws.client.Partner;
 import ws.client.PartnerNotFoundException_Exception;
@@ -232,6 +233,8 @@ public class HolidayReservationSystemClient {
         } catch (CreateNewReservationException_Exception ex) {
             Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RoomTypeNotFoundException_Exception ex) {
+            Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InputDataValidationException_Exception ex) {
             Logger.getLogger(HolidayReservationSystemClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

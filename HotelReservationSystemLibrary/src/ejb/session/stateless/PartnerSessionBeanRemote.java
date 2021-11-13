@@ -9,6 +9,7 @@ import entity.Partner;
 import entity.Reservation;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PartnerNotFoundException;
 import util.exception.PartnerUsernameExistException;
@@ -21,7 +22,7 @@ import util.exception.UnknownPersistenceException;
 @Remote
 public interface PartnerSessionBeanRemote {
 
-    public Long createNewPartner(Partner newPartner) throws PartnerUsernameExistException, UnknownPersistenceException;
+    public Long createNewPartner(Partner newPartner) throws PartnerUsernameExistException, UnknownPersistenceException, InputDataValidationException;
 
     public List<Partner> retrieveAllPartners();
 

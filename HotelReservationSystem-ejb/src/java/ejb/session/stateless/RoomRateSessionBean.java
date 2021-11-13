@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -24,8 +25,13 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumeration.RoomRateType;
 import util.exception.DeleteRoomRateException;
+import util.exception.InputDataValidationException;
 import util.exception.RoomRateNameExistException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -45,29 +51,43 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public RoomRateSessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     @Override
-    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException {
-        try {
+    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException, InputDataValidationException {
+        Set<ConstraintViolation<RoomRate>> constraintViolations = validator.validate(roomRate);
 
-            RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeId(roomTypeId);
+        if (constraintViolations.isEmpty()) {
+            try {
 
-            roomRate.setRoomType(roomType);
-            roomType.getRoomRates().add(roomRate);
+                RoomType roomType = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeId(roomTypeId);
 
-            entityManager.persist(roomRate);
-            entityManager.flush();
+                roomRate.setRoomType(roomType);
+                roomType.getRoomRates().add(roomRate);
 
-            return roomRate.getRoomRateId();
-        } catch (PersistenceException ex) {
-            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
-                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new RoomRateNameExistException();
+                entityManager.persist(roomRate);
+                entityManager.flush();
+
+                return roomRate.getRoomRateId();
+            } catch (PersistenceException ex) {
+                if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                        throw new RoomRateNameExistException();
+                    } else {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
                 } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
-            } else {
-                throw new UnknownPersistenceException(ex.getMessage());
             }
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
@@ -95,20 +115,25 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
     }
 
     @Override
-    public void updateRoomRate(RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException {
+    public void updateRoomRate(RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException {
 
         if (roomRate != null && roomRate.getRoomRateId() != null) {
-            RoomRate roomRateToUpdate = retrieveRoomRateByRoomRateId(roomRate.getRoomRateId());
+            Set<ConstraintViolation<RoomRate>> constraintViolations = validator.validate(roomRate);
+            if (constraintViolations.isEmpty()) {
+                RoomRate roomRateToUpdate = retrieveRoomRateByRoomRateId(roomRate.getRoomRateId());
 
-            if (roomRateToUpdate.getName().equals(roomRate.getName())) {
-                //roomRateToUpdate.setName(roomRate.getName());
-                //roomRateToUpdate.setType(roomRate.getType());
-                roomRateToUpdate.setRatePerNight(roomRate.getRatePerNight());
-                roomRateToUpdate.setValidityStart(roomRate.getValidityStart());
-                roomRateToUpdate.setValidityEnd(roomRate.getValidityEnd());
+                if (roomRateToUpdate.getName().equals(roomRate.getName())) {
+                    //roomRateToUpdate.setName(roomRate.getName());
+                    //roomRateToUpdate.setType(roomRate.getType());
+                    roomRateToUpdate.setRatePerNight(roomRate.getRatePerNight());
+                    roomRateToUpdate.setValidityStart(roomRate.getValidityStart());
+                    roomRateToUpdate.setValidityEnd(roomRate.getValidityEnd());
 
+                } else {
+                    throw new UpdateRoomRateException("Room Rate name of Room Rate to be updated does not match the existing record");
+                }
             } else {
-                throw new UpdateRoomRateException("Room Rate name of Room Rate to be updated does not match the existing record");
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         } else {
             throw new RoomRateNotFoundException("RoomRateId not provided for room type to be updated");
@@ -219,7 +244,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         for (LocalDate date = startDateLocal; date.isBefore(endDateLocal); date = date.plusDays(1)) {
             System.out.println(current.toString());
             System.out.println("LOOPED");
-            
+
             Date curr = localDateToDate(date);
 
             RoomRate peak = null;
@@ -262,15 +287,23 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         System.out.println(totalAmount);
         return totalAmount;
     }
-    
+
     public Date localDateToDate(LocalDate lDate) {
         ZoneId systemTimeZone = ZoneId.systemDefault();
-        ZonedDateTime  zonedDateTime = lDate.atStartOfDay(systemTimeZone);
+        ZonedDateTime zonedDateTime = lDate.atStartOfDay(systemTimeZone);
         Date utilDate = Date.from(zonedDateTime.toInstant());
         return utilDate;
-        
-        
-        
+
+    }
+
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<RoomRate>> constraintViolations) {
+        String msg = "Input data validation error!:";
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+
+        return msg;
     }
 
 }
@@ -319,5 +352,4 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 //            System.out.println(totalAmount);
 //            return totalAmount;
 //        }
-
 

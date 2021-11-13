@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -29,19 +31,32 @@ public class RoomType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
-
-    @Column(nullable = false, length = 64, unique = true)
+      
+    @Column(nullable = false, length = 32, unique = true)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String name;
-    @Column(length = 64)
+    
+    @Column(length = 128)
+    @Size(min = 1, max = 128)
     private String description;
-    @Column(length = 64)
+    
+    @Column(length = 32)
+    @Size(min = 1, max = 32)
     private String size;
-    @Column(length = 64)
+    
+    @Column(length = 32)
+    @Size(min = 1, max = 32)
     private String bed;
-    @Column
+    
+    @Column(length = 32)
+    @Size(min = 1, max = 32)
     private String capacity;
+    
     @Column
+    @Size(min = 1, max = 32)
     private String amenities;
+    
     @Column
     private Boolean enabled;
     //@Column(nullable = false, unique = true)

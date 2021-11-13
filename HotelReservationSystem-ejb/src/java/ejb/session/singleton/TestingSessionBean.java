@@ -27,6 +27,7 @@ import util.enumeration.AccessRightEnum;
 import util.enumeration.RoomRateType;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
+import util.exception.InputDataValidationException;
 import util.exception.PartnerUsernameExistException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomRateNameExistException;
@@ -219,6 +220,8 @@ public class TestingSessionBean {
         } catch (RoomRateNameExistException ex) {
             ex.printStackTrace();
         } catch (PartnerUsernameExistException ex) {
+            ex.printStackTrace();
+        } catch (InputDataValidationException ex) {
             ex.printStackTrace();
         }
     }

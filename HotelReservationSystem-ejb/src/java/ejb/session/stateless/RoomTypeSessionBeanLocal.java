@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomTypeException;
+import util.exception.InputDataValidationException;
 import util.exception.RoomTypeNameExistException;
 import util.exception.RoomTypeNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -24,9 +25,9 @@ public interface RoomTypeSessionBeanLocal {
 
     public List<RoomType> retrieveAllRoomTypes();
 
-     public Long createNewRoomType(RoomType roomType, String nextHigherRoomTypeName) throws RoomTypeNameExistException, UnknownPersistenceException, RoomTypeNotFoundException;
+     public Long createNewRoomType(RoomType roomType, String nextHigherRoomTypeName) throws RoomTypeNameExistException, UnknownPersistenceException, RoomTypeNotFoundException, InputDataValidationException;
 
-    public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException, RoomTypeNameExistException;
+    public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException, InputDataValidationException, RoomTypeNameExistException;
 
     public void deleteRoomType(RoomType roomType) throws RoomTypeNotFoundException, DeleteRoomTypeException;
 

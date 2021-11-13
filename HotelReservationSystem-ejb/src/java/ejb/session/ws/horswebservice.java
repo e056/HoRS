@@ -30,6 +30,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.exception.CreateNewReservationException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PartnerNotFoundException;
 import util.exception.ReservationNotFoundException;
@@ -157,7 +158,7 @@ public class horswebservice {
     }
 
     @WebMethod(operationName = "createNewOnlineReservation")
-    public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException {
+    public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException, InputDataValidationException {
         Reservation res = reservationSessionBeanLocal.createNewOnlineReservation(reservation, guest);
         em.detach(res);
         res.getRoomType().setNextHigherRoomType(null);
@@ -178,7 +179,7 @@ public class horswebservice {
     }
 
     @WebMethod(operationName = "createNewReservation")
-    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException {
+    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException, InputDataValidationException {
 
         Reservation res = reservationSessionBeanLocal.createNewReservation(reservation);
         em.detach(res);
@@ -226,7 +227,7 @@ public class horswebservice {
     }
 
     @WebMethod(operationName = "createNewPartnerReservation")
-    public Reservation createNewPartnerReservation(Reservation reservation, Partner partner) throws CreateNewReservationException, RoomTypeNotFoundException {
+    public Reservation createNewPartnerReservation(Reservation reservation, Partner partner) throws CreateNewReservationException, RoomTypeNotFoundException, InputDataValidationException {
 
         Reservation res = reservationSessionBeanLocal.createNewPartnerReservation(reservation, partner);
         em.detach(res);

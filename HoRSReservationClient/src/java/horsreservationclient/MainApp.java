@@ -18,9 +18,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.CreateNewReservationException;
 import util.exception.GuestPassportNumExistException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -39,7 +47,16 @@ public class MainApp {
 
     private Guest currGuest;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public MainApp() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     public MainApp(GuestSessionBeanRemote guestSessionBeanRemote, RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote) {
+        this();
         this.guestSessionBeanRemote = guestSessionBeanRemote;
         this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
@@ -119,14 +136,21 @@ public class MainApp {
         newGuest.setPassportNumber(scanner.nextLine().trim());
         System.out.print("Enter Password> ");
         newGuest.setPassword(scanner.nextLine().trim());
+        Set<ConstraintViolation<Guest>> constraintViolations = validator.validate(newGuest);
 
-        try {
-            Long newGuestId = guestSessionBeanRemote.createNewGuest(newGuest);
-            System.out.println("Successfully registered! Please log in with your credentials. ");
-        } catch (GuestPassportNumExistException ex) {
-            System.out.println("An error has occurred while creating the new guest: The passport number already exist\n");
-        } catch (UnknownPersistenceException ex) {
-            System.out.println("An unknown error has occurred while creating the new guest: " + ex.getMessage() + "\n");
+        if (constraintViolations.isEmpty()) {
+            try {
+                Long newGuestId = guestSessionBeanRemote.createNewGuest(newGuest);
+                System.out.println("Successfully registered! Please log in with your credentials. ");
+            } catch (GuestPassportNumExistException ex) {
+                System.out.println("An error has occurred while creating the new guest: The passport number already exist\n");
+            } catch (UnknownPersistenceException ex) {
+                System.out.println("An unknown error has occurred while creating the new guest: " + ex.getMessage() + "\n");
+            } catch (InputDataValidationException ex) {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        } else {
+            showInputDataValidationErrorsForGuest(constraintViolations);
         }
     }
 
@@ -283,10 +307,16 @@ public class MainApp {
                 if (comfirmReservation.equals("Y")) {
                     Reservation reservation = new Reservation(startDate, endDate, numOfRooms, totalPrice, roomTypeToReserve);
                     reservation.setAllocated(false);
+                    Set<ConstraintViolation<Reservation>> constraintViolations = validator.validate(reservation);
 
-                    reservation = reservationSessionBeanRemote.createNewOnlineReservation(reservation, currGuest);
+                    if (constraintViolations.isEmpty()) {
 
-                    System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
+                        reservation = reservationSessionBeanRemote.createNewOnlineReservation(reservation, currGuest);
+
+                        System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
+                    } else {
+                        showInputDataValidationErrorsForReservation(constraintViolations);
+                    }
 
                 } else {
                     System.out.println("Cancelled reservation.");
@@ -300,8 +330,31 @@ public class MainApp {
             System.out.println("Error when creating new Reservation: " + ex.getMessage());
         } catch (java.text.ParseException ex) {
             System.out.println("Invalid date input!");
+        } catch (InputDataValidationException ex) {
+            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    private void showInputDataValidationErrorsForGuest(Set<ConstraintViolation<Guest>> constraintViolations) {
+        System.out.println("\nInput data validation error!:");
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
+    }
+
+    private void showInputDataValidationErrorsForReservation(Set<ConstraintViolation<Reservation>> constraintViolations) {
+        System.out.println("\nInput data validation error!:");
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
     }
 
 }

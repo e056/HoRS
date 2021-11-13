@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +29,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.CreateNewReservationException;
+import util.exception.InputDataValidationException;
 import util.exception.NoRoomAllocationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomRateNotFoundException;
@@ -59,68 +65,88 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager em;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public ReservationSessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     @Override
-    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException {
+    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException, InputDataValidationException {
+        Set<ConstraintViolation<Reservation>> constraintViolations = validator.validate(reservation);
+        if (constraintViolations.isEmpty()) {
+            RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
 
-        RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
+            rt.getReservations().add(reservation);
+            em.persist(rt);
 
-        rt.getReservations().add(reservation);
-        em.persist(rt);
+            em.persist(reservation);
 
-        em.persist(reservation);
-
-        for (Room room : reservation.getAllocatedRooms()) {
-            if (!room.getEnabled() || !room.getIsAvailable()) {
-                eJBContext.setRollbackOnly();
-                throw new CreateNewReservationException("Room(s) is not available/enabled for reservation!");
+            for (Room room : reservation.getAllocatedRooms()) {
+                if (!room.getEnabled() || !room.getIsAvailable()) {
+                    eJBContext.setRollbackOnly();
+                    throw new CreateNewReservationException("Room(s) is not available/enabled for reservation!");
+                }
             }
+
+            em.flush();
+            allocateAfter2am(reservation);
+
+            return reservation;
+
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
-
-        em.flush();
-        allocateAfter2am(reservation);
-
-        return reservation;
-
     }
 
     @Override
-    public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException {
+    public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException, InputDataValidationException {
+        Set<ConstraintViolation<Reservation>> constraintViolations = validator.validate(reservation);
+        if (constraintViolations.isEmpty()) {
+            RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
+            Guest g = em.find(Guest.class, guest.getGuestId());
 
-        RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
-        Guest g = em.find(Guest.class, guest.getGuestId());
+            g.getReservations().add(reservation);
+            reservation.setGuest(g);
+            rt.getReservations().add(reservation);
 
-        g.getReservations().add(reservation);
-        reservation.setGuest(g);
-        rt.getReservations().add(reservation);
+            em.persist(rt);
+            em.persist(reservation);
 
-        em.persist(rt);
-        em.persist(reservation);
+            em.flush();
 
-        em.flush();
+            allocateAfter2am(reservation);
 
-        allocateAfter2am(reservation);
-
-        return reservation;
+            return reservation;
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
 
     @Override
-    public Reservation createNewPartnerReservation(Reservation reservation, Partner partner) throws RoomTypeNotFoundException, CreateNewReservationException {
+    public Reservation createNewPartnerReservation(Reservation reservation, Partner partner) throws RoomTypeNotFoundException, CreateNewReservationException, InputDataValidationException {
+        Set<ConstraintViolation<Reservation>> constraintViolations = validator.validate(reservation);
+        if (constraintViolations.isEmpty()) {
+            RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
+            Partner p = em.find(Partner.class, partner.getPartnerId());
 
-        RoomType rt = roomTypeSessionBeanLocal.retrieveRoomTypeByRoomTypeName(reservation.getRoomType().getName());
-        Partner p = em.find(Partner.class, partner.getPartnerId());
+            p.getReservations().add(reservation);
+            reservation.setPartner(p);
+            rt.getReservations().add(reservation);
 
-        p.getReservations().add(reservation);
-        reservation.setPartner(p);
-        rt.getReservations().add(reservation);
+            em.persist(rt);
+            em.persist(reservation);
 
-        em.persist(rt);
-        em.persist(reservation);
+            em.flush();
 
-        em.flush();
+            allocateAfter2am(reservation);
 
-        allocateAfter2am(reservation);
-
-        return reservation;
+            return reservation;
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
 
     public void allocateAfter2am(Reservation reservation) {
@@ -255,6 +281,16 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         } catch (NoResultException ex) {
             throw new ReservationNotFoundException("This reservation for this guest " + guestId + " does not exist.");
         }
+    }
+
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Reservation>> constraintViolations) {
+        String msg = "Input data validation error!:";
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+
+        return msg;
     }
 
 }

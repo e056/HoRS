@@ -9,6 +9,7 @@ import entity.Guest;
 import javax.ejb.Remote;
 import util.exception.GuestNotFoundException;
 import util.exception.GuestPassportNumExistException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
 
@@ -21,7 +22,7 @@ public interface GuestSessionBeanRemote {
 
     public Guest guestLogin(String passport, String password) throws InvalidLoginCredentialException;
 
-    public Long createNewGuest(Guest newGuest) throws UnknownPersistenceException, GuestPassportNumExistException;
+    public Long createNewGuest(Guest newGuest) throws UnknownPersistenceException, GuestPassportNumExistException, InputDataValidationException;
 
     public Guest retrieveGuestByPassportNum(String passport) throws GuestNotFoundException;
     
