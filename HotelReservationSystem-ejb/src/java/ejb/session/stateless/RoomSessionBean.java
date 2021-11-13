@@ -64,6 +64,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
             try {
 
                 RoomType roomType = roomTypeSessionBeanLocal.retrieveEnabledRoomTypeByRoomTypeName(roomTypeName);
+ 
 
                 room.setRoomType(roomType);
                 roomType.getRooms().add(room);

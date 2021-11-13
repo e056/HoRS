@@ -366,7 +366,7 @@ public class HotelOperationModule {
         for (RoomType rt : roomTypes) {
             System.out.printf("%5s%20s\n", rt.getRoomTypeId(), rt.getName());
         }
-        System.out.print("Enter Room Type > ");
+        System.out.print("Enter Room Type Name> ");
         String roomType = scanner.nextLine().trim();
 
         Set<ConstraintViolation<Room>> constraintViolations = validator.validate(newRoom);

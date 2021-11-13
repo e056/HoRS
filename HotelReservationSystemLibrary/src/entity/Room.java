@@ -43,7 +43,6 @@ public class Room implements Serializable {
     private Boolean enabled; //whether room is enabled or not. Will be set to false if room is used during deletion.
 
     @ManyToOne
-    @NotNull
     private RoomType roomType;
 
     @ManyToMany(mappedBy = "allocatedRooms")
