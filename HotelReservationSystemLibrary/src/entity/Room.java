@@ -37,9 +37,11 @@ public class Room implements Serializable {
     // FORMAT: 1234, where 12 refers to the floor number and 34 refers to the sequence number => floor 12 seq 34
 
     @Column(nullable = false)
+    @NotNull
     private Boolean isAvailable; // room status
 
     @Column(nullable = false)
+    @NotNull
     private Boolean enabled; //whether room is enabled or not. Will be set to false if room is used during deletion.
 
     @ManyToOne

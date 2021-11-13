@@ -52,12 +52,10 @@ public class RoomRate implements Serializable {
     
     @Temporal(TemporalType.DATE)
     @Column(nullable = true)
-    @NotNull
     private Date validityStart;
     
     @Temporal(TemporalType.DATE)
     @Column(nullable = true)
-    @NotNull
     private Date validityEnd;
     
     @Column
