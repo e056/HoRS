@@ -84,8 +84,8 @@ public class HotelOperationModule {
 
     public void menuHotelOperation() throws InvalidAccessRightException {
         if (currEmployee.getAccessRightEnum() != AccessRightEnum.OPERATION_MANAGER
-                && currEmployee.getAccessRightEnum() != AccessRightEnum.SALES_MANAGER) {
-            throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER rights to access the hotel operation module.");
+                && currEmployee.getAccessRightEnum() != AccessRightEnum.SALES_MANAGER && currEmployee.getAccessRightEnum() != AccessRightEnum.SYSTEM_ADMIN) {
+            throw new InvalidAccessRightException("You don't have SYSADMIN, OPERATION MANAGER or SALES MANAGER rights to access the hotel operation module.");
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -108,14 +108,14 @@ public class HotelOperationModule {
                     try {
                         menuOperationManager();
                     } catch (InvalidAccessRightException ex) {
-                        throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER rights to access the hotel operation module.");
+                        throw new InvalidAccessRightException("You don't have OPERATION MANAGER rights.");
 
                     }
                 } else if (response == 2) {
                     try {
                         menuSalesManager();
                     } catch (InvalidAccessRightException ex) {
-                        throw new InvalidAccessRightException("You don't have OPERATION MANAGER or SALES MANAGER rights to access the hotel operation module.");
+                        throw new InvalidAccessRightException("You don't have SALES MANAGER rights.");
 
                     }
                 } else if (response == 3) {
@@ -152,8 +152,8 @@ public class HotelOperationModule {
     }
 
     public void menuOperationManager() throws InvalidAccessRightException {
-        if (currEmployee.getAccessRightEnum() != AccessRightEnum.OPERATION_MANAGER) {
-            throw new InvalidAccessRightException("You don't have OPERATION MANAGER rights to access the system administration module.");
+        if (currEmployee.getAccessRightEnum() != AccessRightEnum.OPERATION_MANAGER && currEmployee.getAccessRightEnum() != AccessRightEnum.SYSTEM_ADMIN) {
+            throw new InvalidAccessRightException("You don't have OPERATION MANAGER rights.");
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -524,8 +524,8 @@ public class HotelOperationModule {
      * =======================================================================
      */
     public void menuSalesManager() throws InvalidAccessRightException {
-        if (currEmployee.getAccessRightEnum() != AccessRightEnum.SALES_MANAGER) {
-            throw new InvalidAccessRightException("You don't have SALES MANAGER rights to access the system administration module.");
+        if (currEmployee.getAccessRightEnum() != AccessRightEnum.SALES_MANAGER && currEmployee.getAccessRightEnum() != AccessRightEnum.SYSTEM_ADMIN) {
+            throw new InvalidAccessRightException("You don't have SALES MANAGER rights.");
         }
 
         Scanner scanner = new Scanner(System.in);

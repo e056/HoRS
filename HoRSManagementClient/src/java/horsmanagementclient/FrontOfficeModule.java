@@ -72,8 +72,8 @@ public class FrontOfficeModule {
     }
 
     public void menuFrontOffice() throws InvalidAccessRightException {
-        if (currEmployee.getAccessRightEnum() != AccessRightEnum.GUEST_RELATION) {
-            throw new InvalidAccessRightException("You don't have GUEST RELATION OFFICER rights to access the front office operation module.");
+        if (currEmployee.getAccessRightEnum() != AccessRightEnum.GUEST_RELATION && currEmployee.getAccessRightEnum() != AccessRightEnum.SYSTEM_ADMIN) {
+            throw new InvalidAccessRightException("You don't have SYSADMIN or GUEST RELATION OFFICER rights to access the front office operation module.");
         }
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
