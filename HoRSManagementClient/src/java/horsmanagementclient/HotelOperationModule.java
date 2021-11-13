@@ -591,9 +591,9 @@ public class HotelOperationModule {
             if (type == 3 || type == 4) {
                 Date start;
                 Date end;
-                System.out.print("Enter Validity Start Date (dd/mm/yyyy)> ");
+                System.out.print("Enter Validity Start Date (dd/MM/yyyy)> ");
                 start = inputDateFormat.parse(scanner.nextLine().trim());
-                System.out.print("Enter Validity End Date (dd/mm/yyyy)> ");
+                System.out.print("Enter Validity End Date (dd/MM/yyyy)> ");
                 end = inputDateFormat.parse(scanner.nextLine().trim());
 
                 roomRate.setValidityStart(start);
@@ -637,7 +637,7 @@ public class HotelOperationModule {
 
     // 2: View room rate details
     public void doViewRoomRateDetails() {
-        SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -697,7 +697,7 @@ public class HotelOperationModule {
             if (!(rr.getType().equals(RoomRateType.NORMAL) || rr.getType().equals(RoomRateType.PUBLISHED))) {
 
                 Date date;
-                System.out.print("Enter Validity Start Date (dd/mm/yyyy) (blank if no change)> ");
+                System.out.print("Enter Validity Start Date (dd/MM/yyyy) (blank if no change)> ");
                 input = scanner.nextLine().trim();
                 if (input.length() > 0) {
 
@@ -705,7 +705,7 @@ public class HotelOperationModule {
                     rr.setValidityStart(date);
 
                 }
-                System.out.print("Enter Validity End Date (dd/mm/yyyy) (blank if no change)> ");
+                System.out.print("Enter Validity End Date (dd/MM/yyyy) (blank if no change)> ");
                 input = scanner.nextLine().trim();
                 if (input.length() > 0) {
 

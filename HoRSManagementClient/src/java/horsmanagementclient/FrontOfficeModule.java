@@ -143,9 +143,9 @@ public class FrontOfficeModule {
             System.out.print("Enter Number of Rooms> ");
             numOfRooms = scanner.nextInt();
             scanner.nextLine();
-            System.out.print("Enter Check-In Date (dd/mm/yyyy)> ");
+            System.out.print("Enter Check-In Date (dd/MM/yyyy)> ");
             startDate = inputDateFormat.parse(scanner.nextLine().trim());
-            System.out.print("Enter Check-Out Date (dd/mm/yyyy)> ");
+            System.out.print("Enter Check-Out Date (dd/MM/yyyy)> ");
             endDate = inputDateFormat.parse(scanner.nextLine().trim());
             System.out.println("------------------------");
 //
