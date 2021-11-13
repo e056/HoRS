@@ -11,9 +11,17 @@ import entity.Employee;
 import entity.Partner;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumeration.AccessRightEnum;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidAccessRightException;
 import util.exception.PartnerUsernameExistException;
 import util.exception.UnknownPersistenceException;
@@ -30,11 +38,19 @@ public class SystemAdministrationModule {
     private EmployeeSessionBeanRemote employeeSessionBeanRemote;
     private Employee currEmployee;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public SystemAdministrationModule() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     public SystemAdministrationModule(PartnerSessionBeanRemote partnerSessionBeanRemote, EmployeeSessionBeanRemote employeeSessionBeanRemote, Employee currEmployee) {
+        this();
         this.partnerSessionBeanRemote = partnerSessionBeanRemote;
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
         this.currEmployee = currEmployee;
-
     }
 
     public void menuSystemAdministration() throws InvalidAccessRightException {
@@ -110,13 +126,21 @@ public class SystemAdministrationModule {
         System.out.print("Enter Password> ");
         newEmployee.setPassword(scanner.nextLine().trim());
 
-        try {
-            Long newStaffId = employeeSessionBeanRemote.createNewEmployee(newEmployee);
-            System.out.println("New employee created successfully!: " + newStaffId + "\n");
-        } catch (EmployeeUsernameExistException ex) {
-            System.out.println("An error has occurred while creating the new employee!: The user name already exist\n");
-        } catch (UnknownPersistenceException ex) {
-            System.out.println("An unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
+        Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(newEmployee);
+
+        if (constraintViolations.isEmpty()) {
+            try {
+                Long newStaffId = employeeSessionBeanRemote.createNewEmployee(newEmployee);
+                System.out.println("New employee created successfully!: " + newStaffId + "\n");
+            } catch (EmployeeUsernameExistException ex) {
+                System.out.println("An error has occurred while creating the new employee!: The user name already exist\n");
+            } catch (UnknownPersistenceException ex) {
+                System.out.println("An unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
+            } catch (InputDataValidationException ex) {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        } else {
+            showInputDataValidationErrorsForEmployee(constraintViolations);
         }
     }
 
@@ -155,15 +179,24 @@ public class SystemAdministrationModule {
         System.out.print("Enter Password> ");
         newPartner.setPassword(scanner.nextLine().trim());
 
-        try {
-            Long partnerId = partnerSessionBeanRemote.createNewPartner(newPartner);
-            System.out.println("New partner created successfully!: " + partnerId + "\n");
-        } catch (PartnerUsernameExistException ex) {
-            System.out.println("An error has occurred while creating the new partner!: The user name already exist\n");
-        } catch (UnknownPersistenceException ex) {
-            System.out.println("An unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
-        }
+        Set<ConstraintViolation<Partner>> constraintViolations = validator.validate(newPartner);
 
+        if (constraintViolations.isEmpty()) {
+
+            try {
+                Long partnerId = partnerSessionBeanRemote.createNewPartner(newPartner);
+                System.out.println("New partner created successfully!: " + partnerId + "\n");
+            } catch (PartnerUsernameExistException ex) {
+                System.out.println("An error has occurred while creating the new partner!: The user name already exist\n");
+            } catch (UnknownPersistenceException ex) {
+                System.out.println("An unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
+            } catch (InputDataValidationException ex) {
+                System.out.println(ex.getMessage() + "\n");
+            }
+
+        } else {
+            showInputDataValidationErrorsForPartner(constraintViolations);
+        }
     }
 
     private void doViewAllPartnerDetails() {
@@ -183,5 +216,25 @@ public class SystemAdministrationModule {
         }
         System.out.println("------------------------");
 
+    }
+
+    private void showInputDataValidationErrorsForEmployee(Set<ConstraintViolation<Employee>> constraintViolations) {
+        System.out.println("\nInput data validation error!:");
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
+    }
+
+    private void showInputDataValidationErrorsForPartner(Set<ConstraintViolation<Partner>> constraintViolations) {
+        System.out.println("\nInput data validation error!:");
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
     }
 }

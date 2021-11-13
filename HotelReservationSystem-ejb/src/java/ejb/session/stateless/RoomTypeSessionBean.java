@@ -10,6 +10,7 @@ import entity.Room;
 import entity.RoomType;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -18,7 +19,12 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.DeleteRoomTypeException;
+import util.exception.InputDataValidationException;
 import util.exception.RoomTypeHasNoRoomException;
 import util.exception.RoomTypeIsLowestException;
 import util.exception.RoomTypeNameExistException;
@@ -38,14 +44,29 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
+    
+    
+    public RoomTypeSessionBean()
+    {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
 
     public void persist(Object object) {
         entityManager.persist(object);
     }
 
     @Override
-    public Long createNewRoomType(RoomType roomType, String nextHigherRoomTypeName) throws RoomTypeNameExistException, UnknownPersistenceException, RoomTypeNotFoundException {
+    public Long createNewRoomType(RoomType roomType, String nextHigherRoomTypeName) throws RoomTypeNameExistException, UnknownPersistenceException, RoomTypeNotFoundException, InputDataValidationException {
         Boolean lowestRank = false;
+        Set<ConstraintViolation<RoomType>>constraintViolations = validator.validate(roomType);
+        
+        if(constraintViolations.isEmpty())
+        {
         try {
             if (nextHigherRoomTypeName.equals("None")) {
                 RoomType highestRoomType = retrieveHighestRoomType();
@@ -92,6 +113,11 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
             }
 
         }
+    } 
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
 
     @Override
@@ -114,8 +140,12 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     }
 
     @Override
-    public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException {
+    public void updateRoomType(RoomType roomType) throws RoomTypeNotFoundException, UpdateRoomTypeException, InputDataValidationException {
         if (roomType != null && roomType.getName() != null) {
+            Set<ConstraintViolation<RoomType>>constraintViolations = validator.validate(roomType);
+        
+            if(constraintViolations.isEmpty())
+            {
             RoomType roomTypeToUpdate = retrieveRoomTypeByRoomTypeId(roomType.getRoomTypeId());
             roomTypeToUpdate.setName(roomType.getName());
             roomTypeToUpdate.setDescription(roomType.getDescription());
@@ -123,6 +153,9 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
             roomTypeToUpdate.setBed(roomType.getBed());
             roomTypeToUpdate.setCapacity(roomType.getCapacity());
             roomTypeToUpdate.setAmenities(roomType.getAmenities());
+            } else {
+               throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations)); 
+            }
 
         } else {
             throw new RoomTypeNotFoundException("Room type name not provided for room type to be updated");
@@ -301,6 +334,18 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
     public String retrieveRoomTypeNameByReservation(Long reservationId) {
         Reservation res = entityManager.find(Reservation.class, reservationId);
         return res.getRoomType().getName();
+    }
+    
+     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<RoomType>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
 
 }

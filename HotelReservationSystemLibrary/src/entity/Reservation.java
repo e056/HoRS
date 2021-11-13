@@ -20,6 +20,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -35,12 +38,16 @@ public class Reservation implements Serializable {
     
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
+    @NotNull
     private Date startDate;
+    
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
+    @NotNull
     private Date endDate;
     
     @Column(nullable = false)
+    @NotNull
     private int numOfRooms;
     
     @Column
@@ -49,7 +56,9 @@ public class Reservation implements Serializable {
     @Column
     private boolean checkedOut;
     
-    @Column
+    @Column(precision = 11, scale = 2)
+    @Digits(integer = 9, fraction = 2)
+    @DecimalMin("0.00")
     private BigDecimal totalPrice;
     
     @ManyToOne

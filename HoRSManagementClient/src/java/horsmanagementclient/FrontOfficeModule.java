@@ -29,10 +29,16 @@ import entity.RoomAllocationException;
 import entity.RoomType;
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.GuestNotFoundException;
+import util.exception.InputDataValidationException;
 import util.exception.NoRoomAllocationException;
 import util.exception.ReservationNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -50,9 +56,18 @@ public class FrontOfficeModule {
     private ReservationSessionBeanRemote reservationSessionBeanRemote;
     private Employee currEmployee;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
     private GuestSessionBeanRemote guestSessionBeanRemote;
 
+    public FrontOfficeModule() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     public FrontOfficeModule(RoomTypeSessionBeanRemote roomTypeSessionBeanRemote, RoomSessionBeanRemote roomSessionBeanRemote, RoomRateSessionBeanRemote roomRateSessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, Employee currEmployee, GuestSessionBeanRemote guestSessionBeanRemote) {
+        this();
         this.roomTypeSessionBeanRemote = roomTypeSessionBeanRemote;
         this.roomSessionBeanRemote = roomSessionBeanRemote;
         this.roomRateSessionBeanRemote = roomRateSessionBeanRemote;
@@ -188,19 +203,25 @@ public class FrontOfficeModule {
                     Reservation reservation = new Reservation(startDate, endDate, numOfRooms, totalPrice, roomTypeToReserve);
                     reservation.setAllocated(false);
 
-                    reservation = reservationSessionBeanRemote.createNewReservation(reservation);
+                    Set<ConstraintViolation<Reservation>> constraintViolations = validator.validate(reservation);
+
+                    if (constraintViolations.isEmpty()) {
+                        reservation = reservationSessionBeanRemote.createNewReservation(reservation);
 //                    if (noAccount) {
 //                        Long id = walkInGuestSessionBeanRemote.createNewWalkInGuest(guest, reservation.getReservationId());
 //                    } else {
 //                        walkInGuestSessionBeanRemote.associateGuestWithReservation(reservation, guestId);
 //                    }
 
-                    System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
-
+                        System.out.println("Reservation completed successfully!: " + reservation.getReservationId() + "\n");
+                    } else {
+                        showInputDataValidationErrorsForReservation(constraintViolations);
+                    }
                 } else {
                     System.out.println("Cancelled reservation.");
 
                 }
+
             }
 
         } catch (ParseException ex) {
@@ -211,8 +232,9 @@ public class FrontOfficeModule {
             System.out.println("Error when creating new Reservation: " + ex.getMessage());
         } catch (RoomTypeNotFoundException ex) {
             System.out.println("Error when creating new Reservation: " + ex.getMessage());
+        } catch (InputDataValidationException ex) {
+            Logger.getLogger(FrontOfficeModule.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
 //    private void checkInGuest() {
@@ -302,7 +324,6 @@ public class FrontOfficeModule {
             System.out.printf("%20s%20s%20s\n", "Reservation ID", "Start date", "End date");
             Reservation res = reservationSessionBeanRemote.retrieveReservationByReservationId(resId);
             System.out.printf("%20s%20s%20s\n", res.getReservationId(), df.format(res.getStartDate()), df.format(res.getEndDate()));
-            
 
             System.out.printf("%20s%20s%20s\n", "Room Id", "Room Type", "Room Number");
 
@@ -376,4 +397,7 @@ public class FrontOfficeModule {
 //            System.out.println("Reservation has no allocation exceptions!");
 //        }
 //    }
+    private void showInputDataValidationErrorsForReservation(Set<ConstraintViolation<Reservation>> constraintViolations) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

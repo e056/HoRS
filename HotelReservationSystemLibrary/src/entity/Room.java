@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -28,7 +30,9 @@ public class Room implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
 
-    @Column(nullable = false, length = 64, unique = true)
+    @Column(nullable = false, length = 4, unique = true)
+    @NotNull
+    @Size(min = 4, max = 4)
     private String roomNumber;
     // FORMAT: 1234, where 12 refers to the floor number and 34 refers to the sequence number => floor 12 seq 34
 
@@ -39,6 +43,7 @@ public class Room implements Serializable {
     private Boolean enabled; //whether room is enabled or not. Will be set to false if room is used during deletion.
 
     @ManyToOne
+    @NotNull
     private RoomType roomType;
 
     @ManyToMany(mappedBy = "allocatedRooms")

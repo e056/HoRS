@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomException;
+import util.exception.InputDataValidationException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomTypeHasNoRoomException;
@@ -34,9 +35,9 @@ public interface RoomSessionBeanLocal {
 
     public void deleteRoom(Long roomId) throws RoomNotFoundException, DeleteRoomException;
 
-    public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException;
+    public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException, InputDataValidationException;
     
-    public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException;
+    public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException, InputDataValidationException;
 
 
 

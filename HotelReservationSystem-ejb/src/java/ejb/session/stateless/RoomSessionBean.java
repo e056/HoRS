@@ -10,6 +10,7 @@ import entity.Room;
 import entity.RoomType;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -18,7 +19,12 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.DeleteRoomException;
+import util.exception.InputDataValidationException;
 import util.exception.RoomNotFoundException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomTypeHasNoRoomException;
@@ -42,31 +48,45 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     @PersistenceContext(unitName = "HotelReservationSystem-ejbPU")
     private EntityManager entityManager;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public RoomSessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     @Override
-    public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException {
-        try {
+    public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException, InputDataValidationException {
+        Set<ConstraintViolation<Room>> constraintViolations = validator.validate(room);
 
-            RoomType roomType = roomTypeSessionBeanLocal.retrieveEnabledRoomTypeByRoomTypeName(roomTypeName);
+        if (constraintViolations.isEmpty()) {
+            try {
 
-            room.setRoomType(roomType);
-            roomType.getRooms().add(room);
+                RoomType roomType = roomTypeSessionBeanLocal.retrieveEnabledRoomTypeByRoomTypeName(roomTypeName);
 
-            entityManager.persist(room);
-            entityManager.flush();
+                room.setRoomType(roomType);
+                roomType.getRooms().add(room);
 
-            return room.getRoomId();
-        } catch (PersistenceException ex) {
-            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
-                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new RoomNumberExistException();
+                entityManager.persist(room);
+                entityManager.flush();
+
+                return room.getRoomId();
+            } catch (PersistenceException ex) {
+                if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                        throw new RoomNumberExistException();
+                    } else {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
                 } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
-            } else {
-                throw new UnknownPersistenceException(ex.getMessage());
             }
-        }
 
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
 
     // Added: Use em to find RoomType, did associations both ways, persisted
@@ -146,14 +166,21 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
     }
 
     @Override
-    public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException {
+    public void updateRoom(Room room) throws UpdateRoomException, RoomNotFoundException, InputDataValidationException {
         if (room != null && room.getRoomId() != null) {
-            Room roomToUpdate = retrieveRoomByRoomId(room.getRoomId());
-            if (roomToUpdate.getRoomNumber().equals(room.getRoomNumber())) {
-                roomToUpdate.setIsAvailable(room.getIsAvailable());
+            Set<ConstraintViolation<Room>> constraintViolations = validator.validate(room);
+
+            if (constraintViolations.isEmpty()) {
+                Room roomToUpdate = retrieveRoomByRoomId(room.getRoomId());
+                if (roomToUpdate.getRoomNumber().equals(room.getRoomNumber())) {
+                    roomToUpdate.setIsAvailable(room.getIsAvailable());
+                } else {
+                    throw new UpdateRoomException("Room number of room to be updated does not match the existing record");
+                }
             } else {
-                throw new UpdateRoomException("Room number of room to be updated does not match the existing record");
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
+
         } else {
             throw new RoomNotFoundException("Room ID not provided for room to be updated");
         }
@@ -185,7 +212,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
         query.setParameter("rid", roomTypeId);
         return query.getResultList();
     }
-    
+
     @Override
     public List<Room> retrieveAvailableRoomsByRoomType(Long roomTypeId) {
         Query query = entityManager.createQuery("SELECT r FROM Room r WHERE r.isAvailable = true AND r.roomType.roomTypeId = :rid");
@@ -199,7 +226,6 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 //        query.setParameter("rid", roomTypeId);
 //        return query.getResultList();
 //    }
-
     public List<Room> retrieveRoomsAvailableForReservation(Date checkInDate, Date checkOutDate) {
         Query query = entityManager.createQuery("SELECT r FROM Reservation r WHERE r.startDate >=:startDate AND r.startDate <= :endDate OR r.endDate > :startDate AND r.endDate <= :endDate ");
         query.setParameter("startDate", checkInDate);
@@ -216,6 +242,16 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
         return rooms;
 
+    }
+
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Room>> constraintViolations) {
+        String msg = "Input data validation error!:";
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+
+        return msg;
     }
 
 }

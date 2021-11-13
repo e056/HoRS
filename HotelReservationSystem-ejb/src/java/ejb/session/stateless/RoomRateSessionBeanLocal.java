@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteRoomRateException;
+import util.exception.InputDataValidationException;
 import util.exception.RoomRateNameExistException;
 import util.exception.RoomRateNotFoundException;
 import util.exception.RoomTypeNotFoundException;
@@ -25,7 +26,7 @@ import util.exception.UpdateRoomRateException;
 @Local
 public interface RoomRateSessionBeanLocal {
 
-    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException;
+    public Long createNewRoomRate(RoomRate roomRate, Long roomTypeId) throws UnknownPersistenceException, RoomTypeNotFoundException, RoomRateNameExistException, InputDataValidationException;
 
     public List<RoomRate> retrieveAllRoomRates();
 
@@ -33,7 +34,7 @@ public interface RoomRateSessionBeanLocal {
 
     public RoomRate retrieveRoomRateByRoomRateName(String name) throws RoomRateNotFoundException;
 
-    public void updateRoomRate(RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException;
+    public void updateRoomRate(RoomRate roomRate) throws RoomRateNotFoundException, UpdateRoomRateException, InputDataValidationException;
 
     public void deleteRoomRate(Long rrId) throws RoomRateNotFoundException, DeleteRoomRateException;
 

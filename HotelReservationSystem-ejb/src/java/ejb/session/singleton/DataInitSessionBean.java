@@ -14,6 +14,8 @@ import entity.Room;
 import entity.RoomRate;
 import entity.RoomType;
 import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -23,6 +25,7 @@ import util.enumeration.AccessRightEnum;
 import util.enumeration.RoomRateType;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
+import util.exception.InputDataValidationException;
 import util.exception.RoomNumberExistException;
 import util.exception.RoomRateNameExistException;
 import util.exception.RoomTypeNameExistException;
@@ -205,6 +208,8 @@ public class DataInitSessionBean {
         } catch (RoomTypeNotFoundException ex) {
             ex.printStackTrace();
         } catch (RoomRateNameExistException ex) {
+            ex.printStackTrace();
+        } catch (InputDataValidationException ex) {
             ex.printStackTrace();
         }
     }
