@@ -368,10 +368,10 @@ public class HotelOperationModule {
         }
         System.out.print("Enter Room Type > ");
         String roomType = scanner.nextLine().trim();
-
         Set<ConstraintViolation<Room>> constraintViolations = validator.validate(newRoom);
 
         if (constraintViolations.isEmpty()) {
+
             try {
                 Long newRoomId = roomSessionBeanRemote.createNewRoom(newRoom, roomType);
                 System.out.println("New room created successfully!: " + newRoomId + "\n");
@@ -382,12 +382,13 @@ public class HotelOperationModule {
             } catch (UnknownPersistenceException ex) {
                 System.out.println("An unknown error has occurred while creating the new Room!: " + ex.getMessage() + "\n");
             } catch (InputDataValidationException ex) {
-                Logger.getLogger(HotelOperationModule.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage() + "\n");
             }
-
-        } else {
+            } else {
             showInputDataValidationErrorsForRoom(constraintViolations);
         }
+
+
     }
 
     // 5: Update Room

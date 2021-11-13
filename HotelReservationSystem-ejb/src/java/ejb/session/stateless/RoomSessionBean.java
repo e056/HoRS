@@ -58,20 +58,25 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     @Override
     public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException, InputDataValidationException {
-        Set<ConstraintViolation<Room>> constraintViolations = validator.validate(room);
+        
 
-        if (constraintViolations.isEmpty()) {
+       
             try {
 
                 RoomType roomType = roomTypeSessionBeanLocal.retrieveEnabledRoomTypeByRoomTypeName(roomTypeName);
 
                 room.setRoomType(roomType);
+                Set<ConstraintViolation<Room>> constraintViolations = validator.validate(room);
+                 if (constraintViolations.isEmpty()) {
                 roomType.getRooms().add(room);
 
                 entityManager.persist(room);
                 entityManager.flush();
 
                 return room.getRoomId();
+                } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
             } catch (PersistenceException ex) {
                 if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                     if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
@@ -84,9 +89,7 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
                 }
             }
 
-        } else {
-            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-        }
+        
     }
 
     // Added: Use em to find RoomType, did associations both ways, persisted
