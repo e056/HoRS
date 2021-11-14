@@ -220,7 +220,7 @@ public class FrontOfficeModule {
         } catch (ParseException ex) {
             System.out.println("Invalid date input!\n");
         } catch (RoomRateNotFoundException ex) {
-            System.out.println("An error occured: Room type has no published rate.");
+            System.out.println("An error occured: A Room Type has been added without a published rate.");
         } catch (CreateNewReservationException ex) {
             System.out.println("Error when creating new Reservation: " + ex.getMessage());
         } catch (RoomTypeNotFoundException ex) {

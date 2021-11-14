@@ -58,12 +58,16 @@ public class RoomSessionBean implements RoomSessionBeanRemote, RoomSessionBeanLo
 
     @Override
     public Long createNewRoom(Room room, String roomTypeName) throws RoomNumberExistException, UnknownPersistenceException, RoomTypeNotFoundException, InputDataValidationException {
-        
-
-       
             try {
 
                 RoomType roomType = roomTypeSessionBeanLocal.retrieveEnabledRoomTypeByRoomTypeName(roomTypeName);
+                
+                try {
+                    Integer.valueOf(room.getRoomNumber());
+                } catch (NumberFormatException ex) {
+                    throw new InputDataValidationException("An error occured: The Room Number is not correctly formatted.");
+          
+                }
  
 
                 room.setRoomType(roomType);

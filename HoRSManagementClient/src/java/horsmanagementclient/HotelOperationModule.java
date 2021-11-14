@@ -686,7 +686,7 @@ public class HotelOperationModule {
 
             System.out.println("*** HoRs System :: Hotel Operation Module :: View Room Rate Details :: Update Room Rate ***\n");
 
-            System.out.print("Set Rate per Night (blank if no change>> ");
+            System.out.print("Set Rate per Night (0 for no change)> ");
 
             bigDecimalInput = scanner.nextBigDecimal();
             scanner.nextLine();
