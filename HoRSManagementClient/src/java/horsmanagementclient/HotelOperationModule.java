@@ -353,7 +353,7 @@ public class HotelOperationModule {
         Scanner scanner = new Scanner(System.in);
         Room newRoom = new Room();
 
-        System.out.println("*** HoRS System :: Hotel Operation Moduule [Operation Manager] :: Create New Room ***\n");
+        System.out.println("*** HoRS System :: Hotel Operation Module [Operation Manager] :: Create New Room ***\n");
         System.out.print("Enter Room Number (First two digits floor number, last two digits room sequence) > ");
         String roomNumber = scanner.nextLine().trim();
         newRoom.setRoomNumber(roomNumber);
