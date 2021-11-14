@@ -264,7 +264,7 @@ public class MainApp {
             int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
             System.out.println("DAYS: " + days);
 
-            List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
+            List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate, true);
             System.out.printf("%8s%20s%30s\n", "ID", "Room Type", "Total Price");
             for (RoomType rt : roomTypes) {
                 BigDecimal price = reservationSessionBeanRemote.calculateFinalOnlineReservationAmount(rt, startDate, endDate, numOfRooms);

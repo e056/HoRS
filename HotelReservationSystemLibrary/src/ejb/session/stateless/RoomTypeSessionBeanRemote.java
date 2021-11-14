@@ -48,6 +48,8 @@ public interface RoomTypeSessionBeanRemote {
     
     public RoomType retrieveEnabledRoomTypeByRoomTypeName(String roomTypeName) throws RoomTypeNotFoundException;
 
+    public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate, boolean online);
+
 
     
    

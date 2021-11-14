@@ -113,22 +113,6 @@ public class FrontOfficeModule {
     public void searchRoom() {
         System.out.println("*** Hotel Reservation System :: Walk-In Search Room ***\n");
         Scanner scanner = new Scanner(System.in);
-
-//        try {
-//            guest = walkInGuestSessionBeanRemote.retrieveWalkInGuestByPassportNo(passportNo);
-//            guestId = guest.getWalkInGuestId();
-//            System.out.println("Guest Found!");
-//        } catch (WalkInGuestNotFoundException ex) {
-//            System.out.println("Guest not registered!");
-//            System.out.print("Enter name> ");
-//            name = scanner.nextLine().trim();
-//            noAccount = true;
-//        } finally {
-//            if (noAccount) {
-//                guest.setPassportNumber(passportNo);
-//                guest.setName(name);
-//            }
-//        }
         try {
 
             Integer response = 0;
@@ -152,7 +136,7 @@ public class FrontOfficeModule {
 //            long duration = endDate.getTime() - startDate.getTime();
 //            int days = (int) Math.round(TimeUnit.MILLISECONDS.toDays(duration));
 
-            List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate);
+            List<RoomType> roomTypes = roomTypeSessionBeanRemote.retrieveRoomTypesAvailableForReservation(numOfRooms, startDate, endDate, false);
             System.out.printf("%8s%20s%30s\n", "ID", "Room Type", "Total Price");
             for (RoomType rt : roomTypes) {
                 BigDecimal price = reservationSessionBeanRemote.calculateFinalWalkInReservationAmount(rt, startDate, endDate, numOfRooms);
@@ -230,52 +214,6 @@ public class FrontOfficeModule {
         }
     }
 
-//    private void checkInGuest() {
-//        Scanner scanner = new Scanner(System.in);
-//        Long resId;
-//        System.out.println("*** Hotel Reservation System :: Check In Guest ***\n");
-//      
-//        resId = scanner.nextLong();
-//
-////        boolean isGuest = false;
-////        boolean isWalkInGuest = false;
-////        int type = 0;
-////        WalkInGuest walkInGuest = new WalkInGuest();
-////        Guest guest = new Guest();
-////        try {
-////            walkInGuest = walkInGuestSessionBeanRemote.retrieveWalkInGuestByPassportNo(passportNo);
-////            isWalkInGuest = true;
-////            System.out.println("Walk in Guest found! ");
-////        } catch (WalkInGuestNotFoundException ex) {
-////            System.out.println("Walk in Guest not found!");
-////        }
-//
-////        try {
-////            guest = guestSessionBeanRemote.retrieveGuestByPassportNum(passportNo);
-////            isGuest = true;
-////        } catch (GuestNotFoundException ex) {
-////            System.out.println("Guest not found!");
-////        }
-//
-//        if (isGuest && isWalkInGuest) {
-//            System.out.print("Please select select guest (1 for walk-in, 2 for registered)>");
-//            type = scanner.nextInt();
-//            if (type == 1) {
-//                doCheckInWalkInGuest(walkInGuest);
-//            } else if (type == 2) {
-//                doCheckInGuest(guest);
-//            } else {
-//                System.out.println("Invalid input! try again");
-//            }
-//        } else if (isWalkInGuest && !isGuest) {
-//            doCheckInWalkInGuest(walkInGuest);
-//        } else if (isGuest && !isWalkInGuest) {
-//            doCheckInGuest(guest);
-//        } else if (!isGuest && !isWalkInGuest) {
-//            System.out.println("Guest not found!");
-//        }
-//
-//    }
     private void checkOutGuest() {
         Scanner scanner = new Scanner(System.in);
         Long resId;

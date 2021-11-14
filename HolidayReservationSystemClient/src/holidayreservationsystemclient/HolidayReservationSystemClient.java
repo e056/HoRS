@@ -166,6 +166,7 @@ public class HolidayReservationSystemClient {
             List<ws.client.RoomType> roomTypes = service.getHorswebservicePort().searchRoom(numOfRooms, startDateXML, endDateXML);
             System.out.printf("%8s%20s%30s\n", "ID", "Room Type", "Total Price");
             for (ws.client.RoomType rt : roomTypes) {
+                //System.out.println(rt.getName());
                 BigDecimal priceEachRoom = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(rt.getRoomTypeId(), startDateXML, endDateXML);
                 System.out.printf("%8s%20s%30s\n", rt.getRoomTypeId(), rt.getName(),
                         NumberFormat.getCurrencyInstance().format(priceEachRoom.multiply(BigDecimal.valueOf(numOfRooms))));
@@ -184,6 +185,9 @@ public class HolidayReservationSystemClient {
                 try {
                     roomTypeToReserve = service.getHorswebservicePort().retrieveRoomTypeByRoomId(scanner.nextLong());
                     scanner.nextLine();
+                    if (!roomTypes.contains(roomTypeToReserve)) {
+                        throw new ws.client.CreateNewReservationException_Exception("This room type is not available for reservation! Cancelling...", null);
+                    }
 
                 } catch (ws.client.RoomTypeNotFoundException_Exception ex) {
                     System.out.println("An error has occurred while retrieving Room Type: " + ex.getMessage() + "\n");
@@ -193,9 +197,6 @@ public class HolidayReservationSystemClient {
 
                 System.out.println("Reserving the following:\n");
                 System.out.printf("%20s%20s%30s%30s%30s\n", "Room Type", "Num of Rooms", "Total Price", "CI", "CO");
-//                BigDecimal totalPrice = service.getHorswebservicePort().retrievePriceForOnlineReservationByRoomType(roomTypeToReserve.getRoomTypeId(), startDateXML, endDateXML);
-//                totalPrice = totalPrice.multiply(BigDecimal.valueOf(numOfRooms));
-
                 BigDecimal totalPrice = service.getHorswebservicePort().calculateFinalOnlineReservationAmount(roomTypeToReserve,
                         startDateXML, endDateXML, numOfRooms);
 
@@ -267,7 +268,7 @@ public class HolidayReservationSystemClient {
         Horswebservice_Service service = new Horswebservice_Service();
         System.out.println("***  Holiday Reservation System ::  View All Reservations ***\n");
         try {
-            
+
             List<Reservation> reservations = service.getHorswebservicePort().viewReservation(partner.getPartnerId());
             System.out.println(reservations.size());
             int count = 1;

@@ -4,6 +4,12 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/horswebservice/horswebservice?xsd=1"/>
 </xsd:schema>
 </types>
+<message name="retrieveRoomTypeNameByReservation">
+<part name="parameters" element="tns:retrieveRoomTypeNameByReservation"/>
+</message>
+<message name="retrieveRoomTypeNameByReservationResponse">
+<part name="parameters" element="tns:retrieveRoomTypeNameByReservationResponse"/>
+</message>
 <message name="calculateFinalOnlineReservationAmount">
 <part name="parameters" element="tns:calculateFinalOnlineReservationAmount"/>
 </message>
@@ -15,6 +21,42 @@
 </message>
 <message name="retrievePriceForOnlineReservationByRoomTypeResponse">
 <part name="parameters" element="tns:retrievePriceForOnlineReservationByRoomTypeResponse"/>
+</message>
+<message name="viewReservation">
+<part name="parameters" element="tns:viewReservation"/>
+</message>
+<message name="viewReservationResponse">
+<part name="parameters" element="tns:viewReservationResponse"/>
+</message>
+<message name="PartnerNotFoundException">
+<part name="fault" element="tns:PartnerNotFoundException"/>
+</message>
+<message name="searchRoom">
+<part name="parameters" element="tns:searchRoom"/>
+</message>
+<message name="searchRoomResponse">
+<part name="parameters" element="tns:searchRoomResponse"/>
+</message>
+<message name="createNewPartnerReservation">
+<part name="parameters" element="tns:createNewPartnerReservation"/>
+</message>
+<message name="createNewPartnerReservationResponse">
+<part name="parameters" element="tns:createNewPartnerReservationResponse"/>
+</message>
+<message name="CreateNewReservationException">
+<part name="fault" element="tns:CreateNewReservationException"/>
+</message>
+<message name="RoomTypeNotFoundException">
+<part name="fault" element="tns:RoomTypeNotFoundException"/>
+</message>
+<message name="InputDataValidationException">
+<part name="fault" element="tns:InputDataValidationException"/>
+</message>
+<message name="onlineReservationAmount">
+<part name="parameters" element="tns:onlineReservationAmount"/>
+</message>
+<message name="onlineReservationAmountResponse">
+<part name="parameters" element="tns:onlineReservationAmountResponse"/>
 </message>
 <message name="viewReservationDetails">
 <part name="parameters" element="tns:viewReservationDetails"/>
@@ -28,20 +70,11 @@
 <message name="ReservationNotFoundException">
 <part name="fault" element="tns:ReservationNotFoundException"/>
 </message>
-<message name="onlineReservationAmount">
-<part name="parameters" element="tns:onlineReservationAmount"/>
-</message>
-<message name="onlineReservationAmountResponse">
-<part name="parameters" element="tns:onlineReservationAmountResponse"/>
-</message>
 <message name="retrieveRoomTypeByRoomId">
 <part name="parameters" element="tns:retrieveRoomTypeByRoomId"/>
 </message>
 <message name="retrieveRoomTypeByRoomIdResponse">
 <part name="parameters" element="tns:retrieveRoomTypeByRoomIdResponse"/>
-</message>
-<message name="RoomTypeNotFoundException">
-<part name="fault" element="tns:RoomTypeNotFoundException"/>
 </message>
 <message name="partnerLogin">
 <part name="parameters" element="tns:partnerLogin"/>
@@ -49,40 +82,11 @@
 <message name="partnerLoginResponse">
 <part name="parameters" element="tns:partnerLoginResponse"/>
 </message>
-<message name="createNewPartnerReservation">
-<part name="parameters" element="tns:createNewPartnerReservation"/>
-</message>
-<message name="createNewPartnerReservationResponse">
-<part name="parameters" element="tns:createNewPartnerReservationResponse"/>
-</message>
-<message name="CreateNewReservationException">
-<part name="fault" element="tns:CreateNewReservationException"/>
-</message>
-<message name="InputDataValidationException">
-<part name="fault" element="tns:InputDataValidationException"/>
-</message>
-<message name="retrieveRoomTypeNameByReservation">
-<part name="parameters" element="tns:retrieveRoomTypeNameByReservation"/>
-</message>
-<message name="retrieveRoomTypeNameByReservationResponse">
-<part name="parameters" element="tns:retrieveRoomTypeNameByReservationResponse"/>
-</message>
-<message name="searchRoom">
-<part name="parameters" element="tns:searchRoom"/>
-</message>
-<message name="searchRoomResponse">
-<part name="parameters" element="tns:searchRoomResponse"/>
-</message>
-<message name="viewReservation">
-<part name="parameters" element="tns:viewReservation"/>
-</message>
-<message name="viewReservationResponse">
-<part name="parameters" element="tns:viewReservationResponse"/>
-</message>
-<message name="PartnerNotFoundException">
-<part name="fault" element="tns:PartnerNotFoundException"/>
-</message>
 <portType name="horswebservice">
+<operation name="retrieveRoomTypeNameByReservation">
+<input wsam:Action="http://ws.session.ejb/horswebservice/retrieveRoomTypeNameByReservationRequest" message="tns:retrieveRoomTypeNameByReservation"/>
+<output wsam:Action="http://ws.session.ejb/horswebservice/retrieveRoomTypeNameByReservationResponse" message="tns:retrieveRoomTypeNameByReservationResponse"/>
+</operation>
 <operation name="calculateFinalOnlineReservationAmount">
 <input wsam:Action="http://ws.session.ejb/horswebservice/calculateFinalOnlineReservationAmountRequest" message="tns:calculateFinalOnlineReservationAmount"/>
 <output wsam:Action="http://ws.session.ejb/horswebservice/calculateFinalOnlineReservationAmountResponse" message="tns:calculateFinalOnlineReservationAmountResponse"/>
@@ -91,15 +95,31 @@
 <input wsam:Action="http://ws.session.ejb/horswebservice/retrievePriceForOnlineReservationByRoomTypeRequest" message="tns:retrievePriceForOnlineReservationByRoomType"/>
 <output wsam:Action="http://ws.session.ejb/horswebservice/retrievePriceForOnlineReservationByRoomTypeResponse" message="tns:retrievePriceForOnlineReservationByRoomTypeResponse"/>
 </operation>
+<operation name="viewReservation">
+<input wsam:Action="http://ws.session.ejb/horswebservice/viewReservationRequest" message="tns:viewReservation"/>
+<output wsam:Action="http://ws.session.ejb/horswebservice/viewReservationResponse" message="tns:viewReservationResponse"/>
+<fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/horswebservice/viewReservation/Fault/PartnerNotFoundException"/>
+</operation>
+<operation name="searchRoom">
+<input wsam:Action="http://ws.session.ejb/horswebservice/searchRoomRequest" message="tns:searchRoom"/>
+<output wsam:Action="http://ws.session.ejb/horswebservice/searchRoomResponse" message="tns:searchRoomResponse"/>
+</operation>
+<operation name="createNewPartnerReservation">
+<input wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservationRequest" message="tns:createNewPartnerReservation"/>
+<output wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservationResponse" message="tns:createNewPartnerReservationResponse"/>
+<fault message="tns:CreateNewReservationException" name="CreateNewReservationException" wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservation/Fault/CreateNewReservationException"/>
+<fault message="tns:RoomTypeNotFoundException" name="RoomTypeNotFoundException" wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservation/Fault/RoomTypeNotFoundException"/>
+<fault message="tns:InputDataValidationException" name="InputDataValidationException" wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservation/Fault/InputDataValidationException"/>
+</operation>
+<operation name="onlineReservationAmount">
+<input wsam:Action="http://ws.session.ejb/horswebservice/onlineReservationAmountRequest" message="tns:onlineReservationAmount"/>
+<output wsam:Action="http://ws.session.ejb/horswebservice/onlineReservationAmountResponse" message="tns:onlineReservationAmountResponse"/>
+</operation>
 <operation name="viewReservationDetails">
 <input wsam:Action="http://ws.session.ejb/horswebservice/viewReservationDetailsRequest" message="tns:viewReservationDetails"/>
 <output wsam:Action="http://ws.session.ejb/horswebservice/viewReservationDetailsResponse" message="tns:viewReservationDetailsResponse"/>
 <fault message="tns:InvalidLoginCredentialException" name="InvalidLoginCredentialException" wsam:Action="http://ws.session.ejb/horswebservice/viewReservationDetails/Fault/InvalidLoginCredentialException"/>
 <fault message="tns:ReservationNotFoundException" name="ReservationNotFoundException" wsam:Action="http://ws.session.ejb/horswebservice/viewReservationDetails/Fault/ReservationNotFoundException"/>
-</operation>
-<operation name="onlineReservationAmount">
-<input wsam:Action="http://ws.session.ejb/horswebservice/onlineReservationAmountRequest" message="tns:onlineReservationAmount"/>
-<output wsam:Action="http://ws.session.ejb/horswebservice/onlineReservationAmountResponse" message="tns:onlineReservationAmountResponse"/>
 </operation>
 <operation name="retrieveRoomTypeByRoomId">
 <input wsam:Action="http://ws.session.ejb/horswebservice/retrieveRoomTypeByRoomIdRequest" message="tns:retrieveRoomTypeByRoomId"/>
@@ -111,29 +131,18 @@
 <output wsam:Action="http://ws.session.ejb/horswebservice/partnerLoginResponse" message="tns:partnerLoginResponse"/>
 <fault message="tns:InvalidLoginCredentialException" name="InvalidLoginCredentialException" wsam:Action="http://ws.session.ejb/horswebservice/partnerLogin/Fault/InvalidLoginCredentialException"/>
 </operation>
-<operation name="createNewPartnerReservation">
-<input wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservationRequest" message="tns:createNewPartnerReservation"/>
-<output wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservationResponse" message="tns:createNewPartnerReservationResponse"/>
-<fault message="tns:CreateNewReservationException" name="CreateNewReservationException" wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservation/Fault/CreateNewReservationException"/>
-<fault message="tns:RoomTypeNotFoundException" name="RoomTypeNotFoundException" wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservation/Fault/RoomTypeNotFoundException"/>
-<fault message="tns:InputDataValidationException" name="InputDataValidationException" wsam:Action="http://ws.session.ejb/horswebservice/createNewPartnerReservation/Fault/InputDataValidationException"/>
-</operation>
-<operation name="retrieveRoomTypeNameByReservation">
-<input wsam:Action="http://ws.session.ejb/horswebservice/retrieveRoomTypeNameByReservationRequest" message="tns:retrieveRoomTypeNameByReservation"/>
-<output wsam:Action="http://ws.session.ejb/horswebservice/retrieveRoomTypeNameByReservationResponse" message="tns:retrieveRoomTypeNameByReservationResponse"/>
-</operation>
-<operation name="searchRoom">
-<input wsam:Action="http://ws.session.ejb/horswebservice/searchRoomRequest" message="tns:searchRoom"/>
-<output wsam:Action="http://ws.session.ejb/horswebservice/searchRoomResponse" message="tns:searchRoomResponse"/>
-</operation>
-<operation name="viewReservation">
-<input wsam:Action="http://ws.session.ejb/horswebservice/viewReservationRequest" message="tns:viewReservation"/>
-<output wsam:Action="http://ws.session.ejb/horswebservice/viewReservationResponse" message="tns:viewReservationResponse"/>
-<fault message="tns:PartnerNotFoundException" name="PartnerNotFoundException" wsam:Action="http://ws.session.ejb/horswebservice/viewReservation/Fault/PartnerNotFoundException"/>
-</operation>
 </portType>
 <binding name="horswebservicePortBinding" type="tns:horswebservice">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="retrieveRoomTypeNameByReservation">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
 <operation name="calculateFinalOnlineReservationAmount">
 <soap:operation soapAction=""/>
 <input>
@@ -144,6 +153,54 @@
 </output>
 </operation>
 <operation name="retrievePriceForOnlineReservationByRoomType">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="viewReservation">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="PartnerNotFoundException">
+<soap:fault name="PartnerNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="searchRoom">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="createNewPartnerReservation">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="CreateNewReservationException">
+<soap:fault name="CreateNewReservationException" use="literal"/>
+</fault>
+<fault name="RoomTypeNotFoundException">
+<soap:fault name="RoomTypeNotFoundException" use="literal"/>
+</fault>
+<fault name="InputDataValidationException">
+<soap:fault name="InputDataValidationException" use="literal"/>
+</fault>
+</operation>
+<operation name="onlineReservationAmount">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -167,15 +224,6 @@
 <soap:fault name="ReservationNotFoundException" use="literal"/>
 </fault>
 </operation>
-<operation name="onlineReservationAmount">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
 <operation name="retrieveRoomTypeByRoomId">
 <soap:operation soapAction=""/>
 <input>
@@ -198,54 +246,6 @@
 </output>
 <fault name="InvalidLoginCredentialException">
 <soap:fault name="InvalidLoginCredentialException" use="literal"/>
-</fault>
-</operation>
-<operation name="createNewPartnerReservation">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="CreateNewReservationException">
-<soap:fault name="CreateNewReservationException" use="literal"/>
-</fault>
-<fault name="RoomTypeNotFoundException">
-<soap:fault name="RoomTypeNotFoundException" use="literal"/>
-</fault>
-<fault name="InputDataValidationException">
-<soap:fault name="InputDataValidationException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveRoomTypeNameByReservation">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="searchRoom">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="viewReservation">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="PartnerNotFoundException">
-<soap:fault name="PartnerNotFoundException" use="literal"/>
 </fault>
 </operation>
 </binding>

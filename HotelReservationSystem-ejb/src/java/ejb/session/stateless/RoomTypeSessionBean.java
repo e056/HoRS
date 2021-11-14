@@ -6,7 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Reservation;
-import entity.Room;
+import entity.RoomRate;
 import entity.RoomType;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +23,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.RoomRateType;
 import util.exception.DeleteRoomTypeException;
 import util.exception.InputDataValidationException;
 import util.exception.RoomTypeHasNoRoomException;
@@ -336,6 +337,50 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
 
     }
 
+    public List<RoomType> retrieveRoomTypesAvailableForReservation(int numOfRooms, Date checkInDate, Date checkOutDate, boolean online) {
+
+        List<RoomType> rts = retrieveAllEnabledRoomTypes();
+        List<RoomType> finalRts = retrieveAllEnabledRoomTypes();
+
+        for (RoomType rt : rts) {
+            int inventory = roomSessionBeanLocal.retrieveAvailableAndEnabledRoomsByRoomType(rt.getRoomTypeId()).size();
+            System.out.println("Curr Room Type: " + rt.getName());
+            System.out.println("Inventory: " + inventory);
+            List<Reservation> roomTypeReservations = rt.getReservations();
+            for (Reservation reservation : roomTypeReservations) {
+                if ((reservation.getStartDate().compareTo(checkInDate) >= 0 && reservation.getStartDate().compareTo(checkOutDate) <= 0)
+                        || (reservation.getEndDate().compareTo(checkInDate) > 0 && reservation.getEndDate().compareTo(checkOutDate) <= 0)) {
+                    inventory -= reservation.getNumOfRooms();
+                }
+
+            }
+            List<RoomRate> roomRates = rt.getRoomRates();
+            boolean normalDefined = false, publishedDefined = false;
+            for (RoomRate rr : roomRates) {
+                if (rr.getType() == RoomRateType.NORMAL && rr.getEnabled()) {
+          
+                    normalDefined = true;
+                }
+                if (rr.getType() == RoomRateType.PUBLISHED && rr.getEnabled()) {
+                    publishedDefined = true;
+                }
+
+            }
+            if (!online && !publishedDefined || online && !normalDefined) {
+                
+                finalRts.remove(rt);
+
+            }
+            if (inventory < numOfRooms) {
+                finalRts.remove(rt);
+            }
+            System.out.println("Final Inventory: " + inventory);
+
+        }
+        return finalRts;
+
+    }
+
     public String retrieveRoomTypeNameByReservation(Long reservationId) {
         Reservation res = entityManager.find(Reservation.class, reservationId);
         res.getRoomType();
@@ -343,7 +388,7 @@ public class RoomTypeSessionBean implements RoomTypeSessionBeanRemote, RoomTypeS
         res.getGuest();
         res.getReservationId();
         System.out.println(res.getTotalPrice());
-        
+
         return res.getRoomType().getName();
     }
 

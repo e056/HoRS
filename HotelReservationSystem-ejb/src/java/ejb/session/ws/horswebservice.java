@@ -112,7 +112,7 @@ public class horswebservice {
     @WebMethod(operationName = "searchRoom")
     public List<RoomType> searchRoom(int numOfRooms, Date start, Date end) {
         System.out.println("Here");
-        List<RoomType> rts = roomTypeSessionBeanLocal.retrieveRoomTypesAvailableForReservation(numOfRooms, start, end);
+        List<RoomType> rts = roomTypeSessionBeanLocal.retrieveRoomTypesAvailableForReservation(numOfRooms, start, end, true);
         List<RoomType> newRts = new ArrayList<>();
         // RESERVATION : ROOMTYPE = N : 1 BIDIRECTIONAL
 
@@ -158,44 +158,7 @@ public class horswebservice {
         return reservationSessionBeanLocal.calculateFinalOnlineReservationAmount(roomTypeToReserve, startDate, endDate, numOfRooms);
     }
 
-//    @WebMethod(operationName = "createNewOnlineReservation")
-//    public Reservation createNewOnlineReservation(Reservation reservation, Guest guest) throws RoomTypeNotFoundException, CreateNewReservationException, InputDataValidationException {
-//        Reservation res = reservationSessionBeanLocal.createNewOnlineReservation(reservation, guest);
-//        em.detach(res);
-//        res.getRoomType().setNextHigherRoomType(null);
-//        res.setRoomType(null);
-//        res.setPartner(null);
-//        res.getAllocatedRooms().clear();
-//        res.setException(null);
-//
-//        //res.setRoomType(null);
-//        RoomType rt = res.getRoomType();
-//        List<Reservation> reservationsToDetatch = rt.getReservations();
-//
-//        for (Reservation resToDetatch : reservationsToDetatch) {
-//            em.detach(resToDetatch);
-//            resToDetatch.getRoomType().setNextHigherRoomType(null);
-//            resToDetatch.setRoomType(null);
-//        }
-//
-//        res.setAllocatedRooms(null);
-//        res.setGuest(null);
-//        return res;
-//    }
-//    @WebMethod(operationName = "createNewReservation")
-//    public Reservation createNewReservation(Reservation reservation) throws CreateNewReservationException, RoomTypeNotFoundException, InputDataValidationException {
-//
-//        Reservation res = reservationSessionBeanLocal.createNewReservation(reservation);
-//        em.detach(res);
-//        res.setAllocatedRooms(null);
-//        res.setException(null);
-//        res.setPartner(null);
-//        res.setGuest(null);
-//        res.getRoomType().setNextHigherRoomType(null);
-//        return res;
-//
-//
-//    }
+
     @WebMethod(operationName = "createNewPartnerReservation")
     public Reservation createNewPartnerReservation(Reservation reservation, Partner partner) throws CreateNewReservationException, RoomTypeNotFoundException, InputDataValidationException {
 

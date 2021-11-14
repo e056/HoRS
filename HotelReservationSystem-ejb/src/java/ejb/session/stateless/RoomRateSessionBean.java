@@ -146,21 +146,20 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
      */
     @Override
     public void deleteRoomRate(Long rrId) throws RoomRateNotFoundException, DeleteRoomRateException {
+        System.out.println("Deleting room rate...");
 
         RoomRate roomRate = retrieveRoomRateByRoomRateId(rrId);
+        System.out.println(roomRate.getRoomType().getRooms().isEmpty());
 
         if (!roomRate.getRoomType().getRooms().isEmpty()) {
             for (Room room : roomRate.getRoomType().getRooms()) {
                 if (room.getReservations().size() != 0) {
                     roomRate.setEnabled(Boolean.FALSE);
-                    break;
+                    throw new DeleteRoomRateException("Room Rate is associated with reservation, disabling rate for future use.");
                 }
             }
-            entityManager.remove(roomRate);
-        } else {
-            roomRate.setEnabled(Boolean.FALSE);
-            throw new DeleteRoomRateException("Room Rate is associated with reservation, disabling room for future use.");
         }
+        entityManager.remove(roomRate);
 
     }
 
@@ -220,16 +219,16 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
         for (RoomRate rate : rates) {
             System.out.println(rate.getType());
             System.out.println(rate.getName());
-            if (rate.getType() == RoomRateType.PEAK) {
+            if (rate.getType() == RoomRateType.PEAK && rate.getEnabled()) {
 
                 peaks.add(rate);
-            } else if (rate.getType() == RoomRateType.PROMOTION) {
+            } else if (rate.getType() == RoomRateType.PROMOTION && rate.getEnabled()) {
 
                 promotions.add(rate);
-            } else if (rate.getType() == RoomRateType.NORMAL) {
+            } else if (rate.getType() == RoomRateType.NORMAL && rate.getEnabled()) {
 
                 normal = rate;
-                System.out.println("DEBUGGING :" + normal.getName());
+                //System.out.println("DEBUGGING :" + normal.getName());
             }
         }
 
@@ -243,7 +242,7 @@ public class RoomRateSessionBean implements RoomRateSessionBeanRemote, RoomRateS
 
         for (LocalDate date = startDateLocal; date.isBefore(endDateLocal); date = date.plusDays(1)) {
             System.out.println(current.toString());
-            System.out.println("LOOPED");
+            //System.out.println("LOOPED");
 
             Date curr = localDateToDate(date);
 
